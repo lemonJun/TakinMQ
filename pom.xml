@@ -14,12 +14,12 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>takinmq-remoting</module>
-		<module>takinmq-broker</module>
-		<module>takinmq-store</module>
-		<module>takinmq-naming</module>
-		<module>takinmq-client</module>
-		<module>takinmq-common</module>
+		<module>lemon.takinmq-remoting</module>
+		<module>lemon.takinmq-broker</module>
+		<module>lemon.takinmq-store</module>
+		<module>lemon.takinmq-naming</module>
+		<module>lemon.takinmq-client</module>
+		<module>lemon.takinmq-common</module>
 	</modules>
 
 	<properties>

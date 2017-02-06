@@ -12,16 +12,15 @@ public class ClientMessageHandler extends ChannelHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         NettyMessage message = (NettyMessage) msg;
-        if (message.getType() == MessageType.HEARTBEAT_RES.value()) {
-            logger.info(message.getResultJson());
-        } else {
-            final ResponseFuture responseFuture = NettyClient.responseTable.get(message.getOpaque());
-            if (responseFuture != null) {
-                responseFuture.putResponse(message);
-            }
-            NettyClient.responseTable.remove(message.getOpaque());
-        }
+        logger.info(message.getResultJson());
 
+        final ResponseFuture responseFuture = NettyClient.responseTable.get(message.getOpaque());
+
+        if (responseFuture != null) {
+            System.out.println("response is not null");
+            responseFuture.putResponse(message);
+        }
+        NettyClient.responseTable.remove(message.getOpaque());
     }
 
     @Override

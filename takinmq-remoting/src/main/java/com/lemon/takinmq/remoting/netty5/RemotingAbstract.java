@@ -64,13 +64,16 @@ public abstract class RemotingAbstract {
                 public void operationComplete(ChannelFuture f) throws Exception {
                     if (f.isSuccess()) {
                         responseFuture.setSendRequestOK(true);
+                        System.out.println("channel future is succ");
                         return;
                     } else {
                         responseFuture.setSendRequestOK(false);
                     }
+                    System.out.println("channel future is false");
                     //无结果 返回原因
                     responseTable.remove(message.getOpaque());
                     responseFuture.setCause(f.cause());
+                    responseFuture.putResponse(null);
                 }
             });
             NettyMessage result = responseFuture.waitResponse();

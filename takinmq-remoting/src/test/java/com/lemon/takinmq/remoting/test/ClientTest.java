@@ -18,8 +18,8 @@ public class ClientTest {
             NettyClient client = new NettyClient(config);
             client.start();
             NettyMessage msg = new NettyMessage();
-            for (int i = 0; i < 100; i++) {
-                client.invokeSync("127.0.0.1:6871", msg, 10000);
+            for (int i = 0; i < 10; i++) {
+                client.invokeSync("127.0.0.1:6871", msg, 3000);
                 TimeUnit.SECONDS.sleep(1);
             }
             System.out.println(msg.getResultJson());

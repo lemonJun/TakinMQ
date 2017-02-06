@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.consumer.proxy;
+package com.lemon.takinmq.client.consumer.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -9,9 +9,9 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
-import com.lemon.takinmq.remoting.consumer.NettyClientProxy;
-import com.lemon.takinmq.remoting.io.netty5.MessageType;
-import com.lemon.takinmq.remoting.io.netty5.NettyMessage;
+import com.lemon.takinmq.client.consumer.NettyClientProxy;
+import com.lemon.takinmq.remoting.netty5.MessageType;
+import com.lemon.takinmq.remoting.netty5.NettyMessage;
 import com.lemon.takinmq.remoting.util.GenericsUtils;
 import com.lemon.takinmq.remoting.util.SerializeUtil;
 

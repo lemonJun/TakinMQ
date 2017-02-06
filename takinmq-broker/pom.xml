@@ -13,6 +13,7 @@
 		<dependency>
 			<groupId>lemon.takinmq</groupId>
 			<artifactId>lemon.takinmq-remoting</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

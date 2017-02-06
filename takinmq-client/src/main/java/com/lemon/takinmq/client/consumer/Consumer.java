@@ -1,6 +1,6 @@
-package com.lemon.takinmq.remoting.consumer;
+package com.lemon.takinmq.client.consumer;
 
-import com.lemon.takinmq.remoting.core.cluster.Node;
+import javassist.bytecode.analysis.ControlFlow.Node;
 
 /**
  * @author Robert HG (254963746@qq.com) on 8/14/14.

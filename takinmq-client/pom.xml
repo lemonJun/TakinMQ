@@ -7,4 +7,13 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>lemon.takinmq-client</artifactId>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>lemon.takinmq</groupId>
+			<artifactId>lemon.takinmq-remoting</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>

@@ -1,8 +1,8 @@
-package com.lemon.takinmq.remoting.consumer;
+package com.lemon.takinmq.client.consumer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.lemon.takinmq.remoting.io.netty5.NettyClient;
+import com.lemon.takinmq.remoting.netty5.NettyClient;
 
 /**
  * 

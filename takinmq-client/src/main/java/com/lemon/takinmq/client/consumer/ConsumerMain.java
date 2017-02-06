@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.consumer;
+package com.lemon.takinmq.client.consumer;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -21,8 +21,6 @@ import com.lemon.takinmq.remoting.util.Constants;
 public class ConsumerMain {
 
     private static final Logger logger = Logger.getLogger(ConsumerMain.class);
-
-    private Config config;
 
     public static void main(String[] args) {
         final ConsumerMain task = new ConsumerMain();

@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.consumer.business;
+package com.lemon.takinmq.client.consumer.business;
 
 public enum ResultCode {
 

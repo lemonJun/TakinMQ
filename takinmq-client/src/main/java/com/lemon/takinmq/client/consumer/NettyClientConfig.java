@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.consumer;
+package com.lemon.takinmq.client.consumer;
 
 import com.lemon.takinmq.remoting.util.Constants;
 

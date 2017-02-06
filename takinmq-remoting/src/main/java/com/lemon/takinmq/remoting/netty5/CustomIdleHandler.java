@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.io.netty5;
+package com.lemon.takinmq.remoting.netty5;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -7,8 +7,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 import org.apache.log4j.Logger;
 
-import com.lemon.takinmq.remoting.io.netty5.MessageType;
-import com.lemon.takinmq.remoting.io.netty5.NettyMessage;
+import com.lemon.takinmq.remoting.netty5.MessageType;
+import com.lemon.takinmq.remoting.netty5.NettyMessage;
 
 /**
  * 检测空闲连接

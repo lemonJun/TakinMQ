@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.io.netty5;
+package com.lemon.takinmq.remoting.netty5;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;

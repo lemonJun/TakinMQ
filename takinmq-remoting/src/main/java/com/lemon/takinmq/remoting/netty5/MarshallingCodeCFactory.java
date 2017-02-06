@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.io.netty5;
+package com.lemon.takinmq.remoting.netty5;
 
 import io.netty.handler.codec.marshalling.DefaultMarshallerProvider;
 import io.netty.handler.codec.marshalling.DefaultUnmarshallerProvider;

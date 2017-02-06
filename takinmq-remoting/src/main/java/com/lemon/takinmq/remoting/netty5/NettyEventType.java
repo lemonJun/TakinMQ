@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.io.netty5;
+package com.lemon.takinmq.remoting.netty5;
 
 /**
  * Netty产生的事件类型

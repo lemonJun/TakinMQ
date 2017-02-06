@@ -16,7 +16,7 @@
  */
 package com.lemon.takinmq.remoting;
 
-import com.lemon.takinmq.remoting.io.netty5.ResponseFuture;
+import com.lemon.takinmq.remoting.netty5.ResponseFuture;
 
 /**
  * @author lemon

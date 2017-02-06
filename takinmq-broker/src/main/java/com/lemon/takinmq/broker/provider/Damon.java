@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.provider;
+package com.lemon.takinmq.broker.provider;
 
 /**
  * 检测接口类

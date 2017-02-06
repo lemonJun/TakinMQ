@@ -1,6 +1,4 @@
-package com.lemon.takinmq.remoting.provider.channel;
-
-import com.lemon.takinmq.remoting.core.cluster.NodeType;
+package com.lemon.takinmq.broker.provider.channel;
 
 import io.netty.channel.Channel;
 
@@ -11,14 +9,12 @@ import io.netty.channel.Channel;
 public class ChannelWrapper {
 
     private Channel channel;
-    private NodeType nodeType;
     private String nodeGroup;
     // 节点的唯一标识
     private String identity;
 
-    public ChannelWrapper(Channel channel, NodeType nodeType, String nodeGroup, String identity) {
+    public ChannelWrapper(Channel channel, String nodeGroup, String identity) {
         this.channel = channel;
-        this.nodeType = nodeType;
         this.nodeGroup = nodeGroup;
         this.identity = identity;
     }
@@ -29,14 +25,6 @@ public class ChannelWrapper {
 
     public void setChannel(Channel channel) {
         this.channel = channel;
-    }
-
-    public NodeType getNodeType() {
-        return nodeType;
-    }
-
-    public void setNodeType(NodeType nodeType) {
-        this.nodeType = nodeType;
     }
 
     public String getNodeGroup() {
@@ -78,8 +66,8 @@ public class ChannelWrapper {
             return false;
         if (nodeGroup != null ? !nodeGroup.equals(that.nodeGroup) : that.nodeGroup != null)
             return false;
-        if (nodeType != that.nodeType)
-            return false;
+        //        if (nodeType != that.nodeType)
+        //            return false;
 
         return true;
     }
@@ -87,7 +75,6 @@ public class ChannelWrapper {
     @Override
     public int hashCode() {
         int result = channel != null ? channel.hashCode() : 0;
-        result = 31 * result + (nodeType != null ? nodeType.hashCode() : 0);
         result = 31 * result + (nodeGroup != null ? nodeGroup.hashCode() : 0);
         result = 31 * result + (identity != null ? identity.hashCode() : 0);
         return result;
@@ -95,6 +82,6 @@ public class ChannelWrapper {
 
     @Override
     public String toString() {
-        return "ChannelWrapper{" + "channel=" + channel + ", nodeType=" + nodeType + ", nodeGroup='" + nodeGroup + '\'' + ", identity='" + identity + '\'' + '}';
+        return "ChannelWrapper{" + "channel=" + channel + ", nodeGroup='" + nodeGroup + '\'' + ", identity='" + identity + '\'' + '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.provider.channel;
+package com.lemon.takinmq.broker.provider.channel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
-
-import com.lemon.takinmq.remoting.core.cluster.NodeType;
 
 /**
  *  管理channel
@@ -27,7 +25,7 @@ public class ChannelManager {
     private final ConcurrentHashMap<String/*taskGroup*/, List<ChannelWrapper>> taskTrackerChannelMap = new ConcurrentHashMap<String, List<ChannelWrapper>>();
     // 用来定时检查已经关闭的channel
     private final ScheduledExecutorService channelCheckExecutorService = Executors.newScheduledThreadPool(1);
-    
+
     private ScheduledFuture scheduledFuture;
     private AtomicBoolean start = new AtomicBoolean(false);
 
@@ -82,69 +80,69 @@ public class ChannelManager {
         }
     }
 
-    public List<ChannelWrapper> getChannels(String nodeGroup, NodeType nodeType) {
-        if (nodeType == NodeType.PROVIDER_NODE) {
-            return clientChannelMap.get(nodeGroup);
-        } else if (nodeType == NodeType.CONSUMER_NODE) {
-            return taskTrackerChannelMap.get(nodeGroup);
-        }
-        return null;
-    }
+    //    public List<ChannelWrapper> getChannels(String nodeGroup, NodeType nodeType) {
+    //        if (nodeType == NodeType.PROVIDER_NODE) {
+    //            return clientChannelMap.get(nodeGroup);
+    //        } else if (nodeType == NodeType.CONSUMER_NODE) {
+    //            return taskTrackerChannelMap.get(nodeGroup);
+    //        }
+    //        return null;
+    //    }
 
-    /**
-     * 根据 节点唯一编号得到 channel
-     *
-     * @param nodeGroup
-     * @param nodeType
-     * @param identity
-     * @return
-     */
-    public ChannelWrapper getChannel(String nodeGroup, NodeType nodeType, String identity) {
-        List<ChannelWrapper> channelWrappers = getChannels(nodeGroup, nodeType);
-        if (channelWrappers != null && channelWrappers.size() != 0) {
-            for (ChannelWrapper channelWrapper : channelWrappers) {
-                if (channelWrapper.getIdentity().equals(identity)) {
-                    return channelWrapper;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 添加channel
-     *
-     * @param channel
-     */
-    public void offerChannel(ChannelWrapper channel) {
-        String nodeGroup = channel.getNodeGroup();
-        NodeType nodeType = channel.getNodeType();
-        List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
-        if (channels == null) {
-            channels = new ArrayList<ChannelWrapper>();
-            if (nodeType == NodeType.CONSUMER_NODE) {
-                clientChannelMap.put(nodeGroup, channels);
-            } else if (nodeType == NodeType.PROVIDER_NODE) {
-                taskTrackerChannelMap.put(nodeGroup, channels);
-            }
-            channels.add(channel);
-            logger.info(String.format("new connected channel=%s", channel));
-        } else {
-            if (!channels.contains(channel)) {
-                channels.add(channel);
-                logger.info(String.format("new connected channel=%s", channel));
-            }
-        }
-    }
-
-    public void removeChannel(ChannelWrapper channel) {
-        String nodeGroup = channel.getNodeGroup();
-        NodeType nodeType = channel.getNodeType();
-        List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
-        if (channels != null) {
-            channels.remove(channel);
-            logger.info(String.format("remove channel=%s", channel));
-
-        }
-    }
+    //    /**
+    //     * 根据 节点唯一编号得到 channel
+    //     *
+    //     * @param nodeGroup
+    //     * @param nodeType
+    //     * @param identity
+    //     * @return
+    //     */
+    //    public ChannelWrapper getChannel(String nodeGroup, String identity) {
+    //        List<ChannelWrapper> channelWrappers = getChannels(nodeGroup, nodeType);
+    //        if (channelWrappers != null && channelWrappers.size() != 0) {
+    //            for (ChannelWrapper channelWrapper : channelWrappers) {
+    //                if (channelWrapper.getIdentity().equals(identity)) {
+    //                    return channelWrapper;
+    //                }
+    //            }
+    //        }
+    //        return null;
+    //    }
+    //
+    //    /**
+    //     * 添加channel
+    //     *
+    //     * @param channel
+    //     */
+    //    public void offerChannel(ChannelWrapper channel) {
+    //        String nodeGroup = channel.getNodeGroup();
+    //        NodeType nodeType = channel.getNodeType();
+    //        List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
+    //        if (channels == null) {
+    //            channels = new ArrayList<ChannelWrapper>();
+    //            if (nodeType == NodeType.CONSUMER_NODE) {
+    //                clientChannelMap.put(nodeGroup, channels);
+    //            } else if (nodeType == NodeType.PROVIDER_NODE) {
+    //                taskTrackerChannelMap.put(nodeGroup, channels);
+    //            }
+    //            channels.add(channel);
+    //            logger.info(String.format("new connected channel=%s", channel));
+    //        } else {
+    //            if (!channels.contains(channel)) {
+    //                channels.add(channel);
+    //                logger.info(String.format("new connected channel=%s", channel));
+    //            }
+    //        }
+    //    }
+    //
+    //    public void removeChannel(ChannelWrapper channel) {
+    //        String nodeGroup = channel.getNodeGroup();
+    //        NodeType nodeType = channel.getNodeType();
+    //        List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
+    //        if (channels != null) {
+    //            channels.remove(channel);
+    //            logger.info(String.format("remove channel=%s", channel));
+    //
+    //        }
+    //    }
 }

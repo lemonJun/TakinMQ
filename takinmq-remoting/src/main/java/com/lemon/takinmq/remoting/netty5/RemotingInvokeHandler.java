@@ -46,14 +46,15 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
                 }
             }
             Class clazz = Class.forName(clazzName);
-            Method method = clazz.getDeclaredMethod(methodName, c);
-            //            Object impl = GuiceDI.getInstance(clazz);
-            Object impl = clazz.newInstance();
-
-            Object result = method.invoke(impl, args);
-            if (!method.getReturnType().getName().equals("void")) {
-                msg.setResultJson(SerializeUtil.jsonSerialize(result));
-            }
+            //            Method method = clazz.getDeclaredMethod(methodName, c);
+            //            //            Object impl = GuiceDI.getInstance(clazz);
+            //            Object impl = clazz.newInstance();
+            //
+            //            Object result = method.invoke(impl, args);
+            //            if (!method.getReturnType().getName().equals("void")) {
+            //                msg.setResultJson(SerializeUtil.jsonSerialize(result));
+            //            }
+            msg.setResultJson("hello world");
             ctx.writeAndFlush(msg);
         } else {
             ctx.fireChannelRead(obj);

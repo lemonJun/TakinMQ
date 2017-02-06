@@ -25,7 +25,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class NettyServer {
 
     private static final Logger logger = Logger.getLogger(NettyServer.class);
-    
+
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
@@ -56,7 +56,7 @@ public class NettyServer {
             }
         });
 
-        this.bootstrap.bind().sync();
+        this.bootstrap.bind(port).sync();
         respScheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {

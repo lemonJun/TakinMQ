@@ -25,7 +25,6 @@ import com.lemon.takinmq.remoting.util.SystemClock;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -61,7 +60,6 @@ public class NettyClient extends RemotingAbstract {
         });
 
         group = new NioEventLoopGroup();
-
     }
 
     public void start() {
@@ -75,6 +73,8 @@ public class NettyClient extends RemotingAbstract {
                 ch.pipeline().addLast(new ClientMessageHandler());
             }
         });
+
+        bootstrap.bind(6871);
 
         new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable() {
             @Override
@@ -152,7 +152,7 @@ public class NettyClient extends RemotingAbstract {
      * @param address
      * @param message
      * @param timeout
-     * @return
+     * @return 
      * @throws Exception
      */
     public NettyMessage invokeSync(String address, final NettyMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
@@ -245,7 +245,6 @@ public class NettyClient extends RemotingAbstract {
 
     @Override
     public ExecutorService getCallbackExecutor() {
-        // TODO Auto-generated method stub
         return null;
     }
 

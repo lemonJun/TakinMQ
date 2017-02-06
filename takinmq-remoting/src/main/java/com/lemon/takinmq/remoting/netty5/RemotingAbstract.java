@@ -53,7 +53,7 @@ public abstract class RemotingAbstract {
      * @return
      * @throws Exception
      */
-    public NettyMessage invokeSyncImpl(final Channel channel, final NettyMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
+    protected NettyMessage invokeSyncImpl(final Channel channel, final NettyMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
         long start = System.currentTimeMillis();
         try {
             final ResponseFuture responseFuture = new ResponseFuture(message.getOpaque(), timeout);

@@ -26,26 +26,25 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
 
     private static final Logger logger = Logger.getLogger(RemotingInvokeHandler.class);
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
         NettyMessage msg = (NettyMessage) obj;
+        logger.info(JSON.toJSONString(msg));
         if (msg.getType() == MessageType.REMOTING_INVOKE.value()) {
-            logger.info(JSON.toJSONString(msg));
-            String clazzName = msg.getClazz();
-            String methodName = msg.getMethod();
-            Object[] args = msg.getArgs();
-            //            ClassPool pool = ClassPool.getDefault();
-            //            Class clazz = pool.get(clazzStr).toClass();
-            Class c[] = null;
-            if (args != null) {//存在
-                int len = args.length;
-                c = new Class[len];
-                for (int i = 0; i < len; ++i) {
-                    c[i] = args[i].getClass();
-                }
-            }
-            Class clazz = Class.forName(clazzName);
+            //            String clazzName = msg.getClazz();
+            //            String methodName = msg.getMethod();
+            //            Object[] args = msg.getArgs();
+            //            //            ClassPool pool = ClassPool.getDefault();
+            //            //            Class clazz = pool.get(clazzStr).toClass();
+            //            Class c[] = null;
+            //            if (args != null) {//存在
+            //                int len = args.length;
+            //                c = new Class[len];
+            //                for (int i = 0; i < len; ++i) {
+            //                    c[i] = args[i].getClass();
+            //                }
+            //            }
+            //            Class clazz = Class.forName(clazzName);
             //            Method method = clazz.getDeclaredMethod(methodName, c);
             //            //            Object impl = GuiceDI.getInstance(clazz);
             //            Object impl = clazz.newInstance();
@@ -57,7 +56,14 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
             msg.setResultJson("hello world");
             ctx.writeAndFlush(msg);
         } else {
-            ctx.fireChannelRead(obj);
+            msg.setResultJson("hello world");
+            ctx.writeAndFlush(msg);
+
+            /**
+             * 继续放给下一个handler处理
+             * 如查后面已经没有handler了  不能用这个方法  否则会报 Discarded inbound message  错误
+             */
+            //            ctx.fireChannelRead(obj);//
         }
     }
 

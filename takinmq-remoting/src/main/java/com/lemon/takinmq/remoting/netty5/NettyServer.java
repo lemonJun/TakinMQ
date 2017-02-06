@@ -48,8 +48,8 @@ public class NettyServer {
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws IOException {
-                ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(60, 60, 60));
-                ch.pipeline().addLast("heartbeat", new CustomIdleHandler());
+                //                ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(60, 60, 60));
+                //                ch.pipeline().addLast("heartbeat", new CustomIdleHandler());
                 ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                 ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
                 ch.pipeline().addLast("remoteinvode", new RemotingInvokeHandler());
@@ -57,12 +57,13 @@ public class NettyServer {
         });
 
         this.bootstrap.bind(port).sync();
+        logger.info("server started on port:" + port);
         respScheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 scanResponseTable(5000);
             }
-        }, 5 * 1000, 5000, TimeUnit.MILLISECONDS);
+        }, 5000, 5000, TimeUnit.MILLISECONDS);
     }
 
     /**

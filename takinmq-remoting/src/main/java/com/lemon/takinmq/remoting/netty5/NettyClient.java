@@ -98,7 +98,6 @@ public class NettyClient extends RemotingAbstract {
         }
         try {
             if (this.lockChannelTables.tryLock(1000, TimeUnit.MILLISECONDS)) {
-
                 boolean createNewConnection = false;
                 cw = this.channelTables.get(address);
                 if (cw != null) {
@@ -128,6 +127,8 @@ public class NettyClient extends RemotingAbstract {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("", e);
         } finally {
             this.lockChannelTables.unlock();
         }

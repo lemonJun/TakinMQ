@@ -4,8 +4,12 @@ import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,17 +33,35 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-public class NettyClient {
+public class NettyClient extends RemotingAbstract {
 
     private static final Logger logger = Logger.getLogger(NettyClient.class);
 
     private final Bootstrap bootstrap = new Bootstrap();
     private final EventLoopGroup group;
+    private final ExecutorService publicExecutor;
+
     private ConcurrentHashMap<String, ChannelWrapper> channelTables = new ConcurrentHashMap<String, ChannelWrapper>();
     public static final ConcurrentHashMap<Long, ResponseFuture> responseTable = new ConcurrentHashMap<Long, ResponseFuture>(256);
 
-    public NettyClient() {
+    public NettyClient(final NettyClientConfig nettyClientConfig) {
+        super(nettyClientConfig.getClientOnewaySemaphoreValue(), nettyClientConfig.getClientAsyncSemaphoreValue());
+        int publicThreadNums = nettyClientConfig.getClientCallbackExecutorThreads();
+        if (publicThreadNums <= 0) {
+            publicThreadNums = 4;
+        }
+
+        this.publicExecutor = Executors.newFixedThreadPool(publicThreadNums, new ThreadFactory() {
+            private AtomicInteger threadIndex = new AtomicInteger(0);
+
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "NettyClientPublicExecutor_" + this.threadIndex.incrementAndGet());
+            }
+        });
+
         group = new NioEventLoopGroup();
+
     }
 
     public void start() {
@@ -126,6 +148,7 @@ public class NettyClient {
      * 发起同步调用
      * 其实后面也是异步的
      * 这个同步是指：可以携带结果返回
+     * 
      * @param address
      * @param message
      * @param timeout
@@ -137,31 +160,7 @@ public class NettyClient {
         long start = System.currentTimeMillis();
         if (channel != null && channel.isActive()) {
             try {
-                final ResponseFuture responseFuture = new ResponseFuture(message.getOpaque(), timeout);
-                responseTable.put(message.getOpaque(), responseFuture);
-                channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
-                    //什么时候会触发这一个接口呢
-                    @Override
-                    public void operationComplete(ChannelFuture f) throws Exception {
-                        if (f.isSuccess()) {
-                            responseFuture.setSendRequestOK(true);
-                            return;
-                        } else {
-                            responseFuture.setSendRequestOK(false);
-                        }
-                        //无结果 返回原因
-                        responseTable.remove(message.getOpaque());
-                        responseFuture.setCause(f.cause());
-                    }
-                });
-                NettyMessage result = responseFuture.waitResponse();
-                if (null == result) {
-                    if (responseFuture.isSendRequestOK()) {
-                        throw new Exception("request timeout ");
-                    } else {
-                        throw new Exception("request error");
-                    }
-                }
+                NettyMessage result = invokeSyncImpl(channel, message, timeout);
                 long end = System.currentTimeMillis();
                 logger.info(String.format("invoke address:%s , use time:%dms", address, (end - start)));
                 return result;
@@ -242,6 +241,12 @@ public class NettyClient {
                 it.remove();
             }
         }
+    }
+
+    @Override
+    public ExecutorService getCallbackExecutor() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

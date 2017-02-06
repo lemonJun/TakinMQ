@@ -2,6 +2,10 @@ package com.lemon.takinmq.remoting.netty5;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.lemon.takinmq.remoting.InvokeCallback;
+import com.lemon.takinmq.remoting.util.SemaphoreReleaseOnlyOnce;
 
 /**
  * 异步请求应答封装
@@ -13,15 +17,39 @@ public class ResponseFuture {
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
     // 保证信号量至多至少只被释放一次
     // 保证回调的callback方法至多至少只被执行一次
-    //    private final AtomicBoolean executeCallbackOnlyOnce = new AtomicBoolean(false);
+    private final AtomicBoolean executeCallbackOnlyOnce = new AtomicBoolean(false);
     private volatile boolean sendRequestOK = true;
     private volatile NettyMessage message;
-
     private volatile Throwable cause;
+
+    private InvokeCallback invokeCallback;
+
+    private SemaphoreReleaseOnlyOnce once;
 
     public ResponseFuture(long opaque, long timeoutMillis) {
         this.opaque = opaque;
         this.timeoutMillis = timeoutMillis;
+    }
+
+    public ResponseFuture(long opaque, long timeoutMillis, InvokeCallback invokeCallback, SemaphoreReleaseOnlyOnce once) {
+        this.opaque = opaque;
+        this.timeoutMillis = timeoutMillis;
+        this.invokeCallback = invokeCallback;
+        this.once = once;
+    }
+
+    public void executeInvokeCallback() {
+        if (invokeCallback != null) {
+            if (this.executeCallbackOnlyOnce.compareAndSet(false, true)) {
+                invokeCallback.operationComplete(this);
+            }
+        }
+    }
+
+    public void release() {
+        if (this.once != null) {
+            this.once.release();
+        }
     }
 
     public boolean isTimeout() {

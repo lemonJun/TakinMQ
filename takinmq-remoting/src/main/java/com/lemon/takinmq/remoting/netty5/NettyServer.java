@@ -25,7 +25,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class NettyServer {
 
     private static final Logger logger = Logger.getLogger(NettyServer.class);
-
+    
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
@@ -38,9 +38,8 @@ public class NettyServer {
         respScheduler = new ScheduledThreadPoolExecutor(1);
     }
 
-    public void bind() throws Exception {
+    public void bind(int port) throws Exception {
         //        int port = GuiceDI.getInstance(NettyServerConfig.class).getListenPort();
-        int port = 6781;
         bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
         bootstrap.option(ChannelOption.SO_BACKLOG, 65536);
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
@@ -53,7 +52,7 @@ public class NettyServer {
                 ch.pipeline().addLast("heartbeat", new CustomIdleHandler());
                 ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
                 ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
-                //                ch.pipeline().addLast("remoteinvode", new RemotingInvokeHandler());
+                ch.pipeline().addLast("remoteinvode", new RemotingInvokeHandler());
             }
         });
 

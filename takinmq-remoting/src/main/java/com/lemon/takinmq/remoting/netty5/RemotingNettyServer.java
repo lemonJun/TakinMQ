@@ -29,21 +29,23 @@ public class RemotingNettyServer {
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
     private final ScheduledExecutorService respScheduler;
+    private final NettyServerConfig serverconfig;
     public static final ConcurrentHashMap<Integer, ResponseFuture> responseTable = GenericsUtils.newConcurrentHashMap();
 
-    public RemotingNettyServer() {
+    public RemotingNettyServer(final NettyServerConfig serverconfig) {
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
         respScheduler = new ScheduledThreadPoolExecutor(1);
+        this.serverconfig = serverconfig;
     }
 
-    public void bind(int port) throws Exception {
+    public void start() throws Exception {
         //        int port = GuiceDI.getInstance(NettyServerConfig.class).getListenPort();
         bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
         bootstrap.option(ChannelOption.SO_BACKLOG, 65536);
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
         bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
-        bootstrap.localAddress(port);
+        bootstrap.localAddress(serverconfig.getListenPort());
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws IOException {
@@ -55,8 +57,8 @@ public class RemotingNettyServer {
             }
         });
 
-        this.bootstrap.bind(port).sync();
-        logger.info("server started on port:" + port);
+        this.bootstrap.bind().sync();
+        logger.info("server started on port:" + serverconfig.getListenPort());
         respScheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {

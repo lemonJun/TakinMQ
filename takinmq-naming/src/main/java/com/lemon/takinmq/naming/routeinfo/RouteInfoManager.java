@@ -571,4 +571,55 @@ public class RouteInfoManager {
         return SerializeUtil.jsonSerialize(topicList).getBytes();
     }
 
+    /**
+     * 定期打印当前类的数据结构
+     */
+    public void printAllPeriodically() {
+        try {
+            try {
+                this.lock.readLock().lockInterruptibly();
+                logger.info("--------------------------------------------------------");
+                {
+                    logger.info("topicQueueTable SIZE: {}", this.topicQueueTable.size());
+                    Iterator<Entry<String, List<QueueData>>> it = this.topicQueueTable.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Entry<String, List<QueueData>> next = it.next();
+                        logger.info("topicQueueTable Topic: {} {}", next.getKey(), next.getValue());
+                    }
+                }
+
+                {
+                    logger.info("brokerAddrTable SIZE: {}", this.brokerAddrTable.size());
+                    Iterator<Entry<String, BrokerData>> it = this.brokerAddrTable.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Entry<String, BrokerData> next = it.next();
+                        logger.info("brokerAddrTable brokerName: {} {}", next.getKey(), next.getValue());
+                    }
+                }
+
+                {
+                    logger.info("brokerLiveTable SIZE: {}", this.brokerLiveTable.size());
+                    Iterator<Entry<String, BrokerLiveInfo>> it = this.brokerLiveTable.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Entry<String, BrokerLiveInfo> next = it.next();
+                        logger.info("brokerLiveTable brokerAddr: {} {}", next.getKey(), next.getValue());
+                    }
+                }
+
+                {
+                    logger.info("clusterAddrTable SIZE: {}", this.clusterAddrTable.size());
+                    Iterator<Entry<String, Set<String>>> it = this.clusterAddrTable.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Entry<String, Set<String>> next = it.next();
+                        logger.info("clusterAddrTable clusterName: {} {}", next.getKey(), next.getValue());
+                    }
+                }
+            } finally {
+                this.lock.readLock().unlock();
+            }
+        } catch (Exception e) {
+            logger.error("printAllPeriodically Exception", e);
+        }
+    }
+
 }

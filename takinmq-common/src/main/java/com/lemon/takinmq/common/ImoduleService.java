@@ -8,6 +8,4 @@ public interface ImoduleService {
 
     public abstract void destroy() throws Exception;
 
-    public abstract void info() throws Exception;
-
 }

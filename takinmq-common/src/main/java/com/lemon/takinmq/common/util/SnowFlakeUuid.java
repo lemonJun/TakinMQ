@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.util;
+package com.lemon.takinmq.common.util;
 
 import java.util.Random;
 

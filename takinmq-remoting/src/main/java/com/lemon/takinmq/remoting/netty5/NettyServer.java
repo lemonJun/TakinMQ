@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
+import com.lemon.takinmq.common.util.SystemClock;
 import com.lemon.takinmq.remoting.util.GenericsUtils;
-import com.lemon.takinmq.remoting.util.SystemClock;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;

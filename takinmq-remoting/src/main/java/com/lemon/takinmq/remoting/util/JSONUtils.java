@@ -1,11 +1,12 @@
 package com.lemon.takinmq.remoting.util;
 
+import java.lang.reflect.Type;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-
-import java.lang.reflect.Type;
+import com.lemon.takinmq.common.util.StringUtils;
 
 /**
  * @author Robert HG (254963746@qq.com) on 6/23/14.

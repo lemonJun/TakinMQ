@@ -18,5 +18,17 @@
 			<groupId>org.jgroups</groupId>
 			<artifactId>jgroups-raft</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>lemon.takinmq</groupId>
+			<artifactId>lemon.takinmq-remoting</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>lemon.takinmq</groupId>
+			<artifactId>lemon.takinmq-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

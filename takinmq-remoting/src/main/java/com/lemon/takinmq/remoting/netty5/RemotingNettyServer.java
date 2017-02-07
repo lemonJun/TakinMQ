@@ -21,9 +21,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-public class NettyServer {
+public class RemotingNettyServer {
 
-    private static final Logger logger = Logger.getLogger(NettyServer.class);
+    private static final Logger logger = Logger.getLogger(RemotingNettyServer.class);
 
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup;
@@ -31,7 +31,7 @@ public class NettyServer {
     private final ScheduledExecutorService respScheduler;
     public static final ConcurrentHashMap<Integer, ResponseFuture> responseTable = GenericsUtils.newConcurrentHashMap();
 
-    public NettyServer() {
+    public RemotingNettyServer() {
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
         respScheduler = new ScheduledThreadPoolExecutor(1);

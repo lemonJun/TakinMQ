@@ -14,13 +14,13 @@ public class ClientMessageHandler extends ChannelHandlerAdapter {
         NettyMessage message = (NettyMessage) msg;
         logger.info(message.getResultJson());
 
-        final ResponseFuture responseFuture = NettyClient.responseTable.get(message.getOpaque());
+        final ResponseFuture responseFuture = RemotingNettyClient.responseTable.get(message.getOpaque());
 
         if (responseFuture != null) {
             System.out.println("response is not null");
             responseFuture.putResponse(message);
         }
-        NettyClient.responseTable.remove(message.getOpaque());
+        RemotingNettyClient.responseTable.remove(message.getOpaque());
     }
 
     @Override

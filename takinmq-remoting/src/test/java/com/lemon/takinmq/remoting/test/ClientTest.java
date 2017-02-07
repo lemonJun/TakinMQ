@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import com.lemon.takinmq.remoting.netty5.NettyClient;
+import com.lemon.takinmq.remoting.netty5.RemotingNettyClient;
 import com.lemon.takinmq.remoting.netty5.NettyClientConfig;
 import com.lemon.takinmq.remoting.netty5.NettyMessage;
 
@@ -15,7 +15,7 @@ public class ClientTest {
             PropertyConfigurator.configure("D:/log4j.properties");
 
             NettyClientConfig config = new NettyClientConfig();
-            NettyClient client = new NettyClient(config);
+            RemotingNettyClient client = new RemotingNettyClient(config);
             client.start();
             NettyMessage msg = new NettyMessage();
             for (int i = 0; i < 10; i++) {

@@ -32,9 +32,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-public class NettyClient extends RemotingAbstract {
+public class RemotingNettyClient extends RemotingAbstract {
 
-    private static final Logger logger = Logger.getLogger(NettyClient.class);
+    private static final Logger logger = Logger.getLogger(RemotingNettyClient.class);
 
     private final Bootstrap bootstrap = new Bootstrap();
     private final EventLoopGroup group;
@@ -42,7 +42,7 @@ public class NettyClient extends RemotingAbstract {
 
     private ConcurrentHashMap<String, ChannelWrapper> channelTables = new ConcurrentHashMap<String, ChannelWrapper>();
 
-    public NettyClient(final NettyClientConfig nettyClientConfig) {
+    public RemotingNettyClient(final NettyClientConfig nettyClientConfig) {
         super(nettyClientConfig.getClientOnewaySemaphoreValue(), nettyClientConfig.getClientAsyncSemaphoreValue());
         int publicThreadNums = nettyClientConfig.getClientCallbackExecutorThreads();
         if (publicThreadNums <= 0) {

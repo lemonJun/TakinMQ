@@ -109,7 +109,7 @@ public class RouteInfoManager {
      * @param channel
      * @return
      */
-    public RegisterBrokerResult registerBroker(final String clusterName, final String brokerAddr, final String brokerName, final long brokerId, final String haServerAddr, final TopicConfigSerializeWrapper topicConfigWrapper, final List<String> filterServerList, final Channel channel) {
+    public RegisterBrokerResult registerBroker(final String clusterName, final String brokerAddr, final String brokerName, final long brokerId, final String haServerAddr, final TopicConfigSerializeWrapper topicConfigWrapper, final Channel channel) {
         RegisterBrokerResult result = new RegisterBrokerResult();
         try {
             try {
@@ -153,13 +153,13 @@ public class RouteInfoManager {
                     logger.info("new broker registerd, {} HAServer: {}", brokerAddr, haServerAddr);
                 }
                 // 更新Filter Server列表
-                if (filterServerList != null) {
-                    if (filterServerList.isEmpty()) {
-                        this.filterServerTable.remove(brokerAddr);
-                    } else {
-                        this.filterServerTable.put(brokerAddr, filterServerList);
-                    }
-                }
+                //                if (filterServerList != null) {
+                //                    if (filterServerList.isEmpty()) {
+                //                        this.filterServerTable.remove(brokerAddr);
+                //                    } else {
+                //                        this.filterServerTable.put(brokerAddr, filterServerList);
+                //                    }
+                //                }
                 // 返回值
                 if (0 != brokerId) {
                     String masterAddr = brokerData.getBrokerAddrs().get(0);

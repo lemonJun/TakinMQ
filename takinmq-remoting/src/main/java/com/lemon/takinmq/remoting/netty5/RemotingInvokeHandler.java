@@ -69,4 +69,7 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
+    
+    
+
 }

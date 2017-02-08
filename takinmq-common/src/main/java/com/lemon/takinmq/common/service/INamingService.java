@@ -1,5 +1,6 @@
 package com.lemon.takinmq.common.service;
 
+import java.nio.channels.Channel;
 import java.util.HashMap;
 
 import com.lemon.takinmq.common.datainfo.ClusterInfo;
@@ -22,7 +23,7 @@ public interface INamingService {
      * @return  kv配置信息
      * @throws Exception
      */
-    public abstract HashMap<String, String> register(String address, String topic) throws Exception;
+    public abstract HashMap<String, String> register(String clustername, String brokeraddress, String brokername, final long brokerId, String topic) throws Exception;
 
     /**
      * 取消注册

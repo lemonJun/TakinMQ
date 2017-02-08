@@ -34,11 +34,12 @@ public class NamingStartUp implements ImoduleService {
     public void init() throws Exception {
         //初始化监听服务
         NettyServerConfig config = new NettyServerConfig();
+        this.env();
         config.setListenPort(6871);
         remotingserver = new RemotingNettyServer(config);
 
         //启动jgroups的群组通信   好处是任何组件连接任何一个name都可以获取所有配置信息 
-
+        
         //
         //定时检查非活跃的broker
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
@@ -64,6 +65,11 @@ public class NamingStartUp implements ImoduleService {
 
     @Override
     public void destroy() throws Exception {
+
+    }
+
+    @Override
+    public void env() throws Exception {
 
     }
 

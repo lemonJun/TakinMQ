@@ -20,6 +20,7 @@ import com.lemon.takinmq.common.DataVersion;
 import com.lemon.takinmq.common.MixAll;
 import com.lemon.takinmq.common.TopicConfig;
 import com.lemon.takinmq.common.datainfo.BrokerData;
+import com.lemon.takinmq.common.datainfo.ClusterInfo;
 import com.lemon.takinmq.common.datainfo.QueueData;
 import com.lemon.takinmq.common.datainfo.TopicConfigSerializeWrapper;
 import com.lemon.takinmq.common.datainfo.TopicList;
@@ -58,6 +59,13 @@ public class RouteInfoManager {
         clusterAddrTable = Maps.newHashMap();
         brokerLiveTable = Maps.newHashMap();
         filterServerTable = Maps.newHashMap();
+    }
+
+    public ClusterInfo getAllClusterInfo() {
+        ClusterInfo clusterInfo = new ClusterInfo();
+        clusterInfo.setBrokerAddrTable(this.brokerAddrTable);
+        clusterInfo.setClusterAddrTable(this.clusterAddrTable);
+        return clusterInfo;
     }
 
     //删除一个主题
@@ -503,7 +511,7 @@ public class RouteInfoManager {
      * 
      * @return
      */
-    public byte[] getSystemTopicList() {
+    public TopicList getSystemTopicList() {
         TopicList topicList = new TopicList();
         try {
             try {
@@ -532,7 +540,7 @@ public class RouteInfoManager {
             logger.error("getAllTopicList Exception", e);
         }
 
-        return SerializeUtil.jsonSerialize(topicList).getBytes();
+        return topicList;
     }
 
     /**

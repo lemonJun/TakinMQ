@@ -1,4 +1,4 @@
-package com.lemon.takinmq.remoting.proxy;
+package com.lemon.takinmq.remoting.clientproxy;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;

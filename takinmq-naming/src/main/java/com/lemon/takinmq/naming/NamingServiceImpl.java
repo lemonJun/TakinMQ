@@ -1,14 +1,15 @@
 package com.lemon.takinmq.naming;
 
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.lemon.takinmq.common.datainfo.ClusterInfo;
 import com.lemon.takinmq.common.datainfo.TopicConfigSerializeWrapper;
 import com.lemon.takinmq.common.datainfo.TopicList;
 import com.lemon.takinmq.common.datainfo.TopicRouteData;
+import com.lemon.takinmq.common.naming.RegisterBrokerResult;
 import com.lemon.takinmq.common.service.INamingService;
 import com.lemon.takinmq.naming.routeinfo.RouteInfoManager;
+import com.lemon.takinmq.remoting.GlobalContext;
 
 import io.netty.channel.Channel;
 
@@ -28,55 +29,62 @@ public class NamingServiceImpl implements INamingService {
     }
 
     @Override
-    public HashMap<String, String> register(String clustername, String address, String brokername, final long brokerId, String topic) throws Exception {
+    public RegisterBrokerResult register(String clustername, String address, String brokername, final long brokerId, String topic) throws Exception {
         TopicConfigSerializeWrapper topicConfigWrapper;//先默认按无来算
         topicConfigWrapper = new TopicConfigSerializeWrapper();
         topicConfigWrapper.getDataVersion().setCounter(new AtomicLong(0));
         topicConfigWrapper.getDataVersion().setTimestatmp(0);
 
-        Channel channel = null;
-        routeInfoManager.registerBroker(clustername, address, brokername, brokerId, "", topicConfigWrapper, channel);
-        return null;
+        Channel channel = GlobalContext.getSingleton().getFromThreadLocal().getContext().channel();
+        RegisterBrokerResult brokerResult = routeInfoManager.registerBroker(clustername, address, brokername, brokerId, "", topicConfigWrapper, channel);
+        return brokerResult;
 
     }
 
     @Override
-    public boolean unregister(String address, String topic) throws Exception {
-        return false;
+    public boolean unregister(String clustername, String brokerAddr, String brokername, final long brokerId) throws Exception {
+        routeInfoManager.unregisterBroker(clustername, brokerAddr, brokername, brokerId);
+        return true;
     }
 
     @Override
     public TopicRouteData getRouteInfoByTopic(String topic) throws Exception {
-        return null;
+        TopicRouteData routedata = routeInfoManager.pickupTopicRouteData(topic);
+        return routedata;
     }
 
     @Override
     public ClusterInfo getBrokerClusterInfo(String topic) throws Exception {
-        return null;
+        ClusterInfo clusterInfo = routeInfoManager.getAllClusterInfo();
+        return clusterInfo;
     }
 
     @Override
     public TopicList getAllTopicListFromNameserver() throws Exception {
-        return null;
+        TopicList toplicList = routeInfoManager.getAllTopicList();
+        return toplicList;
     }
 
     @Override
     public boolean deleteTopicInNamesrv(String topic) throws Exception {
-        return false;
+        routeInfoManager.deleteTopic(topic);
+        return true;
     }
 
     @Override
     public TopicList getTopicsByCluster(String cluster) throws Exception {
-        return null;
+        TopicList toplicList = routeInfoManager.getTopicsByCluster(cluster);
+        return toplicList;
     }
 
     @Override
     public TopicList getSystemTopicListFromNs() throws Exception {
-        return null;
+        TopicList toplicList = routeInfoManager.getSystemTopicList();
+        return toplicList;
     }
 
     @Override
-    public void putkv(String key, String value) throws Exception {
+    public void putkv(String namespace, String key, String value) throws Exception {
 
     }
 

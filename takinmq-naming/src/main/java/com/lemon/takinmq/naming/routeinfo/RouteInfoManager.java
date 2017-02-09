@@ -82,7 +82,7 @@ public class RouteInfoManager {
         }
     }
 
-    public byte[] getAllTopicList() {
+    public TopicList getAllTopicList() {
         TopicList topicList = new TopicList();
         try {
             try {
@@ -94,7 +94,7 @@ public class RouteInfoManager {
         } catch (Exception e) {
             logger.error("getAllTopicList Exception", e);
         }
-        return SerializeUtil.jsonSerialize(topicList).getBytes();
+        return topicList;
     }
 
     /**
@@ -549,7 +549,7 @@ public class RouteInfoManager {
      * @param cluster
      * @return
      */
-    public byte[] getTopicsByCluster(String cluster) {
+    public TopicList getTopicsByCluster(String cluster) {
         TopicList topicList = new TopicList();
         try {
             try {
@@ -576,7 +576,7 @@ public class RouteInfoManager {
             logger.error("getAllTopicList Exception", e);
         }
 
-        return SerializeUtil.jsonSerialize(topicList).getBytes();
+        return topicList;
     }
 
     /**

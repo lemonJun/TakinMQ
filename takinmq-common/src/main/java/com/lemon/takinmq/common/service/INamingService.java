@@ -1,11 +1,9 @@
 package com.lemon.takinmq.common.service;
 
-import java.nio.channels.Channel;
-import java.util.HashMap;
-
 import com.lemon.takinmq.common.datainfo.ClusterInfo;
 import com.lemon.takinmq.common.datainfo.TopicList;
 import com.lemon.takinmq.common.datainfo.TopicRouteData;
+import com.lemon.takinmq.common.naming.RegisterBrokerResult;
 
 /**
  * 名称服务的接口类
@@ -23,7 +21,7 @@ public interface INamingService {
      * @return  kv配置信息
      * @throws Exception
      */
-    public abstract HashMap<String, String> register(String clustername, String brokeraddress, String brokername, final long brokerId, String topic) throws Exception;
+    public abstract RegisterBrokerResult register(String clustername, String brokeraddress, String brokername, final long brokerId, String topic) throws Exception;
 
     /**
      * 取消注册
@@ -32,7 +30,7 @@ public interface INamingService {
      * @return  
      * @throws Exception
      */
-    public abstract boolean unregister(String address, String topic) throws Exception;
+    public abstract boolean unregister(String clustername, String address, String brokername, final long brokerId) throws Exception;
 
     /**
      * 获取一个topic下的所有broker路由信息
@@ -87,6 +85,6 @@ public interface INamingService {
      * @param value
      * @throws Exception
      */
-    public abstract void putkv(String key, String value) throws Exception;
+    public abstract void putkv(String namespace, String key, String value) throws Exception;
 
 }

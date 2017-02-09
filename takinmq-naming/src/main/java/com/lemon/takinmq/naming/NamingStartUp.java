@@ -34,6 +34,7 @@ public class NamingStartUp implements ImoduleService {
     public void init() throws Exception {
         //初始化监听服务
         NettyServerConfig config = new NettyServerConfig();
+        //
         this.env();
         config.setListenPort(6871);
         remotingserver = new RemotingNettyServer(config);
@@ -57,7 +58,7 @@ public class NamingStartUp implements ImoduleService {
             }
         }, 60, 30, TimeUnit.SECONDS);
     }
-
+    
     @Override
     public void start() throws Exception {
         remotingserver.start();//启动监听

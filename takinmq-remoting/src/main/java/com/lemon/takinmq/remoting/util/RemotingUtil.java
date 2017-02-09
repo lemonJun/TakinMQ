@@ -140,7 +140,6 @@ public class RemotingUtil {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

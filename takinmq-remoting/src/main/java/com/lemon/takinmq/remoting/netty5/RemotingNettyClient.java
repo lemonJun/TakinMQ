@@ -39,7 +39,7 @@ public class RemotingNettyClient extends RemotingAbstract {
     private final Bootstrap bootstrap = new Bootstrap();
     private final EventLoopGroup group;
     private final ExecutorService publicExecutor;
-
+    
     private ConcurrentHashMap<String, ChannelWrapper> channelTables = new ConcurrentHashMap<String, ChannelWrapper>();
 
     public RemotingNettyClient(final NettyClientConfig nettyClientConfig) {

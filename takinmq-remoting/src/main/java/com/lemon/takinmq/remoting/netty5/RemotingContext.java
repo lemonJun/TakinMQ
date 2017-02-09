@@ -1,4 +1,7 @@
-package com.lemon.takinmq.remoting;
+package com.lemon.takinmq.remoting.netty5;
+
+import com.lemon.takinmq.remoting.GlobalContext;
+import com.lemon.takinmq.remoting.StopWatch;
 
 import io.netty.channel.ChannelHandlerContext;
 
@@ -30,7 +33,7 @@ public class RemotingContext {
      * @return
      */
     public static RemotingContext getFromThreadLocal() {
-        return Global.getSingleton().getThreadLocal().get();
+        return GlobalContext.getSingleton().getThreadLocal().get();
     }
 
     public boolean isMonitor() {

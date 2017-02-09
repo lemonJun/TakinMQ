@@ -1,31 +1,28 @@
 package com.lemon.takinmq.remoting;
 
+import com.lemon.takinmq.remoting.netty5.RemotingContext;
+
 /**
- * A class contains global variable
- * 
- * @author Service Platform Architecture Team (spat@58.com)
- * 
- * <a href="http://blog.58.com/spat/">blog</a>
- * <a href="http://www.58.com">website</a>
+ * 主要存放每个线程请求的上下文
  * 
  */
-public class Global {
+public class GlobalContext {
 
     private ThreadLocal<RemotingContext> threadLocal = new ThreadLocal<RemotingContext>();
 
     private static final Object lockHelper = new Object();
 
-    private static Global m_global = null;
+    private static GlobalContext m_global = null;
 
     /**
      * 获取单例Global
      * @return
      */
-    public static Global getSingleton() {
+    public static GlobalContext getSingleton() {
         if (m_global == null) {
             synchronized (lockHelper) {
                 if (m_global == null) {
-                    m_global = new Global();
+                    m_global = new GlobalContext();
                 }
             }
         }
@@ -33,7 +30,7 @@ public class Global {
         return m_global;
     }
 
-    private Global() {
+    private GlobalContext() {
     }
 
     public ThreadLocal<RemotingContext> getThreadLocal() {

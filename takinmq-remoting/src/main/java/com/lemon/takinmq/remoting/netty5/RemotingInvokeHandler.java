@@ -71,5 +71,17 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     }
     
     
+    
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        // TODO Auto-generated method stub
+        super.channelReadComplete(ctx);
+    }
+
+    @Override
+    public void flush(ChannelHandlerContext ctx) throws Exception {
+        super.flush(ctx);
+    }
 
 }

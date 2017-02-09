@@ -12,7 +12,7 @@ public class GlobalContext {
 
     private static final Object lockHelper = new Object();
 
-    private static GlobalContext m_global = null;
+    private static volatile GlobalContext m_global = null;
 
     /**
      * 获取单例Global
@@ -26,7 +26,6 @@ public class GlobalContext {
                 }
             }
         }
-
         return m_global;
     }
 
@@ -35,6 +34,18 @@ public class GlobalContext {
 
     public ThreadLocal<RemotingContext> getThreadLocal() {
         return threadLocal;
+    }
+
+    public RemotingContext getFromThreadLocal() {
+        return (RemotingContext) GlobalContext.getSingleton().getThreadLocal().get();
+    }
+
+    public void setThreadLocal(RemotingContext context) {
+        GlobalContext.getSingleton().getThreadLocal().set(context);
+    }
+
+    public void removeThreadLocal() {
+        GlobalContext.getSingleton().getThreadLocal().remove();
     }
 
 }

@@ -21,13 +21,13 @@ public class RemotingContext {
     private StopWatch stopWatch = new StopWatch();
 
     private Throwable error;
-    
+
     private boolean isDoInvoke = true;
 
-    public RemotingContext() {
-
+    public RemotingContext(ChannelHandlerContext ctx) {
+        this.context = ctx;
     }
-    
+
     /**
      * 从ThreadLocal里获取SCFContext
      * @return

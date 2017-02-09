@@ -19,7 +19,7 @@ public class ResponseFuture {
     // 保证回调的callback方法至多至少只被执行一次
     private final AtomicBoolean executeCallbackOnlyOnce = new AtomicBoolean(false);
     private volatile boolean sendRequestOK = true;
-    private volatile NettyMessage message;
+    private volatile RemotingMessage message;
     private volatile Throwable cause;
 
     private InvokeCallback invokeCallback;
@@ -57,12 +57,12 @@ public class ResponseFuture {
         return diff > this.timeoutMillis;
     }
 
-    public NettyMessage waitResponse() throws InterruptedException {
+    public RemotingMessage waitResponse() throws InterruptedException {
         this.countDownLatch.await(timeoutMillis, TimeUnit.MILLISECONDS);
         return this.message;
     }
 
-    public void putResponse(final NettyMessage message) {
+    public void putResponse(final RemotingMessage message) {
         this.message = message;
         this.countDownLatch.countDown();
     }

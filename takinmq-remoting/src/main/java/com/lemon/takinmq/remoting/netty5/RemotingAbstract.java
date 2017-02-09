@@ -53,7 +53,7 @@ public abstract class RemotingAbstract {
      * @return
      * @throws Exception
      */
-    protected NettyMessage invokeSyncImpl(final Channel channel, final NettyMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
+    protected RemotingMessage invokeSyncImpl(final Channel channel, final RemotingMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
         long start = System.currentTimeMillis();
         try {
             final ResponseFuture responseFuture = new ResponseFuture(message.getOpaque(), timeout);
@@ -76,7 +76,7 @@ public abstract class RemotingAbstract {
                     responseFuture.putResponse(null);
                 }
             });
-            NettyMessage result = responseFuture.waitResponse();
+            RemotingMessage result = responseFuture.waitResponse();
             if (null == result) {
                 if (responseFuture.isSendRequestOK()) {
                     throw new Exception("request timeout ");
@@ -103,7 +103,7 @@ public abstract class RemotingAbstract {
      * @throws RemotingTimeoutException
      * @throws RemotingSendRequestException
      */
-    public void invokeAsyncImpl(final Channel channel, final NettyMessage request, final long timeoutMillis, final InvokeCallback invokeCallback) throws InterruptedException, RemotingTooMuchRequestException, RemotingTimeoutException, RemotingSendRequestException {
+    public void invokeAsyncImpl(final Channel channel, final RemotingMessage request, final long timeoutMillis, final InvokeCallback invokeCallback) throws InterruptedException, RemotingTooMuchRequestException, RemotingTimeoutException, RemotingSendRequestException {
         final long opaque = request.getOpaque();
         boolean acquired = this.semaphoreAsync.tryAcquire(timeoutMillis, TimeUnit.MILLISECONDS);
         if (acquired) {
@@ -197,7 +197,7 @@ public abstract class RemotingAbstract {
      * @throws RemotingTimeoutException
      * @throws RemotingSendRequestException
      */
-    public void invokeOnewayImpl(final Channel channel, final NettyMessage request, final long timeoutMillis) throws InterruptedException, RemotingTooMuchRequestException, RemotingTimeoutException, RemotingSendRequestException {
+    public void invokeOnewayImpl(final Channel channel, final RemotingMessage request, final long timeoutMillis) throws InterruptedException, RemotingTooMuchRequestException, RemotingTimeoutException, RemotingSendRequestException {
         //        request.markOnewayRPC();//把一个标记   目前还未用到
         boolean acquired = this.semaphoreOneway.tryAcquire(timeoutMillis, TimeUnit.MILLISECONDS);
         if (acquired) {

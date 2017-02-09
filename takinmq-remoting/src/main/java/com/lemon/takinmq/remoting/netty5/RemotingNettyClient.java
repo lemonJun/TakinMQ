@@ -39,7 +39,7 @@ public class RemotingNettyClient extends RemotingAbstract {
     private final Bootstrap bootstrap = new Bootstrap();
     private final EventLoopGroup group;
     private final ExecutorService publicExecutor;
-    
+
     private ConcurrentHashMap<String, ChannelWrapper> channelTables = new ConcurrentHashMap<String, ChannelWrapper>();
 
     public RemotingNettyClient(final NettyClientConfig nettyClientConfig) {
@@ -155,12 +155,12 @@ public class RemotingNettyClient extends RemotingAbstract {
      * @return 
      * @throws Exception
      */
-    public NettyMessage invokeSync(String address, final NettyMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
+    public RemotingMessage invokeSync(String address, final RemotingMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
         final Channel channel = this.createChannel(address);
         long start = System.currentTimeMillis();
         if (channel != null && channel.isActive()) {
             try {
-                NettyMessage result = invokeSyncImpl(channel, message, timeout);
+                RemotingMessage result = invokeSyncImpl(channel, message, timeout);
                 long end = System.currentTimeMillis();
                 logger.info(String.format("invoke address:%s , use time:%dms", address, (end - start)));
                 return result;

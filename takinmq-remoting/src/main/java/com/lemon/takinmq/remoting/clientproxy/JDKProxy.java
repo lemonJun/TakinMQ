@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.alibaba.fastjson.JSONObject;
 import com.lemon.takinmq.common.util.SerializeUtil;
 import com.lemon.takinmq.remoting.netty5.MessageType;
-import com.lemon.takinmq.remoting.netty5.NettyMessage;
+import com.lemon.takinmq.remoting.netty5.RemotingMessage;
 import com.lemon.takinmq.remoting.netty5.RemotingNettyClient;
 import com.lemon.takinmq.remoting.util.GenericsUtils;
 
@@ -53,7 +53,7 @@ public class JDKProxy {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 //                NettyClientProxy clientProxy = GuiceDI.getInstance(NettyClientProxy.class);
-                NettyMessage message = new NettyMessage();
+                RemotingMessage message = new RemotingMessage();
                 message.setType(MessageType.REMOTING_INVOKE.value());
                 //                message.setIdentity(GuiceDI.getInstance(Config.class).getIdentity());
                 message.setIdentity("");
@@ -63,7 +63,7 @@ public class JDKProxy {
                 //                String address = GuiceDI.getInstance(RandomLoadBalance.class).select(GuiceDI.getInstance(ConsumerManager.class).getAddress(), "0");
                 String address = "";
                 logger.info(String.format("request: %s", JSONObject.toJSONString(message)));
-                NettyMessage resultMessage = remotingclient.invokeSync(address, message, 2000);
+                RemotingMessage resultMessage = remotingclient.invokeSync(address, message, 2000);
                 //                logger.info(String.format("response: %s", JSONObject.toJSONString(message)));
                 return SerializeUtil.jsonDeserialize(resultMessage.getResultJson());
             }

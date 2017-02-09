@@ -1,6 +1,5 @@
 package com.lemon.takinmq.remoting.netty5;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -12,9 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see 
  * @since
  */
-public final class NettyMessage implements Serializable {
+public final class RemotingMessage {
 
-    private static final long serialVersionUID = 1L;
     private static AtomicLong RequestId = new AtomicLong(0);
     private String clazz;
     private String method;

@@ -1,10 +1,13 @@
 package com.lemon.takinmq.remoting.netty5;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
+import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.util.SerializeUtil;
 import com.lemon.takinmq.remoting.GlobalContext;
 
@@ -29,41 +32,63 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
         try {
+            RemotingMessage msg = (RemotingMessage) obj;
+            logger.info("REQUEST: " + JSON.toJSONString(msg));
             RemotingContext context = new RemotingContext(ctx);
             GlobalContext.getSingleton().setThreadLocal(context);
-
-            NettyMessage msg = (NettyMessage) obj;
-            logger.info(JSON.toJSONString(msg));
-            msg.setResultJson("hello world");
-            ctx.writeAndFlush(msg);
             String clazzName = msg.getClazz();
             String methodName = msg.getMethod();
             Object[] args = msg.getArgs();
             //            ClassPool pool = ClassPool.getDefault();
             //            Class clazz = pool.get(clazzStr).toClass();
-            Class c[] = null;
+            //
+            //确定方法参数
+            Class<?> mc[] = null;
             if (args != null) {//存在
                 int len = args.length;
-                c = new Class[len];
+                mc = new Class[len];
                 for (int i = 0; i < len; ++i) {
-                    c[i] = args[i].getClass();
+                    mc[i] = args[i].getClass();
                 }
             }
-            Class clazz = Class.forName(clazzName);
-            Method method = clazz.getDeclaredMethod(methodName, c);
-            //            Object impl = GuiceDI.getInstance(clazz);
-            Object impl = clazz.newInstance();
 
-            Object result = method.invoke(impl, args);
-            if (!method.getReturnType().getName().equals("void")) {
-                msg.setResultJson(SerializeUtil.jsonSerialize(result));
+            ///反射调用
+            Class<?> clazz = Class.forName(clazzName);
+            if (clazz.isAnnotationPresent(ImplementBy.class)) {
+                ImplementBy impl = (ImplementBy) clazz.getAnnotation(ImplementBy.class);
+
+                Method method = clazz.getDeclaredMethod(methodName, mc);
+                Object target = getOjbectFromClass(impl.implclass());
+                Object result = method.invoke(target, args);
+                if (!method.getReturnType().getName().equals("void")) {
+                    msg.setResultJson(SerializeUtil.jsonSerialize(result));
+                }
             }
-            msg.setResultJson("hello world");
+            logger.info("RESPONSE: " + JSON.toJSONString(msg));
             ctx.writeAndFlush(msg);
         } finally {
             GlobalContext.getSingleton().removeThreadLocal();
         }
     }
+
+    //获取实现类
+    private Object getOjbectFromClass(String clazz) {
+        if (implMap.get(clazz) == null) {
+            synchronized (RemotingInvokeHandler.class) {
+                if (implMap.get(clazz) == null) {
+                    try {
+                        Object obj = Class.forName(clazz).newInstance();
+                        implMap.put(clazz, obj);
+                    } catch (Exception e) {
+                        logger.error(e);
+                    }
+                }
+            }
+        }
+        return implMap.get(clazz);
+    }
+
+    private final Map<String, Object> implMap = Maps.newConcurrentMap();
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

@@ -1,5 +1,6 @@
 package com.lemon.takinmq.common.service;
 
+import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.datainfo.ClusterInfo;
 import com.lemon.takinmq.common.datainfo.TopicList;
 import com.lemon.takinmq.common.datainfo.TopicRouteData;
@@ -12,6 +13,7 @@ import com.lemon.takinmq.common.naming.RegisterBrokerResult;
  * @date  2017年2月7日 下午1:36:09
  * @see
  */
+@ImplementBy(implclass = "com.lemon.takinmq.naming.NamingServiceImpl")
 public interface INamingService {
 
     /**

@@ -2,8 +2,11 @@ package com.lemon.takinmq.common;
 
 public interface ImoduleService {
 
-    //初始化配置
-    public abstract void env() throws Exception;
+    /**
+     * 读取配置文件
+     * 如查没有配置文件  则按默认配置的来
+     */
+    public abstract void loadconfig();
 
     //工程初始化
     public abstract void init() throws Exception;

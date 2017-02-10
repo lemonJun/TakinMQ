@@ -23,7 +23,10 @@ import com.lemon.takinmq.common.heartbeat.SubscriptionData;
 import com.lemon.takinmq.common.message.MessageExt;
 
 /**
+ * 
  * 存储层对外提供的接口
+ * 底层存储实现使用leveldb的话 很多名词都不需要了如mappedfile
+ * 
  * @author lemon
  */
 public interface MessageStore {

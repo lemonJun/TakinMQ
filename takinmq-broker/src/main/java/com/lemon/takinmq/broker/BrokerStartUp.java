@@ -1,7 +1,12 @@
 package com.lemon.takinmq.broker;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +17,7 @@ import com.lemon.takinmq.broker.client.ConsumerManager;
 import com.lemon.takinmq.broker.client.DefaultConsumerIdsChangeListener;
 import com.lemon.takinmq.broker.client.ProducerManager;
 import com.lemon.takinmq.broker.latency.BrokerFastFailure;
+import com.lemon.takinmq.broker.latency.BrokerFixedThreadPoolExecutor;
 import com.lemon.takinmq.broker.offset.ConsumerOffsetManager;
 import com.lemon.takinmq.broker.polling.NotifyMessageArrivingListener;
 import com.lemon.takinmq.broker.polling.PullRequestHoldService;
@@ -21,8 +27,12 @@ import com.lemon.takinmq.broker.subscription.SubscriptionGroupManager;
 import com.lemon.takinmq.broker.topic.TopicConfigManager;
 import com.lemon.takinmq.common.BrokerConfig;
 import com.lemon.takinmq.common.ImoduleService;
+import com.lemon.takinmq.common.ThreadFactoryImpl;
+import com.lemon.takinmq.common.util.UtilAll;
 import com.lemon.takinmq.remoting.netty5.NettyClientConfig;
 import com.lemon.takinmq.remoting.netty5.NettyServerConfig;
+import com.lemon.takinmq.remoting.netty5.RemotingNettyServer;
+import com.lemon.takinmq.store.MessageStore;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
 import com.lemon.takinmq.store.stat.BrokerStatsManager;
 
@@ -36,6 +46,7 @@ import com.lemon.takinmq.store.stat.BrokerStatsManager;
 public class BrokerStartUp implements ImoduleService {
 
     private static final Logger logger = LoggerFactory.getLogger(BrokerStartUp.class);
+
     private final BrokerConfig brokerConfig;
     private final NettyServerConfig nettyServerConfig;
     private final NettyClientConfig nettyClientConfig;
@@ -60,6 +71,20 @@ public class BrokerStartUp implements ImoduleService {
     //
     private final BrokerStatsManager brokerStatManager;
     private final BrokerFastFailure brokerFastFailure;
+
+    //
+    private MessageStore messageStore;
+    private RemotingNettyServer remotingServer;
+
+    //线程池
+    private ExecutorService sendMessageExecutor;
+    private ExecutorService pullMessageExecutor;
+    private ExecutorService adminBrokerExecutor;
+    private ExecutorService clientManageExecutor;
+    private ExecutorService consumerManageExecutor;
+
+    //定时任务
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("BrokerControllerScheduledThread"));
 
     //初始化对象
     public BrokerStartUp(BrokerConfig brokerConfig, NettyServerConfig nettyServerConfig, NettyClientConfig nettyClientConfig, MessageStoreConfig messageStoreConfig) {
@@ -88,6 +113,7 @@ public class BrokerStartUp implements ImoduleService {
 
         this.brokerStatManager = new BrokerStatsManager(this.brokerConfig.getBrokerClusterName());
         this.brokerFastFailure = new BrokerFastFailure(this);
+        logger.info("init constructor");
     }
 
     @Override
@@ -96,9 +122,30 @@ public class BrokerStartUp implements ImoduleService {
         loadconfig();//读取配置文件
         if (result) {
             //创建消息持久化服务
+            this.messageStore = null;//底层存储实现改成leveldb的话  
         }
+        result = result & this.messageStore.load();//重启时 加载数据
+        if (result) {
+            this.remotingServer = new RemotingNettyServer(this.nettyServerConfig);
+        }
+
+        this.sendMessageExecutor = new BrokerFixedThreadPoolExecutor(brokerConfig.getSendMessageThreadPoolNums(), this.brokerConfig.getSendMessageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.sendThreadPoolQueue, new ThreadFactoryImpl("SendMessageThread_"));
+        this.pullMessageExecutor = new BrokerFixedThreadPoolExecutor(brokerConfig.getPullMessageThreadPoolNums(), this.brokerConfig.getPullMessageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.pullThreadPoolQueue, new ThreadFactoryImpl("PullMessageThread_"));
+        this.adminBrokerExecutor = Executors.newFixedThreadPool(brokerConfig.getAdminBrokerThreadPoolNums(), new ThreadFactoryImpl("AdminBrokerThread_"));
+        this.clientManageExecutor = new ThreadPoolExecutor(brokerConfig.getClientManageThreadPoolNums(), this.brokerConfig.getClientManageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.clientManagerThreadPoolQueue, new ThreadFactoryImpl("ClientManageThread_"));
+        this.consumerManageExecutor = Executors.newFixedThreadPool(brokerConfig.getConsumerManageThreadPoolNums(), new ThreadFactoryImpl("ConsumerManageThread_"));
+
+        registerProcessor();
+
+        final long initialDelay = UtilAll.computNextMorningTimeMillis() - System.currentTimeMillis();
+        final long period = 1000 * 60 * 60 * 24;
         
-        
+
+    }
+
+    //注册broker特有的nettyhandler类
+    private void registerProcessor() {
+
     }
 
     @Override

@@ -20,5 +20,10 @@
 			<artifactId>lemon.takinmq-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>lemon.takinmq</groupId>
+			<artifactId>lemon.takinmq-store</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

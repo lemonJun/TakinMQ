@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.rocketmq.broker.BrokerController;
 import com.lemon.takinmq.broker.client.Broker2Client;
 import com.lemon.takinmq.broker.client.ConsumerIdsChangeListener;
 import com.lemon.takinmq.broker.client.ConsumerManager;
@@ -33,6 +34,7 @@ import com.lemon.takinmq.remoting.netty5.NettyClientConfig;
 import com.lemon.takinmq.remoting.netty5.NettyServerConfig;
 import com.lemon.takinmq.remoting.netty5.RemotingNettyServer;
 import com.lemon.takinmq.store.MessageStore;
+import com.lemon.takinmq.store.config.BrokerRole;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
 import com.lemon.takinmq.store.stat.BrokerStatsManager;
 
@@ -137,9 +139,120 @@ public class BrokerStartUp implements ImoduleService {
 
         registerProcessor();
 
+        //
+
+    }
+
+    private void scheduler() {
         final long initialDelay = UtilAll.computNextMorningTimeMillis() - System.currentTimeMillis();
         final long period = 1000 * 60 * 60 * 24;
-        
+        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BrokerStartUp.this.getBrokerStats().record();
+                } catch (Throwable e) {
+                    logger.error("schedule record error.", e);
+                }
+            }
+        }, initialDelay, period, TimeUnit.MILLISECONDS);
+
+        //周期记录消费进度
+        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BrokerController.this.consumerOffsetManager.persist();
+                } catch (Throwable e) {
+                    log.error("schedule persist consumerOffset error.", e);
+                }
+            }
+        }, 1000 * 10, this.brokerConfig.getFlushConsumerOffsetInterval(), TimeUnit.MILLISECONDS);
+
+        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BrokerController.this.protectBroker();
+                } catch (Exception e) {
+                    log.error("protectBroker error.", e);
+                }
+            }
+        }, 3, 3, TimeUnit.MINUTES);
+
+        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BrokerController.this.printWaterMark();
+                } catch (Exception e) {
+                    log.error("printWaterMark error.", e);
+                }
+            }
+        }, 10, 1, TimeUnit.SECONDS);
+
+        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    log.info("dispatch behind commit log {} bytes", BrokerController.this.getMessageStore().dispatchBehindBytes());
+                } catch (Throwable e) {
+                    log.error("schedule dispatchBehindBytes error.", e);
+                }
+            }
+        }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
+
+        if (this.brokerConfig.getNamesrvAddr() != null) {
+            this.brokerOuterAPI.updateNameServerAddressList(this.brokerConfig.getNamesrvAddr());
+        } else if (this.brokerConfig.isFetchNamesrvAddrByAddressServer()) {
+            this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        BrokerController.this.brokerOuterAPI.fetchNameServerAddr();
+                    } catch (Throwable e) {
+                        log.error("ScheduledTask fetchNameServerAddr exception", e);
+                    }
+                }
+            }, 1000 * 10, 1000 * 60 * 2, TimeUnit.MILLISECONDS);
+        }
+
+        //如果是副本  则启动定时同步
+        if (BrokerRole.SLAVE == this.messageStoreConfig.getBrokerRole()) {
+            if (this.messageStoreConfig.getHaMasterAddress() != null && this.messageStoreConfig.getHaMasterAddress().length() >= 6) {
+                this.messageStore.updateHaMasterAddress(this.messageStoreConfig.getHaMasterAddress());
+                this.updateMasterHAServerAddrPeriodically = false;
+            } else {
+                this.updateMasterHAServerAddrPeriodically = true;
+            }
+
+            this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        BrokerController.this.slaveSynchronize.syncAll();
+                    } catch (Throwable e) {
+                        log.error("ScheduledTask syncAll slave exception", e);
+                    }
+                }
+            }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
+        } else {
+            this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        BrokerController.this.printMasterAndSlaveDiff();
+                    } catch (Throwable e) {
+                        log.error("schedule printMasterAndSlaveDiff error.", e);
+                    }
+                }
+            }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
+        }
+    }
 
     }
 

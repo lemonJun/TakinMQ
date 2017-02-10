@@ -9,7 +9,7 @@ public class BrokerStatRecordThread implements Runnable {
     public BrokerStatRecordThread(BrokerStartUp brokerStartUp) {
         this.brokerStartUp = brokerStartUp;
     }
-
+    
     @Override
     public void run() {
         try {

@@ -67,7 +67,6 @@ public class BrokerStartUp implements ImoduleService {
         this.nettyServerConfig = nettyServerConfig;
         this.nettyClientConfig = nettyClientConfig;
         this.messageStoreConfig = messageStoreConfig;
-        loadconfig();//读取配置文件
         //创建主要服务对象
         this.consumerOffsetManager = new ConsumerOffsetManager(this);
         this.topicConfigManager = new TopicConfigManager(this);
@@ -92,14 +91,14 @@ public class BrokerStartUp implements ImoduleService {
     }
 
     @Override
-    public void loadconfig() {
-
-    }
-
-    @Override
     public void init() throws Exception {
-        //初始化配置
-
+        boolean result = true;
+        loadconfig();//读取配置文件
+        if (result) {
+            //创建消息持久化服务
+        }
+        
+        
     }
 
     @Override
@@ -109,6 +108,11 @@ public class BrokerStartUp implements ImoduleService {
 
     @Override
     public void destroy() throws Exception {
+
+    }
+
+    @Override
+    public void loadconfig() {
 
     }
 

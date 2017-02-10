@@ -19,8 +19,8 @@ package com.lemon.takinmq.store;
 import java.util.HashMap;
 import java.util.Set;
 
-import com.alibaba.rocketmq.common.message.MessageExt;
-import com.alibaba.rocketmq.common.protocol.heartbeat.SubscriptionData;
+import com.lemon.takinmq.common.heartbeat.SubscriptionData;
+import com.lemon.takinmq.common.message.MessageExt;
 
 /**
  * 存储层对外提供的接口

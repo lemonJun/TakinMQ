@@ -13,7 +13,11 @@
 			<groupId>org.fusesource.leveldbjni</groupId>
 			<artifactId>leveldbjni</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>lemon.takinmq</groupId>
+			<artifactId>lemon.takinmq-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 </project>

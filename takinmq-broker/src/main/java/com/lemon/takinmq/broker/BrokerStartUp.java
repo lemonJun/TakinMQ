@@ -1,5 +1,7 @@
 package com.lemon.takinmq.broker;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.rocketmq.broker.BrokerController;
 import com.lemon.takinmq.broker.client.Broker2Client;
+import com.lemon.takinmq.broker.client.BrokerOuterAPI;
 import com.lemon.takinmq.broker.client.ConsumerIdsChangeListener;
 import com.lemon.takinmq.broker.client.ConsumerManager;
 import com.lemon.takinmq.broker.client.DefaultConsumerIdsChangeListener;
@@ -29,13 +31,16 @@ import com.lemon.takinmq.broker.topic.TopicConfigManager;
 import com.lemon.takinmq.common.BrokerConfig;
 import com.lemon.takinmq.common.ImoduleService;
 import com.lemon.takinmq.common.ThreadFactoryImpl;
+import com.lemon.takinmq.common.stat.MomentStatsItem;
 import com.lemon.takinmq.common.util.UtilAll;
 import com.lemon.takinmq.remoting.netty5.NettyClientConfig;
 import com.lemon.takinmq.remoting.netty5.NettyServerConfig;
 import com.lemon.takinmq.remoting.netty5.RemotingNettyServer;
+import com.lemon.takinmq.store.DefaultMessageStore;
 import com.lemon.takinmq.store.MessageStore;
 import com.lemon.takinmq.store.config.BrokerRole;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
+import com.lemon.takinmq.store.stat.BrokerStats;
 import com.lemon.takinmq.store.stat.BrokerStatsManager;
 
 /**
@@ -77,6 +82,7 @@ public class BrokerStartUp implements ImoduleService {
     //
     private MessageStore messageStore;
     private RemotingNettyServer remotingServer;
+    private final BrokerOuterAPI brokerOuterAPI;
 
     //线程池
     private ExecutorService sendMessageExecutor;
@@ -87,6 +93,9 @@ public class BrokerStartUp implements ImoduleService {
 
     //定时任务
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("BrokerControllerScheduledThread"));
+    //
+    private BrokerStats brokerStats;
+    private boolean updateMasterHAServerAddrPeriodically = false;
 
     //初始化对象
     public BrokerStartUp(BrokerConfig brokerConfig, NettyServerConfig nettyServerConfig, NettyClientConfig nettyClientConfig, MessageStoreConfig messageStoreConfig) {
@@ -115,6 +124,7 @@ public class BrokerStartUp implements ImoduleService {
 
         this.brokerStatManager = new BrokerStatsManager(this.brokerConfig.getBrokerClusterName());
         this.brokerFastFailure = new BrokerFastFailure(this);
+        this.brokerOuterAPI = new BrokerOuterAPI(nettyClientConfig);
         logger.info("init constructor");
     }
 
@@ -125,6 +135,7 @@ public class BrokerStartUp implements ImoduleService {
         if (result) {
             //创建消息持久化服务
             this.messageStore = null;//底层存储实现改成leveldb的话  
+            this.brokerStats = new BrokerStats((DefaultMessageStore) messageStore);
         }
         result = result & this.messageStore.load();//重启时 加载数据
         if (result) {
@@ -141,6 +152,10 @@ public class BrokerStartUp implements ImoduleService {
 
         //
 
+    }
+
+    public BrokerStats getBrokerStats() {
+        return brokerStats;
     }
 
     private void scheduler() {
@@ -162,9 +177,9 @@ public class BrokerStartUp implements ImoduleService {
             @Override
             public void run() {
                 try {
-                    BrokerController.this.consumerOffsetManager.persist();
+                    BrokerStartUp.this.consumerOffsetManager.persist();
                 } catch (Throwable e) {
-                    log.error("schedule persist consumerOffset error.", e);
+                    logger.error("schedule persist consumerOffset error.", e);
                 }
             }
         }, 1000 * 10, this.brokerConfig.getFlushConsumerOffsetInterval(), TimeUnit.MILLISECONDS);
@@ -173,9 +188,9 @@ public class BrokerStartUp implements ImoduleService {
             @Override
             public void run() {
                 try {
-                    BrokerController.this.protectBroker();
+                    BrokerStartUp.this.protectBroker();
                 } catch (Exception e) {
-                    log.error("protectBroker error.", e);
+                    logger.error("protectBroker error.", e);
                 }
             }
         }, 3, 3, TimeUnit.MINUTES);
@@ -184,9 +199,9 @@ public class BrokerStartUp implements ImoduleService {
             @Override
             public void run() {
                 try {
-                    BrokerController.this.printWaterMark();
+                    BrokerStartUp.this.printWaterMark();
                 } catch (Exception e) {
-                    log.error("printWaterMark error.", e);
+                    logger.error("printWaterMark error.", e);
                 }
             }
         }, 10, 1, TimeUnit.SECONDS);
@@ -196,28 +211,25 @@ public class BrokerStartUp implements ImoduleService {
             @Override
             public void run() {
                 try {
-                    log.info("dispatch behind commit log {} bytes", BrokerController.this.getMessageStore().dispatchBehindBytes());
+                    logger.info("dispatch behind commit log {} bytes", BrokerStartUp.this.getMessageStore().dispatchBehindBytes());
                 } catch (Throwable e) {
-                    log.error("schedule dispatchBehindBytes error.", e);
+                    logger.error("schedule dispatchBehindBytes error.", e);
                 }
             }
         }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
 
-        if (this.brokerConfig.getNamesrvAddr() != null) {
-            this.brokerOuterAPI.updateNameServerAddressList(this.brokerConfig.getNamesrvAddr());
-        } else if (this.brokerConfig.isFetchNamesrvAddrByAddressServer()) {
-            this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        BrokerController.this.brokerOuterAPI.fetchNameServerAddr();
-                    } catch (Throwable e) {
-                        log.error("ScheduledTask fetchNameServerAddr exception", e);
-                    }
+        //naming改到另一个地方统一维护
+        //
+        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BrokerStartUp.this.brokerOuterAPI.fetchNameServerAddr();
+                } catch (Throwable e) {
+                    logger.error("ScheduledTask fetchNameServerAddr exception", e);
                 }
-            }, 1000 * 10, 1000 * 60 * 2, TimeUnit.MILLISECONDS);
-        }
+            }
+        }, 1000 * 10, 1000 * 60 * 2, TimeUnit.MILLISECONDS);
 
         //如果是副本  则启动定时同步
         if (BrokerRole.SLAVE == this.messageStoreConfig.getBrokerRole()) {
@@ -233,27 +245,57 @@ public class BrokerStartUp implements ImoduleService {
                 @Override
                 public void run() {
                     try {
-                        BrokerController.this.slaveSynchronize.syncAll();
+                        BrokerStartUp.this.slaveSynchronize.syncAll();
                     } catch (Throwable e) {
-                        log.error("ScheduledTask syncAll slave exception", e);
+                        logger.error("ScheduledTask syncAll slave exception", e);
                     }
                 }
             }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
         } else {
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-
                 @Override
                 public void run() {
                     try {
-                        BrokerController.this.printMasterAndSlaveDiff();
+                        BrokerStartUp.this.printMasterAndSlaveDiff();
                     } catch (Throwable e) {
-                        log.error("schedule printMasterAndSlaveDiff error.", e);
+                        logger.error("schedule printMasterAndSlaveDiff error.", e);
                     }
                 }
             }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
         }
     }
 
+    public MessageStore getMessageStore() {
+        return messageStore;
+    }
+
+    //打
+    public void printWaterMark() {
+        //        logger.info("[WATERMARK] Send Queue Size: {} SlowTimeMills: {}", this.sendThreadPoolQueue.size(), headSlowTimeMills4SendThreadPoolQueue());
+        //        logger.info("[WATERMARK] Pull Queue Size: {} SlowTimeMills: {}", this.pullThreadPoolQueue.size(), headSlowTimeMills4PullThreadPoolQueue());
+    }
+
+    //保护broker
+    public void protectBroker() {
+        if (this.brokerConfig.isDisableConsumeIfConsumerReadSlowly()) {
+            final Iterator<Map.Entry<String, MomentStatsItem>> it = this.brokerStatManager.getMomentStatsItemSetFallSize().getStatsItemTable().entrySet().iterator();
+            while (it.hasNext()) {
+                final Map.Entry<String, MomentStatsItem> next = it.next();
+                final long fallBehindBytes = next.getValue().getValue().get();
+                if (fallBehindBytes > this.brokerConfig.getConsumerFallbehindThreshold()) {
+                    final String[] split = next.getValue().getStatsKey().split("@");
+                    final String group = split[2];
+                    logger.info("[PROTECT_BROKER] the consumer[{}] consume slowly, {} bytes, disable it", group, fallBehindBytes);
+                    this.subscriptionGroupManager.disableConsume(group);
+                }
+            }
+        }
+    }
+
+    private void printMasterAndSlaveDiff() {
+        long diff = this.messageStore.slaveFallBehindMuch();
+        // XXX: warn and notify me
+        logger.info("slave fall behind master, how much, {} bytes", diff);
     }
 
     //注册broker特有的nettyhandler类

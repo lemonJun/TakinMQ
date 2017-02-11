@@ -16,4 +16,26 @@ public class SlaveSynchronize {
         this.brokerStartUp = brokerStartUp;
     }
 
+    public void syncAll() {
+        this.syncTopicConfig();
+        this.syncConsumerOffset();
+        this.syncDelayOffset();
+        this.syncSubscriptionGroupConfig();
+    }
+
+    public void syncTopicConfig() {
+
+    }
+
+    public void syncConsumerOffset() {
+
+    }
+
+    public void syncDelayOffset() {
+
+    }
+
+    public void syncSubscriptionGroupConfig() {
+
+    }
 }

@@ -15,9 +15,13 @@ public class ConsumerOffsetManager {
 
     public ConsumerOffsetManager() {
     }
-    
+
     public ConsumerOffsetManager(BrokerStartUp brokerstartup) {
         this.brokerStartUp = brokerstartup;
     }
 
+    //记录消费进度
+    public void persist() {
+
+    }
 }

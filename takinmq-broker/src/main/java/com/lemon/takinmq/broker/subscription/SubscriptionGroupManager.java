@@ -16,4 +16,8 @@ public class SubscriptionGroupManager {
     public SubscriptionGroupManager(BrokerStartUp brokerStartUp) {
         this.brokerStartUp = brokerStartUp;
     }
+
+    public void disableConsume(final String clusterName) {
+
+    }
 }

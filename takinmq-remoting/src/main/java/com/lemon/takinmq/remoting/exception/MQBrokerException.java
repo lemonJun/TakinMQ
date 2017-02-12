@@ -14,43 +14,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package com.lemon.takinmq.common.naming;
-
-import java.util.HashMap;
-
-import com.lemon.takinmq.common.datainfo.KVTable;
+package com.lemon.takinmq.remoting.exception;
 
 /**
  * @author lemon
  */
-public class RegisterBrokerResult {
-    private String haServerAddr;
-    private String masterAddr;
-    private KVTable kvTable;
+public class MQBrokerException extends Exception {
+    private static final long serialVersionUID = 5975020272601250368L;
+    private final String errorMessage;
 
-    public String getHaServerAddr() {
-        return haServerAddr;
+    public MQBrokerException(String errorMessage, Exception e) {
+        super(errorMessage);//去掉了FAQ页面
+        this.errorMessage = errorMessage;
     }
 
-    public void setHaServerAddr(String haServerAddr) {
-        this.haServerAddr = haServerAddr;
+    public String getErrorMessage() {
+        return errorMessage;
     }
-
-    public String getMasterAddr() {
-        return masterAddr;
-    }
-
-    public void setMasterAddr(String masterAddr) {
-        this.masterAddr = masterAddr;
-    }
-
-    public KVTable getKvTable() {
-        return kvTable;
-    }
-
-    public void setKvTable(KVTable kvTable) {
-        this.kvTable = kvTable;
-    }
-
 }

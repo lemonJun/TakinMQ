@@ -2,13 +2,14 @@ package com.lemon.takinmq.common.service;
 
 import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.datainfo.ClusterInfo;
+import com.lemon.takinmq.common.datainfo.TopicConfigSerializeWrapper;
 import com.lemon.takinmq.common.datainfo.TopicList;
 import com.lemon.takinmq.common.datainfo.TopicRouteData;
 import com.lemon.takinmq.common.naming.RegisterBrokerResult;
 
 /**
  * 名称服务的接口类
- * 
+ * 由原实现类DefaultRequestProcessor的命令模式  整理改写而来
  * @author WangYazhou
  * @date  2017年2月7日 下午1:36:09
  * @see
@@ -23,7 +24,7 @@ public interface INamingService {
      * @return  kv配置信息
      * @throws Exception
      */
-    public abstract RegisterBrokerResult register(String clustername, String brokeraddress, String brokername, final long brokerId, String topic) throws Exception;
+    public abstract RegisterBrokerResult register(String clustername, String brokeraddress, String brokername, final long brokerId, TopicConfigSerializeWrapper topic) throws Exception;
 
     /**
      * 取消注册

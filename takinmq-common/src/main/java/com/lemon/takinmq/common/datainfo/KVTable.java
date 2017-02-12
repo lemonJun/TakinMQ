@@ -14,43 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package com.lemon.takinmq.common.naming;
+package com.lemon.takinmq.common.datainfo;
 
 import java.util.HashMap;
 
-import com.lemon.takinmq.common.datainfo.KVTable;
-
 /**
  * @author lemon
+ *
  */
-public class RegisterBrokerResult {
-    private String haServerAddr;
-    private String masterAddr;
-    private KVTable kvTable;
+public class KVTable {
+    private HashMap<String, String> table = new HashMap<String, String>();
 
-    public String getHaServerAddr() {
-        return haServerAddr;
+    public HashMap<String, String> getTable() {
+        return table;
     }
 
-    public void setHaServerAddr(String haServerAddr) {
-        this.haServerAddr = haServerAddr;
+    public void setTable(HashMap<String, String> table) {
+        this.table = table;
     }
-
-    public String getMasterAddr() {
-        return masterAddr;
-    }
-
-    public void setMasterAddr(String masterAddr) {
-        this.masterAddr = masterAddr;
-    }
-
-    public KVTable getKvTable() {
-        return kvTable;
-    }
-
-    public void setKvTable(KVTable kvTable) {
-        this.kvTable = kvTable;
-    }
-
 }

@@ -31,25 +31,26 @@ import com.lemon.takinmq.remoting.util.GenericsUtils;
 public class JDKProxy {
 
     private static final Logger logger = Logger.getLogger(JDKProxy.class);
+    //代理缓存
     public static final ConcurrentHashMap<String, Object> proxyMap = GenericsUtils.newConcurrentHashMap();
     //    public static final ConcurrentHashMap<String, Future<Object>> futureyMap = GenericsUtils.newConcurrentHashMap();
     public static final ExecutorService executor = Executors.newFixedThreadPool(6);
 
     private final RemotingNettyClient remotingclient;
 
-    private JDKProxy(RemotingNettyClient remotingclient) {
+    public JDKProxy(RemotingNettyClient remotingclient) {
         this.remotingclient = remotingclient;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> T createProxy(Class clazz, String str) {
-        Object proxy = proxyMap.get(str);
-        if (proxy != null) {
-            return ((T) proxy);
-        }
+        //        Object proxy = proxyMap.get(str);
+        //        if (proxy != null) {
+        //            return ((T) proxy);
+        //        }
 
         logger.info(String.format("Create New JDK Proxy %s", ""));
-        proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] { clazz }, new InvocationHandler() {
+        Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] { clazz }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 //                NettyClientProxy clientProxy = GuiceDI.getInstance(NettyClientProxy.class);

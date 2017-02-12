@@ -29,11 +29,15 @@ public class NamingServiceImpl implements INamingService {
     }
 
     @Override
-    public RegisterBrokerResult register(String clustername, String address, String brokername, final long brokerId, String topic) throws Exception {
-        TopicConfigSerializeWrapper topicConfigWrapper;//先默认按无来算
-        topicConfigWrapper = new TopicConfigSerializeWrapper();
-        topicConfigWrapper.getDataVersion().setCounter(new AtomicLong(0));
-        topicConfigWrapper.getDataVersion().setTimestatmp(0);
+    public RegisterBrokerResult register(String clustername, String address, String brokername, final long brokerId, TopicConfigSerializeWrapper topicWrapper) throws Exception {
+        TopicConfigSerializeWrapper topicConfigWrapper;
+        if (topicWrapper != null) {
+            topicConfigWrapper = topicWrapper;
+        } else {
+            topicConfigWrapper = new TopicConfigSerializeWrapper();
+            topicConfigWrapper.getDataVersion().setCounter(new AtomicLong(0));
+            topicConfigWrapper.getDataVersion().setTimestatmp(0);
+        }
 
         Channel channel = GlobalContext.getSingleton().getFromThreadLocal().getContext().channel();
         RegisterBrokerResult brokerResult = routeInfoManager.registerBroker(clustername, address, brokername, brokerId, "", topicConfigWrapper, channel);

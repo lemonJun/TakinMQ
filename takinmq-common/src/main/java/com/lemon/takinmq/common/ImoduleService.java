@@ -15,6 +15,6 @@ public interface ImoduleService {
     public abstract void start() throws Exception;
 
     //销毁时释放资源
-    public abstract void destroy() throws Exception;
+    public abstract void shutdown() throws Exception;
 
 }

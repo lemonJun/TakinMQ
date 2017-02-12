@@ -3,6 +3,7 @@ package com.lemon.takinmq.broker;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,7 +31,11 @@ import com.lemon.takinmq.broker.subscription.SubscriptionGroupManager;
 import com.lemon.takinmq.broker.topic.TopicConfigManager;
 import com.lemon.takinmq.common.BrokerConfig;
 import com.lemon.takinmq.common.ImoduleService;
+import com.lemon.takinmq.common.PermName;
 import com.lemon.takinmq.common.ThreadFactoryImpl;
+import com.lemon.takinmq.common.TopicConfig;
+import com.lemon.takinmq.common.datainfo.TopicConfigSerializeWrapper;
+import com.lemon.takinmq.common.naming.RegisterBrokerResult;
 import com.lemon.takinmq.common.stat.MomentStatsItem;
 import com.lemon.takinmq.common.util.UtilAll;
 import com.lemon.takinmq.remoting.netty5.NettyClientConfig;
@@ -132,6 +137,12 @@ public class BrokerStartUp implements ImoduleService {
     public void init() throws Exception {
         boolean result = true;
         loadconfig();//读取配置文件
+
+        //设置默认的naming地址
+        if (this.brokerConfig.getNamesrvAddr() != null) {
+            this.brokerOuterAPI.updateNameServerAddressList(this.brokerConfig.getNamesrvAddr());
+            logger.info("user specfied name server address: {}", this.brokerConfig.getNamesrvAddr());
+        }
         if (result) {
             //创建消息持久化服务
             this.messageStore = null;//底层存储实现改成leveldb的话  
@@ -149,7 +160,7 @@ public class BrokerStartUp implements ImoduleService {
         this.consumerManageExecutor = Executors.newFixedThreadPool(brokerConfig.getConsumerManageThreadPoolNums(), new ThreadFactoryImpl("ConsumerManageThread_"));
 
         registerProcessor();
-
+        scheduler();
         //
 
     }
@@ -263,10 +274,67 @@ public class BrokerStartUp implements ImoduleService {
                 }
             }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
         }
+
+        //周期注册
+        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BrokerStartUp.this.registerBrokerAll(true, false);
+                } catch (Throwable e) {
+                    logger.error("registerBrokerAll Exception", e);
+                }
+            }
+        }, 1000 * 10, 1000 * 30, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 向naming注册broker
+     * @param checkOrderConfig
+     * @param oneway
+     */
+    public synchronized void registerBrokerAll(final boolean checkOrderConfig, boolean oneway) {
+        TopicConfigSerializeWrapper topicConfigWrapper = this.topicConfigManager.buildTopicConfigSerializeWrapper();
+
+        //
+        if (!PermName.isWriteable(this.getBrokerConfig().getBrokerPermission()) || !PermName.isReadable(this.getBrokerConfig().getBrokerPermission())) {
+            ConcurrentHashMap<String, TopicConfig> topicConfigTable = new ConcurrentHashMap<String, TopicConfig>();
+            for (TopicConfig topicConfig : topicConfigWrapper.getTopicConfigTable().values()) {
+                TopicConfig tmp = new TopicConfig(topicConfig.getTopicName(), topicConfig.getReadQueueNums(), topicConfig.getWriteQueueNums(), this.brokerConfig.getBrokerPermission());
+                topicConfigTable.put(topicConfig.getTopicName(), tmp);
+            }
+            topicConfigWrapper.setTopicConfigTable(topicConfigTable);
+        }
+
+        RegisterBrokerResult registerBrokerResult = this.brokerOuterAPI.registerBrokerAll(this.brokerConfig.getBrokerClusterName(), this.getBrokerAddr(), this.brokerConfig.getBrokerName(), this.brokerConfig.getBrokerId(), this.getHAServerAddr(), topicConfigWrapper, null, oneway, this.brokerConfig.getRegisterBrokerTimeoutMills());
+
+        if (registerBrokerResult != null) {
+            if (this.updateMasterHAServerAddrPeriodically && registerBrokerResult.getHaServerAddr() != null) {
+                this.messageStore.updateHaMasterAddress(registerBrokerResult.getHaServerAddr());
+            }
+
+            this.slaveSynchronize.setMasterAddr(registerBrokerResult.getMasterAddr());
+
+            if (checkOrderConfig) {
+                this.getTopicConfigManager().updateOrderTopicConfig(registerBrokerResult.getKvTable());
+            }
+        }
+    }
+
+    public String getBrokerAddr() {
+        return this.brokerConfig.getBrokerIP1() + ":" + this.nettyServerConfig.getListenPort();
+    }
+
+    public TopicConfigManager getTopicConfigManager() {
+        return topicConfigManager;
     }
 
     public MessageStore getMessageStore() {
         return messageStore;
+    }
+
+    private String getHAServerAddr() {
+        return "";
     }
 
     //打
@@ -309,8 +377,13 @@ public class BrokerStartUp implements ImoduleService {
     }
 
     @Override
-    public void destroy() throws Exception {
-
+    public void shutdown() throws Exception {
+        this.scheduledExecutorService.shutdown();
+        try {
+            this.scheduledExecutorService.awaitTermination(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            logger.error("", e);
+        }
     }
 
     @Override

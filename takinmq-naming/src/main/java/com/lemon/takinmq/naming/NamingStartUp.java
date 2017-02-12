@@ -65,7 +65,7 @@ public class NamingStartUp implements ImoduleService {
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void shutdown() throws Exception {
 
     }
 

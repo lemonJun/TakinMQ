@@ -12,6 +12,8 @@ import com.lemon.takinmq.broker.BrokerStartUp;
 public class SlaveSynchronize {
     private final BrokerStartUp brokerStartUp;
 
+    private volatile String masterAddr = null;
+
     public SlaveSynchronize(BrokerStartUp brokerStartUp) {
         this.brokerStartUp = brokerStartUp;
     }
@@ -21,6 +23,10 @@ public class SlaveSynchronize {
         this.syncConsumerOffset();
         this.syncDelayOffset();
         this.syncSubscriptionGroupConfig();
+    }
+
+    public String getMasterAddr() {
+        return masterAddr;
     }
 
     public void syncTopicConfig() {
@@ -37,5 +43,9 @@ public class SlaveSynchronize {
 
     public void syncSubscriptionGroupConfig() {
 
+    }
+
+    public void setMasterAddr(String masterAddr) {
+        this.masterAddr = masterAddr;
     }
 }

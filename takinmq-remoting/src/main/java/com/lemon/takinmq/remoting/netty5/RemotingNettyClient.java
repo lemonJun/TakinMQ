@@ -1,7 +1,9 @@
 package com.lemon.takinmq.remoting.netty5;
 
 import java.net.InetSocketAddress;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -10,6 +12,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -39,6 +42,8 @@ public class RemotingNettyClient extends RemotingAbstract {
     private final Bootstrap bootstrap = new Bootstrap();
     private final EventLoopGroup group;
     private final ExecutorService publicExecutor;
+    //保存所有服务端的地址
+    private final AtomicReference<List<String>> namesrvAddrList = new AtomicReference<List<String>>();
 
     private ConcurrentHashMap<String, ChannelWrapper> channelTables = new ConcurrentHashMap<String, ChannelWrapper>();
 
@@ -246,6 +251,34 @@ public class RemotingNettyClient extends RemotingAbstract {
     @Override
     public ExecutorService getCallbackExecutor() {
         return null;
+    }
+
+    public void updateNameServerAddressList(List<String> addrs) {
+        List<String> old = this.namesrvAddrList.get();
+        boolean update = false;
+
+        if (!addrs.isEmpty()) {
+            if (null == old) {
+                update = true;
+            } else if (addrs.size() != old.size()) {
+                update = true;
+            } else {
+                for (int i = 0; i < addrs.size() && !update; i++) {
+                    if (!old.contains(addrs.get(i))) {
+                        update = true;
+                    }
+                }
+            }
+
+            if (update) {
+                Collections.shuffle(addrs);
+                this.namesrvAddrList.set(addrs);
+            }
+        }
+    }
+
+    public List<String> getNameServerAddressList() {
+        return this.namesrvAddrList.get();
     }
 
 }

@@ -62,7 +62,7 @@ public class JDKProxy {
                 message.setMethod(method.getName());
                 message.setArgs(args);
                 //                String address = GuiceDI.getInstance(RandomLoadBalance.class).select(GuiceDI.getInstance(ConsumerManager.class).getAddress(), "0");
-                String address = "";
+                String address = "127.0.0.1:6871";//应该从某个地方获取到
                 logger.info(String.format("request: %s", JSONObject.toJSONString(message)));
                 RemotingMessage resultMessage = remotingclient.invokeSync(address, message, 2000);
                 //                logger.info(String.format("response: %s", JSONObject.toJSONString(message)));

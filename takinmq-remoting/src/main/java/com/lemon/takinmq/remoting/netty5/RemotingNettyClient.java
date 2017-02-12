@@ -42,7 +42,7 @@ public class RemotingNettyClient extends RemotingAbstract {
     private final Bootstrap bootstrap = new Bootstrap();
     private final EventLoopGroup group;
     private final ExecutorService publicExecutor;
-    //保存所有服务端的地址
+    //保存所有服务端的地址   
     private final AtomicReference<List<String>> namesrvAddrList = new AtomicReference<List<String>>();
 
     private ConcurrentHashMap<String, ChannelWrapper> channelTables = new ConcurrentHashMap<String, ChannelWrapper>();
@@ -77,9 +77,7 @@ public class RemotingNettyClient extends RemotingAbstract {
                 ch.pipeline().addLast(new ClientMessageHandler());
             }
         });
-
-        bootstrap.bind(6871);
-
+        //        bootstrap.bind(6871);
         new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -96,6 +94,7 @@ public class RemotingNettyClient extends RemotingAbstract {
      * @return
      */
     private Channel createChannel(final String address) {
+        logger.info("addresss:" + address);
         ChannelWrapper cw = channelTables.get(address);
         if (cw != null && cw.isOK()) {
             return cw.getChannel();
@@ -131,7 +130,6 @@ public class RemotingNettyClient extends RemotingAbstract {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("", e);
         } finally {
             this.lockChannelTables.unlock();

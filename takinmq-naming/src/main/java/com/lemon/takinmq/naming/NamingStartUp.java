@@ -26,18 +26,19 @@ public class NamingStartUp implements ImoduleService {
 
     private RemotingNettyServer remotingserver;
 
-    public NamingStartUp() {
+    private final NettyServerConfig serverConfig;
+
+    public NamingStartUp(NettyServerConfig serverconfig) {
+        this.serverConfig = serverconfig;
         this.routeInfoManager = new RouteInfoManager();
     }
 
     @Override
     public void init() throws Exception {
         //初始化监听服务
-        NettyServerConfig config = new NettyServerConfig();
         //
         this.loadconfig();
-        config.setListenPort(6871);
-        remotingserver = new RemotingNettyServer(config);
+        remotingserver = new RemotingNettyServer(serverConfig);
 
         //启动jgroups的群组通信   好处是任何组件连接任何一个name都可以获取所有配置信息 
 

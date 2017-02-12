@@ -23,7 +23,7 @@ package com.lemon.takinmq.remoting.netty5;
  *
  */
 public class NettyServerConfig implements Cloneable {
-    private int listenPort = 8888;
+    private int listenPort = 6871;
     private int serverWorkerThreads = 8;
     private int serverCallbackExecutorThreads = 0;
     private int serverSelectorThreads = 3;

@@ -24,7 +24,6 @@ public class ClientTest {
             }
             System.out.println(msg.getResultJson());
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

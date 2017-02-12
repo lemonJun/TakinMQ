@@ -63,13 +63,14 @@ public abstract class RemotingAbstract {
                 @Override
                 public void operationComplete(ChannelFuture f) throws Exception {
                     if (f.isSuccess()) {
+                        //                    if (f.isDone()) {
                         responseFuture.setSendRequestOK(true);
-                        System.out.println("channel future is succ");
+                        logger.info("channel future is succ");
                         return;
                     } else {
                         responseFuture.setSendRequestOK(false);
                     }
-                    System.out.println("channel future is false");
+                    logger.info("channel future is false");
                     //无结果 返回原因
                     responseTable.remove(message.getOpaque());
                     responseFuture.setCause(f.cause());

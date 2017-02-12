@@ -77,7 +77,7 @@ public class RemotingNettyClient extends RemotingAbstract {
                 ch.pipeline().addLast(new ClientMessageHandler());
             }
         });
-        //        bootstrap.bind(6871);
+        bootstrap.bind(6871);
         new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -168,6 +168,7 @@ public class RemotingNettyClient extends RemotingAbstract {
                 logger.info(String.format("invoke address:%s , use time:%dms", address, (end - start)));
                 return result;
             } catch (Exception e) {
+                logger.error("", e);
                 throw e;
             }
         } else {

@@ -1,6 +1,7 @@
 package com.lemon.takinmq.remoting.netty5;
 
 import java.lang.reflect.Method;
+import java.net.SocketAddress;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -9,10 +10,11 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.util.SerializeUtil;
-import com.lemon.takinmq.remoting.GlobalContext;
+import com.lemon.takinmq.common.util.StringUtils;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 
 /**
  * 接收客户端发起的请求   并按
@@ -31,11 +33,11 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     //设置环境变量
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
+        RemotingMessage msg = (RemotingMessage) obj;
         try {
-            RemotingMessage msg = (RemotingMessage) obj;
             logger.info("REQUEST: " + JSON.toJSONString(msg));
             RemotingContext context = new RemotingContext(ctx);
-            GlobalContext.getSingleton().setThreadLocal(context);
+            //            GlobalContext.getSingleton().setThreadLocal(context);
             String clazzName = msg.getClazz();
             String methodName = msg.getMethod();
             Object[] args = msg.getArgs();
@@ -51,23 +53,28 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
                     mc[i] = args[i].getClass();
                 }
             }
+            if (StringUtils.isNotEmpty(clazzName)) {
+                //反射调用
+                Class<?> clazz = Class.forName(clazzName);
+                if (clazz.isAnnotationPresent(ImplementBy.class)) {
+                    ImplementBy impl = (ImplementBy) clazz.getAnnotation(ImplementBy.class);
 
-            ///反射调用
-            Class<?> clazz = Class.forName(clazzName);
-            if (clazz.isAnnotationPresent(ImplementBy.class)) {
-                ImplementBy impl = (ImplementBy) clazz.getAnnotation(ImplementBy.class);
-
-                Method method = clazz.getDeclaredMethod(methodName, mc);
-                Object target = getOjbectFromClass(impl.implclass());
-                Object result = method.invoke(target, args);
-                if (!method.getReturnType().getName().equals("void")) {
-                    msg.setResultJson(SerializeUtil.jsonSerialize(result));
+                    Method method = clazz.getDeclaredMethod(methodName, mc);
+                    Object target = getOjbectFromClass(impl.implclass());
+                    Object result = method.invoke(target, args);
+                    if (!method.getReturnType().getName().equals("void")) {
+                        msg.setResultJson(SerializeUtil.jsonSerialize(result));
+                    }
                 }
+            } else {
+                msg.setResultJson("no class name content");
             }
             logger.info("RESPONSE: " + JSON.toJSONString(msg));
-            ctx.writeAndFlush(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            GlobalContext.getSingleton().removeThreadLocal();
+            //            GlobalContext.getSingleton().removeThreadLocal();
+            ctx.writeAndFlush(msg);
         }
     }
 
@@ -97,13 +104,19 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        super.channelReadComplete(ctx);
+    public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception {
+        super.connect(ctx, remoteAddress, localAddress, promise);
+        logger.info("channel connect " + remoteAddress);
     }
 
-    @Override
-    public void flush(ChannelHandlerContext ctx) throws Exception {
-        super.flush(ctx);
-    }
+    //    @Override
+    //    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    //        super.channelReadComplete(ctx);
+    //    }
+    //
+    //    @Override
+    //    public void flush(ChannelHandlerContext ctx) throws Exception {
+    //        super.flush(ctx);
+    //    }
 
 }

@@ -5,6 +5,13 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 
+/**
+ * 客户端处理类
+ * 
+ * @author WangYazhou
+ * @date  2017年2月12日 下午8:18:41
+ * @see
+ */
 public class ClientMessageHandler extends ChannelHandlerAdapter {
 
     private static final Logger logger = Logger.getLogger(ClientMessageHandler.class);

@@ -12,8 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since
  */
 public final class RemotingMessage {
-
-    private static AtomicLong RequestId = new AtomicLong(0);
+    private static AtomicLong RequestId = new AtomicLong(1);
     private String clazz;
     private String method;
     private Object[] args;

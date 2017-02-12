@@ -40,7 +40,6 @@ public class RemotingNettyServer {
     }
 
     public void start() throws Exception {
-        //        int port = GuiceDI.getInstance(NettyServerConfig.class).getListenPort();
         bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
         bootstrap.option(ChannelOption.SO_BACKLOG, 65536);
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
@@ -57,7 +56,7 @@ public class RemotingNettyServer {
             }
         });
 
-        this.bootstrap.bind().sync();
+        this.bootstrap.bind(6871).sync();
         logger.info("server started on port:" + serverconfig.getListenPort());
         respScheduler.scheduleAtFixedRate(new Runnable() {
             @Override

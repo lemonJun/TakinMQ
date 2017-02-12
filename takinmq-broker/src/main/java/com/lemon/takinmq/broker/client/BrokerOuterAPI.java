@@ -38,6 +38,10 @@ public class BrokerOuterAPI {
         proxy = new JDKProxy(remotingNettyClient);
     }
 
+    public void start() {
+        remotingNettyClient.start();
+    }
+
     //获取naming的地址 并更新本地缓存
     //改用jgroups组件后  这部分应该不需要了
     public void fetchNameServerAddr() {
@@ -115,6 +119,7 @@ public class BrokerOuterAPI {
         //        requestBody.setFilterServerList(filterServerList);
         //        request.setBody(requestBody.encode());
 
+        //
         INamingService namingProxy = proxy.createProxy(INamingService.class, "INamingService");
 
         //        if (oneway) {
@@ -124,7 +129,7 @@ public class BrokerOuterAPI {
         //            }
         //            return null;
         //        }
-        
+
         try {
             RegisterBrokerResult result = namingProxy.register(clusterName, brokerAddr, brokerName, brokerId, topicConfigWrapper);
             return result;

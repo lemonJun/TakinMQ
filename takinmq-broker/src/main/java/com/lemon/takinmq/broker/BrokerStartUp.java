@@ -145,7 +145,7 @@ public class BrokerStartUp implements ImoduleService {
         }
         if (result) {
             //创建消息持久化服务
-            this.messageStore = null;//底层存储实现改成leveldb的话  
+            this.messageStore = new DefaultMessageStore();//底层存储实现改成leveldb的话  
             this.brokerStats = new BrokerStats((DefaultMessageStore) messageStore);
         }
         result = result & this.messageStore.load();//重启时 加载数据
@@ -160,13 +160,19 @@ public class BrokerStartUp implements ImoduleService {
         this.consumerManageExecutor = Executors.newFixedThreadPool(brokerConfig.getConsumerManageThreadPoolNums(), new ThreadFactoryImpl("ConsumerManageThread_"));
 
         registerProcessor();
-        scheduler();
+        //        scheduler();
         //
 
     }
 
     public BrokerStats getBrokerStats() {
         return brokerStats;
+    }
+
+    @Override
+    public void start() throws Exception {
+        this.registerBrokerAll(false, false);
+        this.brokerOuterAPI.start();
     }
 
     private void scheduler() {
@@ -289,6 +295,7 @@ public class BrokerStartUp implements ImoduleService {
     }
 
     /**
+     * N多地方都需要注册
      * 向naming注册broker
      * @param checkOrderConfig
      * @param oneway
@@ -296,7 +303,7 @@ public class BrokerStartUp implements ImoduleService {
     public synchronized void registerBrokerAll(final boolean checkOrderConfig, boolean oneway) {
         TopicConfigSerializeWrapper topicConfigWrapper = this.topicConfigManager.buildTopicConfigSerializeWrapper();
 
-        //
+        // 
         if (!PermName.isWriteable(this.getBrokerConfig().getBrokerPermission()) || !PermName.isReadable(this.getBrokerConfig().getBrokerPermission())) {
             ConcurrentHashMap<String, TopicConfig> topicConfigTable = new ConcurrentHashMap<String, TopicConfig>();
             for (TopicConfig topicConfig : topicConfigWrapper.getTopicConfigTable().values()) {
@@ -305,7 +312,7 @@ public class BrokerStartUp implements ImoduleService {
             }
             topicConfigWrapper.setTopicConfigTable(topicConfigTable);
         }
-
+        logger.info(String.format("[Regist] %s %s %s %s %s %s %s %s %s", this.brokerConfig.getBrokerClusterName(), this.getBrokerAddr(), this.brokerConfig.getBrokerName(), this.brokerConfig.getBrokerId(), this.getHAServerAddr(), topicConfigWrapper, null, oneway, this.brokerConfig.getRegisterBrokerTimeoutMills()));
         RegisterBrokerResult registerBrokerResult = this.brokerOuterAPI.registerBrokerAll(this.brokerConfig.getBrokerClusterName(), this.getBrokerAddr(), this.brokerConfig.getBrokerName(), this.brokerConfig.getBrokerId(), this.getHAServerAddr(), topicConfigWrapper, null, oneway, this.brokerConfig.getRegisterBrokerTimeoutMills());
 
         if (registerBrokerResult != null) {
@@ -368,11 +375,6 @@ public class BrokerStartUp implements ImoduleService {
 
     //注册broker特有的nettyhandler类
     private void registerProcessor() {
-
-    }
-
-    @Override
-    public void start() throws Exception {
 
     }
 

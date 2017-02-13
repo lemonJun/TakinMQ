@@ -186,68 +186,20 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<compilerVersion>${maven.compiler.source}</compilerVersion>
+					<showDeprecation>true</showDeprecation>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
 
 		</plugins>
 	</build>
-
-
-
-
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.1</version>
-						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
-							<encoding>UTF-8</encoding>
-						</configuration>
-					</plugin>
-					<!-- Source -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.2.1</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<!-- Javadoc -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.3</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<additionalparam>-Xdoclint:none</additionalparam><!-- 防止生成docs时报错 -->
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
-
-
 
 </project>

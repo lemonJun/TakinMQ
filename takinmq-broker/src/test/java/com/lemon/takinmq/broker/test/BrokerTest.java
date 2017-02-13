@@ -18,7 +18,7 @@ public class BrokerTest {
             brokerConfig.setBrokerId(1000L);
             brokerConfig.setBrokerIP1("127.0.0.1");
             NettyServerConfig serverConfig = new NettyServerConfig();
-            serverConfig.setListenPort(5876);
+            serverConfig.setListenPort(6876);
 
             NettyClientConfig clientConfig = new NettyClientConfig();
             MessageStoreConfig messageConfig = new MessageStoreConfig();

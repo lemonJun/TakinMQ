@@ -1,17 +1,24 @@
 package com.lemon.takinmq.remoting.netty5;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * netty 服务交互的实体类
- *
+ * 目前使用的是marshalling解码器   城朵实现序列化接口
  * @author lemon
  * @version 1.0
  * @date  2015年9月7日 下午4:39:10
  * @see 
  * @since
  */
-public final class RemotingMessage {
+public final class RemotingMessage implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private static AtomicLong RequestId = new AtomicLong(1);
     private String clazz;
     private String method;

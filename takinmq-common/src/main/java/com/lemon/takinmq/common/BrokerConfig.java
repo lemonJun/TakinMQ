@@ -26,12 +26,12 @@ import com.lemon.takinmq.common.util.AddressUtil;
  */
 public class BrokerConfig {
     private String rocketmqHome = System.getProperty(MixAll.ROCKETMQ_HOME_PROPERTY, System.getenv(MixAll.ROCKETMQ_HOME_ENV));
-    private String namesrvAddr = System.getProperty(MixAll.NAMESRV_ADDR_PROPERTY, System.getenv(MixAll.NAMESRV_ADDR_ENV));
+    private String namesrvAddr = "127.0.0.1:6871";
 
     private String brokerIP1 = AddressUtil.getLocalAddress();
     private String brokerIP2 = AddressUtil.getLocalAddress();
     private String brokerName = localHostName();
-    private String brokerClusterName = "DefaultCluster";
+    private String brokerClusterName = "Test";
     private long brokerId = MixAll.MASTER_ID;
     private int brokerPermission = PermName.PERM_READ | PermName.PERM_WRITE;
     private int defaultTopicQueueNums = 8;
@@ -52,7 +52,7 @@ public class BrokerConfig {
     private int flushConsumerOffsetInterval = 1000 * 5;
 
     private int flushConsumerOffsetHistoryInterval = 1000 * 60;
-    
+
     private boolean rejectTransactionMessage = false;
     private boolean fetchNamesrvAddrByAddressServer = false;
     private int sendThreadPoolQueueCapacity = 10000;

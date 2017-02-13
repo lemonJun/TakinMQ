@@ -150,9 +150,9 @@ public class BrokerStartUp implements ImoduleService {
         }
         result = result & this.messageStore.load();//重启时 加载数据
         if (result) {
-            this.remotingServer = new RemotingNettyServer(this.nettyServerConfig);
+            //            this.remotingServer = new RemotingNettyServer(this.nettyServerConfig);
         }
-
+        
         this.sendMessageExecutor = new BrokerFixedThreadPoolExecutor(brokerConfig.getSendMessageThreadPoolNums(), this.brokerConfig.getSendMessageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.sendThreadPoolQueue, new ThreadFactoryImpl("SendMessageThread_"));
         this.pullMessageExecutor = new BrokerFixedThreadPoolExecutor(brokerConfig.getPullMessageThreadPoolNums(), this.brokerConfig.getPullMessageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.pullThreadPoolQueue, new ThreadFactoryImpl("PullMessageThread_"));
         this.adminBrokerExecutor = Executors.newFixedThreadPool(brokerConfig.getAdminBrokerThreadPoolNums(), new ThreadFactoryImpl("AdminBrokerThread_"));
@@ -171,8 +171,8 @@ public class BrokerStartUp implements ImoduleService {
 
     @Override
     public void start() throws Exception {
-        this.registerBrokerAll(false, false);
         this.brokerOuterAPI.start();
+        this.registerBrokerAll(false, false);
     }
 
     private void scheduler() {

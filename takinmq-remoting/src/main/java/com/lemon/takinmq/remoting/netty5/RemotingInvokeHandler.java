@@ -1,7 +1,6 @@
 package com.lemon.takinmq.remoting.netty5;
 
 import java.lang.reflect.Method;
-import java.net.SocketAddress;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -11,10 +10,10 @@ import com.google.common.collect.Maps;
 import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.util.SerializeUtil;
 import com.lemon.takinmq.common.util.StringUtils;
+import com.lemon.takinmq.remoting.GlobalContext;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
 
 /**
  * 接收客户端发起的请求   并按
@@ -33,11 +32,12 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     //设置环境变量
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
+        logger.info("receive request");
         RemotingMessage msg = (RemotingMessage) obj;
         try {
             logger.info("REQUEST: " + JSON.toJSONString(msg));
             RemotingContext context = new RemotingContext(ctx);
-            //            GlobalContext.getSingleton().setThreadLocal(context);
+            GlobalContext.getSingleton().setThreadLocal(context);
             String clazzName = msg.getClazz();
             String methodName = msg.getMethod();
             Object[] args = msg.getArgs();
@@ -73,9 +73,10 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            //            GlobalContext.getSingleton().removeThreadLocal();
+            GlobalContext.getSingleton().removeThreadLocal();
             ctx.writeAndFlush(msg);
         }
+        return;
     }
 
     //获取实现类
@@ -101,12 +102,6 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
-    }
-
-    @Override
-    public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception {
-        super.connect(ctx, remoteAddress, localAddress, promise);
-        logger.info("channel connect " + remoteAddress);
     }
 
     //    @Override

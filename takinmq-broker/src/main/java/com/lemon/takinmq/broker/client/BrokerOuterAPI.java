@@ -120,6 +120,7 @@ public class BrokerOuterAPI {
         //        request.setBody(requestBody.encode());
 
         //
+        logger.info(String.format("address:%s clustername:%s", brokerAddr, clusterName));
         INamingService namingProxy = proxy.createProxy(INamingService.class, "INamingService");
 
         //        if (oneway) {

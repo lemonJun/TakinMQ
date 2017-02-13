@@ -43,7 +43,7 @@ public class JDKProxy {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public <T> T createProxy(Class clazz, String str) {
+    public <T> T createProxy(final Class clazz, String str) {
         //        Object proxy = proxyMap.get(str);
         //        if (proxy != null) {
         //            return ((T) proxy);
@@ -55,9 +55,6 @@ public class JDKProxy {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 //                NettyClientProxy clientProxy = GuiceDI.getInstance(NettyClientProxy.class);
                 RemotingMessage message = new RemotingMessage();
-                message.setType(MessageType.REMOTING_INVOKE.value());
-                //                message.setIdentity(GuiceDI.getInstance(Config.class).getIdentity());
-                message.setIdentity("");
                 message.setClazz(clazz.getName());
                 message.setMethod(method.getName());
                 message.setArgs(args);

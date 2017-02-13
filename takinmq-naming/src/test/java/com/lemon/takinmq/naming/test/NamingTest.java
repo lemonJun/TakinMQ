@@ -11,7 +11,7 @@ public class NamingTest {
         try {
             PropertyConfigurator.configure("D:/log4j.properties");
             NettyServerConfig serverConfig = new NettyServerConfig();
-            serverConfig.setListenPort(5871);
+            serverConfig.setListenPort(6871);
             NamingStartUp naming = new NamingStartUp(serverConfig);
             naming.init();
             naming.start();

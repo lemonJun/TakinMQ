@@ -77,7 +77,7 @@ public class RemotingNettyClient extends RemotingAbstract {
                 ch.pipeline().addLast(new ClientMessageHandler());
             }
         });
-        bootstrap.bind(6871);
+
         new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -143,7 +143,6 @@ public class RemotingNettyClient extends RemotingAbstract {
                 }
             }
         }
-
         return null;
     }
 

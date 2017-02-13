@@ -9,6 +9,7 @@ import org.iq80.leveldb.DBComparator;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.lemon.takinmq.store.DispatchRequest;
 
 /**
@@ -29,17 +30,19 @@ public class IndexService {
     public void destroy() {
 
     }
-
+    
     //存储一个消息 
     public void buildIndex(DispatchRequest req) {
-        
+        String indexKey = buildKey(req.getTopic(), req.getKeys());
+        db.put(indexKey.getBytes(), JSON.toJSONBytes(req));
     }
-    
+
     //构建索引的key
     private String buildKey(final String topic, final String key) {
         return topic + "#" + key;
     }
 
+    //
     public QueryOffsetResult queryOffset(String topic, String key, int maxNum, long begin, long end) {
         List<Long> phyOffsets = new ArrayList<Long>(maxNum);
         long indexLastUpdateTimestamp = 0;

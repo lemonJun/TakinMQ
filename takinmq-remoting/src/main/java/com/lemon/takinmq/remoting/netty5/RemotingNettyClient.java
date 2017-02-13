@@ -19,6 +19,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 
 import com.lemon.takinmq.common.util.SystemClock;
+import com.lemon.takinmq.remoting.codec.JsonDecode;
+import com.lemon.takinmq.remoting.codec.JsonEncode;
+import com.lemon.takinmq.remoting.codec.KyroMsgDecoder;
+import com.lemon.takinmq.remoting.codec.KyroMsgEncoder;
 import com.lemon.takinmq.remoting.exception.RemotingConnectException;
 import com.lemon.takinmq.remoting.exception.RemotingSendRequestException;
 import com.lemon.takinmq.remoting.exception.RemotingTimeoutException;
@@ -72,8 +76,10 @@ public class RemotingNettyClient extends RemotingAbstract {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 //                ch.pipeline().addLast(new IdleStateHandler(1, 1, 5));
-                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
-                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
+                //                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
+                //                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
+                ch.pipeline().addLast(new KyroMsgDecoder());
+                ch.pipeline().addLast(new KyroMsgEncoder());
                 ch.pipeline().addLast(new ClientMessageHandler());
             }
         });

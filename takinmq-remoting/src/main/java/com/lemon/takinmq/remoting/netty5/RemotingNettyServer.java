@@ -11,6 +11,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 import com.lemon.takinmq.common.util.SystemClock;
+import com.lemon.takinmq.remoting.codec.JsonDecode;
+import com.lemon.takinmq.remoting.codec.JsonEncode;
+import com.lemon.takinmq.remoting.codec.KyroMsgDecoder;
+import com.lemon.takinmq.remoting.codec.KyroMsgEncoder;
 import com.lemon.takinmq.remoting.util.GenericsUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -50,8 +54,10 @@ public class RemotingNettyServer {
             public void initChannel(SocketChannel ch) throws IOException {
                 //                ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(60, 60, 60));
                 //                ch.pipeline().addLast("heartbeat", new CustomIdleHandler());
-                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
-                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
+                //                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingDecoder());
+                //                ch.pipeline().addLast(MarshallingCodeCFactory.buildMarshallingEncoder());
+                ch.pipeline().addLast(new KyroMsgDecoder());
+                ch.pipeline().addLast(new KyroMsgEncoder());
                 ch.pipeline().addLast("remoteinvode", new RemotingInvokeHandler());
             }
         });

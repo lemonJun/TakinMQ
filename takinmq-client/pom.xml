@@ -12,7 +12,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>lemon.takinmq</groupId>
-			<artifactId>lemon.takinmq-remoting</artifactId>
+			<artifactId>takinmq-remoting</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

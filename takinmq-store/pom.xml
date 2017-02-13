@@ -15,7 +15,7 @@
 		</dependency>
 		<dependency>
 			<groupId>lemon.takinmq</groupId>
-			<artifactId>lemon.takinmq-common</artifactId>
+			<artifactId>takinmq-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

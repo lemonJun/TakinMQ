@@ -6,7 +6,7 @@
 		<artifactId>takinmq</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>lemon.takinmq-common</artifactId>
+	<artifactId>takinmq-common</artifactId>
 
 	<dependencies>
 		<dependency>

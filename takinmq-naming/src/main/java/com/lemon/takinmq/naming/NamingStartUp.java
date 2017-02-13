@@ -50,14 +50,14 @@ public class NamingStartUp implements ImoduleService {
                 NamingStartUp.this.routeInfoManager.scanNotActiveBroker();
             }
         }, 60, 10, TimeUnit.SECONDS);
-
+        
         //定时打印出此name服务中的信息
-        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                NamingStartUp.this.routeInfoManager.printAllPeriodically();
-            }
-        }, 60, 30, TimeUnit.SECONDS);
+        //        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+        //            @Override
+        //            public void run() {
+        //                NamingStartUp.this.routeInfoManager.printAllPeriodically();
+        //            }
+        //        }, 60, 30, TimeUnit.SECONDS);
     }
 
     @Override

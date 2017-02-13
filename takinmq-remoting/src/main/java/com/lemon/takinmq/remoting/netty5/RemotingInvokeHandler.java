@@ -1,6 +1,7 @@
 package com.lemon.takinmq.remoting.netty5;
 
 import java.lang.reflect.Method;
+import java.net.SocketAddress;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import com.lemon.takinmq.remoting.GlobalContext;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 
 /**
  * 接收客户端发起的请求   并按
@@ -102,6 +104,30 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("welcom channelRegistered");
+        super.channelRegistered(ctx);
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("welcom channelActive");
+        super.channelActive(ctx);
+    }
+
+    @Override
+    public void bind(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise) throws Exception {
+        logger.debug("welcom bind");
+        super.bind(ctx, localAddress, promise);
+    }
+
+    @Override
+    public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception {
+        logger.debug("welcom connect");
+        super.connect(ctx, remoteAddress, localAddress, promise);
     }
 
     //    @Override

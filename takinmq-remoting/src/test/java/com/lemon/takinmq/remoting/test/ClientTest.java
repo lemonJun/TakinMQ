@@ -18,7 +18,7 @@ public class ClientTest {
             RemotingNettyClient client = new RemotingNettyClient(config);
             client.start();
             RemotingMessage msg = new RemotingMessage();
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 client.invokeSync("127.0.0.1:6871", msg, 3000);
                 TimeUnit.SECONDS.sleep(1);
             }

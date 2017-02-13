@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * netty 服务交互的实体类
  * 目前使用的是marshalling解码器   城朵实现序列化接口
+ * 遇到一个很深的坑：marshalling不解序列化 Object[]对象   调试了好久才发现的
  * @author lemon
  * @version 1.0
  * @date  2015年9月7日 下午4:39:10

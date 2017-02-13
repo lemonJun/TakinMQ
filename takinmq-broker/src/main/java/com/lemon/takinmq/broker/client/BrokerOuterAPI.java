@@ -31,15 +31,16 @@ public class BrokerOuterAPI {
 
     private final RemotingNettyClient remotingNettyClient;
 
-    private final JDKProxy proxy;
+    private JDKProxy proxy;
 
     public BrokerOuterAPI(final NettyClientConfig nettyClientConfig) {
         this.remotingNettyClient = new RemotingNettyClient(nettyClientConfig);
-        proxy = new JDKProxy(remotingNettyClient);
     }
 
     public void start() {
         remotingNettyClient.start();
+        proxy = new JDKProxy(remotingNettyClient);
+
     }
 
     //获取naming的地址 并更新本地缓存

@@ -28,7 +28,6 @@
 		<dependency>
 			<groupId>lemon.takinmq</groupId>
 			<artifactId>takinmq-common</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

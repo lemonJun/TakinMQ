@@ -152,7 +152,7 @@ public class BrokerStartUp implements ImoduleService {
         if (result) {
             //            this.remotingServer = new RemotingNettyServer(this.nettyServerConfig);
         }
-        
+
         this.sendMessageExecutor = new BrokerFixedThreadPoolExecutor(brokerConfig.getSendMessageThreadPoolNums(), this.brokerConfig.getSendMessageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.sendThreadPoolQueue, new ThreadFactoryImpl("SendMessageThread_"));
         this.pullMessageExecutor = new BrokerFixedThreadPoolExecutor(brokerConfig.getPullMessageThreadPoolNums(), this.brokerConfig.getPullMessageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.pullThreadPoolQueue, new ThreadFactoryImpl("PullMessageThread_"));
         this.adminBrokerExecutor = Executors.newFixedThreadPool(brokerConfig.getAdminBrokerThreadPoolNums(), new ThreadFactoryImpl("AdminBrokerThread_"));

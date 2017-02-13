@@ -22,13 +22,11 @@
 		<dependency>
 			<groupId>lemon.takinmq</groupId>
 			<artifactId>takinmq-remoting</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>lemon.takinmq</groupId>
 			<artifactId>takinmq-common</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

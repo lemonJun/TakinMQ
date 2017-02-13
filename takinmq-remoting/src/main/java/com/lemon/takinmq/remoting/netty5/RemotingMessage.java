@@ -24,6 +24,7 @@ public final class RemotingMessage implements Serializable {
     private String clazz;
     private String method;
     private Object[] args;
+    private Class<?>[] mParamsTypes;
 
     private int type;// 消息类型 对应messagetype中的枚举类型
     private Long timestamp = System.currentTimeMillis();
@@ -59,6 +60,14 @@ public final class RemotingMessage implements Serializable {
 
     public void setArgs(Object[] args) {
         this.args = args;
+    }
+
+    public Class<?>[] getmParamsTypes() {
+        return mParamsTypes;
+    }
+
+    public void setmParamsTypes(Class<?>[] mParamsTypes) {
+        this.mParamsTypes = mParamsTypes;
     }
 
     public int getType() {

@@ -52,12 +52,11 @@ public class JDKProxy {
         Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] { clazz }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                //                NettyClientProxy clientProxy = GuiceDI.getInstance(NettyClientProxy.class);
                 RemotingMessage message = new RemotingMessage();
                 message.setClazz(clazz.getName());
                 message.setMethod(method.getName());
                 message.setArgs(args);
-                //                String address = GuiceDI.getInstance(RandomLoadBalance.class).select(GuiceDI.getInstance(ConsumerManager.class).getAddress(), "0");
+                message.setmParamsTypes(method.getParameterTypes());
                 String address = "127.0.0.1:6871";//应该从某个地方获取到
                 logger.info(String.format("request: %s", JSONObject.toJSONString(message)));
                 RemotingMessage resultMessage = remotingclient.invokeSync(address, message, 2000);
@@ -69,9 +68,7 @@ public class JDKProxy {
             proxyMap.put(str, proxy);
         }
         return (T) proxy;
-
     }
-
 }
 
 //    @SuppressWarnings({ "rawtypes", "unchecked" })

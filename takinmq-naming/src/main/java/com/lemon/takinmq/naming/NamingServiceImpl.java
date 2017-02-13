@@ -29,7 +29,7 @@ public class NamingServiceImpl implements INamingService {
     }
 
     @Override
-    public RegisterBrokerResult register(String clustername, String address, String brokername, final long brokerId, TopicConfigSerializeWrapper topicWrapper) throws Exception {
+    public RegisterBrokerResult register(String clustername, String address, String brokername, Long brokerId, TopicConfigSerializeWrapper topicWrapper) throws Exception {
         TopicConfigSerializeWrapper topicConfigWrapper;
         if (topicWrapper != null) {
             topicConfigWrapper = topicWrapper;
@@ -79,6 +79,10 @@ public class NamingServiceImpl implements INamingService {
     public TopicList getTopicsByCluster(String cluster) throws Exception {
         TopicList toplicList = routeInfoManager.getTopicsByCluster(cluster);
         return toplicList;
+    }
+
+    public TopicList getTopicsByLong(long name) throws Exception {
+        return null;
     }
 
     @Override

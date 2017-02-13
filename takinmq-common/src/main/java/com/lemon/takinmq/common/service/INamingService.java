@@ -24,7 +24,7 @@ public interface INamingService {
      * @return  kv配置信息
      * @throws Exception
      */
-    public abstract RegisterBrokerResult register(String clustername, String brokeraddress, String brokername, final long brokerId, TopicConfigSerializeWrapper topic) throws Exception;
+    public abstract RegisterBrokerResult register(String clustername, String brokeraddress, String brokername, Long brokerId, TopicConfigSerializeWrapper topic) throws Exception;
 
     /**
      * 取消注册

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.util.SerializeUtil;
@@ -43,16 +44,14 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
             String clazzName = msg.getClazz();
             String methodName = msg.getMethod();
             Object[] args = msg.getArgs();
-            //            ClassPool pool = ClassPool.getDefault();
-            //            Class clazz = pool.get(clazzStr).toClass();
-            //
-            //确定方法参数
+            Class<?>[] mParamsType = msg.getmParamsTypes();
+            logger.info(String.format("invoke class:%s method:%s params:%s", clazzName, methodName, Joiner.on(",").join(args)));
             Class<?> mc[] = null;
             if (args != null) {//存在
-                int len = args.length;
-                mc = new Class[len];
-                for (int i = 0; i < len; ++i) {
-                    mc[i] = args[i].getClass();
+                mc = new Class[args.length];
+                for (int i = 0; i < args.length; i++) {
+                    Class<?> primc = args[i].getClass();
+                    mc[i] = primc;
                 }
             }
             if (StringUtils.isNotEmpty(clazzName)) {
@@ -60,12 +59,20 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
                 Class<?> clazz = Class.forName(clazzName);
                 if (clazz.isAnnotationPresent(ImplementBy.class)) {
                     ImplementBy impl = (ImplementBy) clazz.getAnnotation(ImplementBy.class);
-
-                    Method method = clazz.getDeclaredMethod(methodName, mc);
                     Object target = getOjbectFromClass(impl.implclass());
-                    Object result = method.invoke(target, args);
-                    if (!method.getReturnType().getName().equals("void")) {
-                        msg.setResultJson(SerializeUtil.jsonSerialize(result));
+                    Method[] methods = target.getClass().getDeclaredMethods();
+                    for (Method m : methods) {
+                        logger.info(m.toString());
+                    }
+                    Method method = getMethod(target, methodName, mParamsType, mc);
+                    if (method != null) {
+                        method.setAccessible(true);
+                        Object result = method.invoke(target, args);
+                        if (!method.getReturnType().getName().equals("void")) {
+                            msg.setResultJson(SerializeUtil.jsonSerialize(result));
+                        }
+                    } else {
+                        msg.setResultJson("no method found");
                     }
                 }
             } else {
@@ -73,7 +80,7 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
             }
             logger.info("RESPONSE: " + JSON.toJSONString(msg));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("netty server handler error", e);
         } finally {
             GlobalContext.getSingleton().removeThreadLocal();
             ctx.writeAndFlush(msg);
@@ -81,8 +88,29 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
         return;
     }
 
+    //根据参数获取指定的方法
+    private Method getMethod(Object target, String methodName, Class<?>[] mParamsType, Class<?>[] mParamsType2) {
+        Method method = null;
+        try {
+            method = target.getClass().getDeclaredMethod(methodName, mParamsType);
+            logger.info(String.format("get method:%s succ params:%s", methodName, Joiner.on(",").join(mParamsType)));
+        } catch (Exception e) {
+            logger.error(String.format("get method:%s is null params:%s", methodName, Joiner.on(",").join(mParamsType)));
+        }
+        if (method == null) {
+            try {
+                method = target.getClass().getDeclaredMethod(methodName, mParamsType2);
+                logger.info(String.format("get method:%s succ params:%s", methodName, Joiner.on(",").join(mParamsType2)));
+            } catch (Exception e) {
+                logger.error(String.format("get method:%s is null params:%s", methodName, Joiner.on(",").join(mParamsType2)));
+            }
+        }
+        return method;
+    }
+
     //获取实现类
     private Object getOjbectFromClass(String clazz) {
+        logger.info("implclass:" + clazz);
         if (implMap.get(clazz) == null) {
             synchronized (RemotingInvokeHandler.class) {
                 if (implMap.get(clazz) == null) {

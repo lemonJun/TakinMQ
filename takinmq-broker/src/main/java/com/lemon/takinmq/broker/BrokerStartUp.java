@@ -145,7 +145,7 @@ public class BrokerStartUp implements ImoduleService {
         }
         if (result) {
             //创建消息持久化服务
-            this.messageStore = new DefaultMessageStore();//底层存储实现改成leveldb的话  
+            this.messageStore = new DefaultMessageStore(messageStoreConfig);//底层存储实现改成leveldb的话  
             this.brokerStats = new BrokerStats((DefaultMessageStore) messageStore);
         }
         result = result & this.messageStore.load();//重启时 加载数据

@@ -24,7 +24,7 @@ public class LookupResult {
     public static LookupResult ok(LookupKey key, Slice value) {
         return new LookupResult(key, value, false);
     }
-
+    
     public static LookupResult deleted(LookupKey key) {
         return new LookupResult(key, null, true);
     }

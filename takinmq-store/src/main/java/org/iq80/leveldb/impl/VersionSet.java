@@ -54,6 +54,13 @@ import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static org.iq80.leveldb.impl.DbConstants.NUM_LEVELS;
 import static org.iq80.leveldb.impl.LogMonitors.throwExceptionMonitor;
 
+/**
+ * 
+ * 
+ * @author WangYazhou
+ * @date  2017年2月14日 上午11:56:12
+ * @see
+ */
 public class VersionSet implements SeekingIterable<InternalKey, Slice> {
     private static final int L0_COMPACTION_TRIGGER = 4;
 

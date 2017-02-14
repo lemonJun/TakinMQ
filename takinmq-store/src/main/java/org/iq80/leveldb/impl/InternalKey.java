@@ -25,6 +25,13 @@ import org.iq80.leveldb.util.Slices;
 import static com.google.common.base.Charsets.UTF_8;
 import static org.iq80.leveldb.util.SizeOf.SIZE_OF_LONG;
 
+/**
+ * 
+ *
+ * @author WangYazhou
+ * @date  2017年2月14日 下午2:39:14
+ * @see
+ */
 public class InternalKey {
     private final Slice userKey;
     private final long sequenceNumber;

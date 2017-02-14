@@ -37,7 +37,8 @@ import static org.iq80.leveldb.util.SizeOf.SIZE_OF_LONG;
 import static org.iq80.leveldb.util.SizeOf.SIZE_OF_SHORT;
 
 /**
- * 一个简单的数据结构数据结构
+ * 一个简单的数据结构
+ * 保存的是每次操作的真正的数据  用于日志的？？？
  * Little Endian slice of a byte array.
  */
 public final class Slice implements Comparable<Slice> {

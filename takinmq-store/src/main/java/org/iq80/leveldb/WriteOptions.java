@@ -17,8 +17,15 @@
  */
 package org.iq80.leveldb;
 
+/**
+ * 
+ * 
+ * @author WangYazhou
+ * @date  2017年2月14日 下午12:04:30
+ * @see
+ */
 public class WriteOptions {
-    private boolean sync;
+    private boolean sync;//对于log是立刻刷盘还是提交给操作系统，默认false 
     private boolean snapshot;
 
     public boolean sync() {

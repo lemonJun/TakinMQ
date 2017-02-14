@@ -26,6 +26,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * 每一个生成的文件的功能
+ *
+ * @author WangYazhou
+ * @date  2017年2月14日 上午11:39:05
+ * @see
+ */
 public final class Filename {
     private Filename() {
     }
@@ -35,6 +42,7 @@ public final class Filename {
     }
 
     /**
+     * 日志文件
      * Return the name of the log file with the specified number.
      */
     public static String logFileName(long number) {
@@ -42,6 +50,9 @@ public final class Filename {
     }
 
     /**
+     * Leveldb把sstable文件通过level的方式组织起来，从log文件中生成的sstable被放在level 0。
+     * 当level 0的sstable文件个数超过设置时，leveldb就把所有的level 0文件，以及有重合的level 1文件merge起来，
+     * 组织成一个新的level 1文件
      * Return the name of the sstable with the specified number.
      */
     public static String tableFileName(long number) {
@@ -49,6 +60,8 @@ public final class Filename {
     }
 
     /**
+     * DB元信息文件 
+     * 它记录的是leveldb的元信息，比如DB使用的Comparator名，以及各SSTable文件的管理信息：如Level层数、文件名、最小key和最大key等等
      * Return the name of the descriptor file with the specified incarnation number.
      */
     public static String descriptorFileName(long number) {
@@ -57,6 +70,8 @@ public final class Filename {
     }
 
     /**
+     * 它的内容就是当前的manifest文件名；因为在LevleDb的运行过程中，随着Compaction的进行，新的SSTable文件被产生，
+     * 老的文件被废弃。并生成新的Manifest文件来记载sstable的变动，而CURRENT则用来记录我们关心的Manifest文件
      * Return the name of the current file.
      */
     public static String currentFileName() {
@@ -64,6 +79,7 @@ public final class Filename {
     }
 
     /**
+     * 锁文件的名称
      * Return the name of the lock file.
      */
     public static String lockFileName() {
@@ -78,6 +94,7 @@ public final class Filename {
     }
 
     /**
+     * 系统的运行日志，和options_.info_log有关，记录系统的运行信息或者错误日志
      * Return the name of the info log file.
      */
     public static String infoLogFileName() {

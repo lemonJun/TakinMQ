@@ -51,7 +51,7 @@ public class MemTable implements SeekingIterable<InternalKey, Slice> {
     public boolean isEmpty() {
         return table.isEmpty();
     }
-
+    
     public long approximateMemoryUsage() {
         return approximateMemoryUsage.get();
     }
@@ -87,6 +87,20 @@ public class MemTable implements SeekingIterable<InternalKey, Slice> {
         return null;
     }
 
+    /**
+     * 获取跳跃表的第一个key
+     * @return
+     */
+    public LookupResult findFirst() {
+        InternalKey internalKey = table.firstKey();
+        Entry<InternalKey, Slice> entry = table.ceilingEntry(internalKey);
+        if (entry == null) {
+            return null;
+        }
+        LookupKey key = new LookupKey(internalKey.getUserKey(), internalKey.getSequenceNumber());
+        return LookupResult.ok(key, entry.getValue());
+    }
+
     @Override
     public MemTableIterator iterator() {
         return new MemTableIterator();
@@ -95,6 +109,9 @@ public class MemTable implements SeekingIterable<InternalKey, Slice> {
     public class MemTableIterator implements InternalIterator {
         private PeekingIterator<Entry<InternalKey, Slice>> iterator;
 
+        /**
+         * 这个地方性能会不会很差？？？？
+         */
         public MemTableIterator() {
             iterator = Iterators.peekingIterator(table.entrySet().iterator());
         }

@@ -28,6 +28,15 @@ import java.util.Map.Entry;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+/**
+ * leveldb支持原子操作
+ * 就是可以将多个操作放在一个writebatch中打包，执行时，writebatch中所有的写操作打包成一条日志放在log中
+ * 这里即使依次往memtable中插入时机器挂了也没事，重启里recover会将log中这个writebatch重做,原子性得到保证
+ *
+ * @author WangYazhou
+ * @date  2017年2月14日 下午12:06:07
+ * @see
+ */
 public class WriteBatchImpl implements WriteBatch {
     private final List<Entry<Slice, Slice>> batch = newArrayList();
     private int approximateSize;
@@ -76,6 +85,7 @@ public class WriteBatchImpl implements WriteBatch {
     public void close() {
     }
 
+    //这里实现比较有意思，value有值则认为是添加   无值则认为是删除
     public void forEach(Handler handler) {
         for (Entry<Slice, Slice> entry : batch) {
             Slice key = entry.getKey();

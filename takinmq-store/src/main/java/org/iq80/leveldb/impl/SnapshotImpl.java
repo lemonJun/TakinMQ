@@ -21,6 +21,14 @@ import org.iq80.leveldb.Snapshot;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * 快照实现
+ * 只保存当前的版本号与最后的序列号  
+ *
+ * @author WangYazhou
+ * @date  2017年2月14日 上午11:29:23
+ * @see
+ */
 public class SnapshotImpl implements Snapshot {
     private final AtomicBoolean closed = new AtomicBoolean();
     private final Version version;
@@ -31,7 +39,7 @@ public class SnapshotImpl implements Snapshot {
         this.lastSequence = lastSequence;
         this.version.retain();
     }
-
+    
     @Override
     public void close() {
         // This is an end user API.. he might screw up and close multiple times.

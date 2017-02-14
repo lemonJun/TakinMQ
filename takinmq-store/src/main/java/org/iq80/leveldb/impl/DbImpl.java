@@ -525,12 +525,22 @@ public class DbImpl implements DB {
             return maxSequence;
         }
     }
-    
+
     @Override
     public byte[] get(byte[] key) throws DBException {
         return get(key, new ReadOptions());
     }
 
+    @Override
+    public byte[] getfirst() throws DBException {
+        getfirst(new ReadOptions());
+        return null;
+    }
+
+    /**
+     * 分析获查询过程
+     * 搞不懂  查询的时候 为什么还要加入排斥锁？？    会不会有点重了
+     */
     @Override
     public byte[] get(byte[] key, ReadOptions options) throws DBException {
         checkBackgroundException();
@@ -585,6 +595,67 @@ public class DbImpl implements DB {
         return null;
     }
 
+    //获取第一个
+    public byte[] getfirst(ReadOptions options) throws DBException {
+        checkBackgroundException();
+        LookupKey lookupKey;
+        mutex.lock();
+        try {
+            //            SnapshotImpl snapshot = getSnapshot(options);
+            //            lookupKey = new LookupKey(Slices.wrappedBuffer(key), snapshot.getLastSequence());
+
+            // First look in the memtable, then in the immutable memtable (if any).
+            LookupResult lookupResult = memTable.findFirst();
+            if (lookupResult != null) {
+                Slice value = lookupResult.getValue();
+                if (value == null) {
+                    return null;
+                }
+                return value.getBytes();
+            }
+            if (immutableMemTable != null) {
+                lookupResult = immutableMemTable.findFirst();
+                if (lookupResult != null) {
+                    Slice value = lookupResult.getValue();
+                    if (value == null) {
+                        return null;
+                    }
+                    return value.getBytes();
+                }
+            }
+        } finally {
+            mutex.unlock();
+        }
+
+        // Not in memTables; try live files in level order
+        //        LookupResult lookupResult = versions.get(lookupKey);
+        LookupResult lookupResult = null;
+
+        // schedule compaction if necessary
+        mutex.lock();
+        try {
+            if (versions.needsCompaction()) {
+                maybeScheduleCompaction();
+            }
+        } finally {
+            mutex.unlock();
+        }
+
+        if (lookupResult != null) {
+            Slice value = lookupResult.getValue();
+            if (value != null) {
+                return value.getBytes();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 写入速度很快 因为它将随机写转化为了顺序写 
+     * 首先在log文件中顺序写入oplog
+     * 然后在内存的memtable中插入该数据就可以返回了
+     * 
+     */
     @Override
     public void put(byte[] key, byte[] value) throws DBException {
         put(key, value, new WriteOptions());
@@ -615,6 +686,14 @@ public class DbImpl implements DB {
         return writeInternal((WriteBatchImpl) updates, options);
     }
 
+    /**
+     * 插入、修改、删除一条数据
+     * 此处的实现明显与c++版本不一样  https://kernelmaker.github.io/Leveldb_Put
+     * @param updates
+     * @param options
+     * @return
+     * @throws DBException
+     */
     public Snapshot writeInternal(WriteBatchImpl updates, WriteOptions options) throws DBException {
         checkBackgroundException();
         mutex.lock();
@@ -625,10 +704,10 @@ public class DbImpl implements DB {
 
                 // Get sequence numbers for this change set
                 long sequenceBegin = versions.getLastSequence() + 1;
-                sequenceEnd = sequenceBegin + updates.size() - 1;
+                sequenceEnd = sequenceBegin + updates.size() - 1;//可以批量操作
 
                 // Reserve this sequence in the version set
-                versions.setLastSequence(sequenceEnd);
+                versions.setLastSequence(sequenceEnd);//记录最后一个sequence
 
                 // Log write
                 Slice record = writeWriteBatch(updates, sequenceBegin);
@@ -731,6 +810,10 @@ public class DbImpl implements DB {
         return snapshot;
     }
 
+    /**
+     * 
+     * @param force
+     */
     private void makeRoomForWrite(boolean force) {
         Preconditions.checkState(mutex.isHeldByCurrentThread());
 
@@ -750,8 +833,9 @@ public class DbImpl implements DB {
                 // individual write by 1ms to reduce latency variance.  Also,
                 // this delay hands over some CPU to the compaction thread in
                 // case it is sharing the same core as the writer.
+                //level0中文件个数大于L0_SLOWDOWN_WRITES_TRIGGER  释放锁  睡1S 给compact留出时间
                 try {
-                    mutex.unlock();
+                    mutex.unlock();//
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -1289,4 +1373,5 @@ public class DbImpl implements DB {
     public void compactRange(byte[] begin, byte[] end) throws DBException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
 }

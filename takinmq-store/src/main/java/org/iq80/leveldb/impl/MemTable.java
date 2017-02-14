@@ -17,6 +17,7 @@
  */
 package org.iq80.leveldb.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
@@ -51,7 +52,7 @@ public class MemTable implements SeekingIterable<InternalKey, Slice> {
     public boolean isEmpty() {
         return table.isEmpty();
     }
-    
+
     public long approximateMemoryUsage() {
         return approximateMemoryUsage.get();
     }
@@ -63,7 +64,7 @@ public class MemTable implements SeekingIterable<InternalKey, Slice> {
 
         InternalKey internalKey = new InternalKey(key, sequenceNumber, valueType);
         table.put(internalKey, value);
-
+        System.out.println(Iq80DBFactory.asString(key.getBytes()) + "->" + Iq80DBFactory.asString(value.getBytes()));
         approximateMemoryUsage.addAndGet(key.length() + SIZE_OF_LONG + value.length());
     }
 
@@ -88,6 +89,7 @@ public class MemTable implements SeekingIterable<InternalKey, Slice> {
     }
 
     /**
+     * 
      * 获取跳跃表的第一个key
      * @return
      */

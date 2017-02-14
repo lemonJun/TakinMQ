@@ -530,11 +530,10 @@ public class DbImpl implements DB {
     public byte[] get(byte[] key) throws DBException {
         return get(key, new ReadOptions());
     }
-
+    
     @Override
     public byte[] getfirst() throws DBException {
-        getfirst(new ReadOptions());
-        return null;
+        return getfirst(new ReadOptions());
     }
 
     /**
@@ -598,7 +597,6 @@ public class DbImpl implements DB {
     //获取第一个
     public byte[] getfirst(ReadOptions options) throws DBException {
         checkBackgroundException();
-        LookupKey lookupKey;
         mutex.lock();
         try {
             //            SnapshotImpl snapshot = getSnapshot(options);

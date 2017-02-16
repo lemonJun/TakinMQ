@@ -55,8 +55,8 @@ import static org.iq80.leveldb.impl.DbConstants.NUM_LEVELS;
 import static org.iq80.leveldb.impl.LogMonitors.throwExceptionMonitor;
 
 /**
- * 
- * 
+ * 所有version的集合  管理着所有存活的Version
+ * Version0 +VersionEdit-->Version1
  * @author WangYazhou
  * @date  2017年2月14日 上午11:56:12
  * @see

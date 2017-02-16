@@ -89,11 +89,17 @@ public class MemTable implements SeekingIterable<InternalKey, Slice> {
     }
 
     /**
-     * 
+     * 如查这个数据库是刚打开，此table是为null的，调肜firstkey会直接报错
+     * 也就是说memtabble这是一个内存中的数据 
+     * 对文件中的数据   要看下dbimpl中get方法的实现  或 刚启动时对已有数据的操作
+     * 瞎猫碰到死耗子   正好有这个疑点   
      * 获取跳跃表的第一个key
      * @return
      */
     public LookupResult findFirst() {
+        if (table.isEmpty()) {
+            return null;
+        }
         InternalKey internalKey = table.firstKey();
         Entry<InternalKey, Slice> entry = table.ceilingEntry(internalKey);
         if (entry == null) {

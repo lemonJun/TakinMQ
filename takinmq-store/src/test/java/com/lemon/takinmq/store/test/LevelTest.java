@@ -1,6 +1,9 @@
 package com.lemon.takinmq.store.test;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBComparator;
@@ -11,49 +14,60 @@ import org.iq80.leveldb.impl.Iq80DBFactory;
 
 public class LevelTest {
 
+    private static final DB db = init();
+
     public static void main(String[] args) {
-        LevelTest test = new LevelTest();
-        test.add();
-        test.read();
+        try {
+            
+            Map map  = new HashMap<>();
+            LevelTest test = new LevelTest();
+            //            test.add();
+            test.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                db.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void read() {
-        DB db = init();
 
         DBIterator iterator = db.iterator();
         try {
-            for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
-                String key = Iq80DBFactory.factory.asString(iterator.peekNext().getKey());
-                String value = Iq80DBFactory.factory.asString(iterator.peekNext().getValue());
-                System.out.println(key + " = " + value);
-            }
+            //            System.out.println(Iq80DBFactory.asString(db.get(Iq80DBFactory.bytes("1"))));
+            System.out.println(Iq80DBFactory.asString(db.getfirst()));
+            //            for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+            //                String key = Iq80DBFactory.factory.asString(iterator.peekNext().getKey());
+            //                String value = Iq80DBFactory.factory.asString(iterator.peekNext().getValue());
+            //                System.out.println(key + " = " + value);
+            //            }
         } finally {
             try {
                 iterator.close();
-                db.close();
             } catch (Exception e2) {
             }
         }
     }
 
     private void add() {
-        DB db = init();
         try {
-            for (int i = 1; i < 5; i++) {
-                db.put((i * i + "").getBytes(), (i * i + "").getBytes());
+            for (int i = 5; i < 8; i++) {
+                db.put(Iq80DBFactory.bytes(i + ""), Iq80DBFactory.bytes(i * i + ""));
             }
-
         } catch (DBException e) {
             e.printStackTrace();
         } finally {
             try {
-                db.close();
             } catch (Exception e2) {
             }
         }
     }
 
-    private DB init() {
+    private static DB init() {
         try {
             //按正序排
             DBComparator comparator = new DBComparator() {

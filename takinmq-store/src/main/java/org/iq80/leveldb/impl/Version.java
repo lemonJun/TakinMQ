@@ -40,6 +40,13 @@ import static org.iq80.leveldb.impl.DbConstants.NUM_LEVELS;
 import static org.iq80.leveldb.impl.SequenceNumber.MAX_SEQUENCE_NUMBER;
 import static org.iq80.leveldb.impl.VersionSet.MAX_GRAND_PARENT_OVERLAP_BYTES;
 
+/**
+ * 保存了当前磁盘以及内存中所有的文件信息
+ *
+ * @author WangYazhou
+ * @date  2017年2月15日 下午5:31:24
+ * @see
+ */
 // todo this class should be immutable
 public class Version implements SeekingIterable<InternalKey, Slice> {
     private final AtomicInteger retained = new AtomicInteger(1);
@@ -142,6 +149,11 @@ public class Version implements SeekingIterable<InternalKey, Slice> {
         return builder.build();
     }
 
+    /**
+     * 先在第0层查找    然后再在逐个查找
+     * @param key
+     * @return
+     */
     public LookupResult get(LookupKey key) {
         // We can search level-by-level since entries never hop across
         // levels.  Therefore we are guaranteed that if we find data

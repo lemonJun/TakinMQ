@@ -74,6 +74,8 @@ import org.iq80.leveldb.util.SliceInput;
 import org.iq80.leveldb.util.SliceOutput;
 import org.iq80.leveldb.util.Slices;
 import org.iq80.leveldb.util.Snappy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -88,6 +90,9 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
  */
 // todo make thread safe and concurrent
 public class DbImpl implements DB {
+
+    private static final Logger logger = LoggerFactory.getLogger(DbImpl.class);
+
     private final Options options;
     private final File databaseDir;
     private final TableCache tableCache;
@@ -113,6 +118,12 @@ public class DbImpl implements DB {
 
     private ManualCompaction manualCompaction;
 
+    /**
+     * 打开一个数据库
+     * @param options
+     * @param databaseDir
+     * @throws IOException
+     */
     public DbImpl(Options options, File databaseDir) throws IOException {
         Preconditions.checkNotNull(options, "options is null");
         Preconditions.checkNotNull(databaseDir, "databaseDir is null");
@@ -141,8 +152,7 @@ public class DbImpl implements DB {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 // todo need a real UncaughtExceptionHandler
-                System.out.printf("%s%n", t);
-                e.printStackTrace();
+                logger.error("", e);
             }
         }).build();
         compactionExecutor = Executors.newSingleThreadExecutor(compactionThreadFactory);
@@ -150,8 +160,6 @@ public class DbImpl implements DB {
         // Reserve ten files or so for other uses and give the rest to TableCache.
         int tableCacheSize = options.maxOpenFiles() - 10;
         tableCache = new TableCache(databaseDir, tableCacheSize, new InternalUserComparator(internalKeyComparator), options.verifyChecksums());
-
-        // create the version set
 
         // create the database dir if it does not already exist
         databaseDir.mkdirs();
@@ -170,7 +178,7 @@ public class DbImpl implements DB {
             } else {
                 Preconditions.checkArgument(!options.errorIfExists(), "Database '%s' exists and the error if exists option is enabled", databaseDir);
             }
-
+            // create the version set
             versions = new VersionSet(databaseDir, tableCache, internalKeyComparator);
 
             // load  (and recover) current version
@@ -530,7 +538,7 @@ public class DbImpl implements DB {
     public byte[] get(byte[] key) throws DBException {
         return get(key, new ReadOptions());
     }
-    
+
     @Override
     public byte[] getfirst() throws DBException {
         return getfirst(new ReadOptions());
@@ -539,6 +547,7 @@ public class DbImpl implements DB {
     /**
      * 分析获查询过程
      * 搞不懂  查询的时候 为什么还要加入排斥锁？？    会不会有点重了
+     * LevelDB会首先查找内存中的memtable和imm（不可变的memtable），然后逐层查找sstable。
      */
     @Override
     public byte[] get(byte[] key, ReadOptions options) throws DBException {
@@ -626,9 +635,9 @@ public class DbImpl implements DB {
         }
 
         // Not in memTables; try live files in level order
-        //        LookupResult lookupResult = versions.get(lookupKey);
+        //        LookupResult lookupResult = versions.first();
         LookupResult lookupResult = null;
-
+        
         // schedule compaction if necessary
         mutex.lock();
         try {

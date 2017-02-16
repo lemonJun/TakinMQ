@@ -29,6 +29,14 @@ import org.iq80.leveldb.util.VariableLengthQuantity;
 
 import java.util.Map;
 
+/**
+ * 表示version之间的变化  相当于delta增量
+ * 
+ *
+ * @author WangYazhou
+ * @date  2017年2月15日 下午5:33:26
+ * @see
+ */
 public class VersionEdit {
     private String comparatorName;
     private Long logNumber;

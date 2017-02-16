@@ -34,6 +34,13 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.iq80.leveldb.impl.SequenceNumber.MAX_SEQUENCE_NUMBER;
 import static org.iq80.leveldb.impl.ValueType.VALUE;
 
+/**
+ * 
+ * 
+ * @author WangYazhou
+ * @date  2017年2月15日 上午  11:09:11
+ * @see
+ */
 // todo this class should be immutable
 public class Level0 implements SeekingIterable<InternalKey, Slice> {
     private final TableCache tableCache;
@@ -70,6 +77,13 @@ public class Level0 implements SeekingIterable<InternalKey, Slice> {
         return new Level0Iterator(tableCache, files, internalKeyComparator);
     }
 
+    /**
+     * 在Level0 中查询数据
+     * 
+     * @param key
+     * @param readStats
+     * @return
+     */
     public LookupResult get(LookupKey key, ReadStats readStats) {
         if (files.isEmpty()) {
             return null;

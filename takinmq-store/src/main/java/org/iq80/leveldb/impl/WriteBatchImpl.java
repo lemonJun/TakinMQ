@@ -85,7 +85,12 @@ public class WriteBatchImpl implements WriteBatch {
     public void close() {
     }
 
-    //这里实现比较有意思，value有值则认为是添加   无值则认为是删除
+    /**
+     * 这里实现比较有意思，value有值则认为是添加   无值则认为是删除
+     * 数据并不会真正删除 而是打上一个删除标记
+     * 真正的删除是延时的，因为相同的记录可能会存在memtable immutable table sstable中的
+     * @param handler
+     */
     public void forEach(Handler handler) {
         for (Entry<Slice, Slice> entry : batch) {
             Slice key = entry.getKey();

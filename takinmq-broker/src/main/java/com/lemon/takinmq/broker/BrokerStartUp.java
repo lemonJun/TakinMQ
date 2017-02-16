@@ -145,12 +145,12 @@ public class BrokerStartUp implements ImoduleService {
         }
         if (result) {
             //创建消息持久化服务
-            this.messageStore = new DefaultMessageStore(messageStoreConfig);//底层存储实现改成leveldb的话  
+            this.messageStore = new DefaultMessageStore(messageStoreConfig, brokerConfig);//底层存储实现改成leveldb的话  
             this.brokerStats = new BrokerStats((DefaultMessageStore) messageStore);
         }
         result = result & this.messageStore.load();//重启时 加载数据
         if (result) {
-            //            this.remotingServer = new RemotingNettyServer(this.nettyServerConfig);
+            this.remotingServer = new RemotingNettyServer(this.nettyServerConfig);
         }
 
         this.sendMessageExecutor = new BrokerFixedThreadPoolExecutor(brokerConfig.getSendMessageThreadPoolNums(), this.brokerConfig.getSendMessageThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.sendThreadPoolQueue, new ThreadFactoryImpl("SendMessageThread_"));

@@ -7,20 +7,26 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.lemon.takinmq.common.BrokerConfig;
 import com.lemon.takinmq.common.ThreadFactoryImpl;
 import com.lemon.takinmq.common.heartbeat.SubscriptionData;
 import com.lemon.takinmq.common.message.MessageExt;
 import com.lemon.takinmq.common.util.SystemClock;
+import com.lemon.takinmq.store.config.BrokerRole;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
 import com.lemon.takinmq.store.delay.ScheduleMessageService;
 import com.lemon.takinmq.store.index.IndexService;
 
 public class DefaultMessageStore implements MessageStore {
 
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMessageStore.class);
+
     private final MessageStoreConfig messageStoreConfig;
 
-    private final CommitLog commitlog;
+    private final CommitLog commitLog;
 
     //存入的是每一个主题 下的队列ID与消费进度情况
     private final ConcurrentHashMap<String, ConcurrentHashMap<Integer, ConsumeQueue>> consumeMap = new ConcurrentHashMap<>();
@@ -40,7 +46,7 @@ public class DefaultMessageStore implements MessageStore {
     public DefaultMessageStore(final MessageStoreConfig messageStoreConfig, final BrokerConfig brokerConfig) {
         this.messageStoreConfig = messageStoreConfig;
         this.storeStatService = new StoreStatsService();
-        this.commitlog = new CommitLog(this);
+        this.commitLog = new CommitLog(this);
         this.indexService = new IndexService();
         this.scheduleMessageService = new ScheduleMessageService();
         this.brokerConfig = brokerConfig;
@@ -72,7 +78,55 @@ public class DefaultMessageStore implements MessageStore {
 
     @Override
     public PutMessageResult putMessage(MessageExtBrokerInner msg) {
+        if (this.shutdown) {//停了  就不接受消息了 
+            logger.warn("message store has shutdown, so putMessage is forbidden");
+            return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE, null);
+        }
+
+        //如果是从   则不接受写消息  ？   这样怎么样做到数据HA的
+        if (BrokerRole.SLAVE == this.messageStoreConfig.getBrokerRole()) {
+            long value = this.printTimes.getAndIncrement();
+            if ((value % 50000) == 0) {
+                logger.warn("message store is slave mode, so putMessage is forbidden ");
+            }
+            return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE, null);
+        }
+
+        if (!this.runningFlags.isWriteable()) {
+            long value = this.printTimes.getAndIncrement();
+            if ((value % 50000) == 0) {
+                logger.warn("message store is not writeable, so putMessage is forbidden " + this.runningFlags.getFlagBits());
+            }
+
+            return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE, null);
+        } else {
+            this.printTimes.set(0);
+        }
+
+        if (msg.getTopic().length() > Byte.MAX_VALUE) {
+            logger.warn("putMessage message topic length too long " + msg.getTopic().length());
+            return new PutMessageResult(PutMessageStatus.MESSAGE_ILLEGAL, null);
+        }
+
+        if (msg.getPropertiesString() != null && msg.getPropertiesString().length() > Short.MAX_VALUE) {
+            logger.warn("putMessage message properties length too long " + msg.getPropertiesString().length());
+            return new PutMessageResult(PutMessageStatus.PROPERTIES_SIZE_EXCEEDED, null);
+        }
+
+        if (this.isOSPageCacheBusy()) {
+            return new PutMessageResult(PutMessageStatus.OS_PAGECACHE_BUSY, null);
+        }
+
+        long beginTime = this.getSystemClock().now();
+        PutMessageResult result = this.commitLog.putMessage(msg);//真实存储物理消息
+
+        long eclipseTime = this.getSystemClock().now() - beginTime;
+
         return null;
+    }
+
+    public SystemClock getSystemClock() {
+        return systemClock;
     }
 
     @Override
@@ -230,8 +284,19 @@ public class DefaultMessageStore implements MessageStore {
 
     }
 
+    public CommitLog commitLog() {
+        return commitLog;
+    }
+
     @Override
     public boolean isOSPageCacheBusy() {
+        long begin = this.commitLog().getBeginTimeInLock();
+        long diff = this.systemClock.now() - begin;
+
+        if (diff < 10000000 && diff > this.messageStoreConfig.getOsPageCacheBusyTimeOutMills()) {
+            return true;
+        }
+
         return false;
     }
 

@@ -33,6 +33,13 @@
 			<version>0.4</version>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>org.rocksdb</groupId>
+			<artifactId>rocksdbjni</artifactId>
+			<version>5.0.1</version>
+		</dependency>
+
 	</dependencies>
 
 </project>

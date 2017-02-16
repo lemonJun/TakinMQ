@@ -2,20 +2,48 @@ package com.lemon.takinmq.store;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 
+import com.lemon.takinmq.common.BrokerConfig;
+import com.lemon.takinmq.common.ThreadFactoryImpl;
 import com.lemon.takinmq.common.heartbeat.SubscriptionData;
 import com.lemon.takinmq.common.message.MessageExt;
+import com.lemon.takinmq.common.util.SystemClock;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
+import com.lemon.takinmq.store.delay.ScheduleMessageService;
+import com.lemon.takinmq.store.index.IndexService;
 
 public class DefaultMessageStore implements MessageStore {
 
     private final MessageStoreConfig messageStoreConfig;
 
-    private final StoreStatsService storeStatService;
+    private final CommitLog commitlog;
 
-    public DefaultMessageStore(final MessageStoreConfig messageStoreConfig) {
+    //存入的是每一个主题 下的队列ID与消费进度情况
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Integer, ConsumeQueue>> consumeMap = new ConcurrentHashMap<>();
+    private final IndexService indexService;
+    private final StoreStatsService storeStatService;
+    private final ScheduleMessageService scheduleMessageService;
+
+    private final RunningFlags runningFlags = new RunningFlags();
+    private final SystemClock systemClock = SystemClock.instance();
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("StoreScheduledThread"));
+
+    private final BrokerConfig brokerConfig;
+
+    private volatile boolean shutdown = true;
+    private AtomicLong printTimes = new AtomicLong(0);
+
+    public DefaultMessageStore(final MessageStoreConfig messageStoreConfig, final BrokerConfig brokerConfig) {
         this.messageStoreConfig = messageStoreConfig;
         this.storeStatService = new StoreStatsService();
+        this.commitlog = new CommitLog(this);
+        this.indexService = new IndexService();
+        this.scheduleMessageService = new ScheduleMessageService();
+        this.brokerConfig = brokerConfig;
     }
 
     public StoreStatsService getStoreStatService() {

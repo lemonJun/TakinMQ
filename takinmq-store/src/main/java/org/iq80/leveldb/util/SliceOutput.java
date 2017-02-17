@@ -59,7 +59,7 @@ public abstract class SliceOutput extends OutputStream implements DataOutput {
     public final void write(int value) {
         writeByte(value);
     }
-
+    
     /**
      * Sets the specified byte at the current {@code writerIndex}
      * and increases the {@code writerIndex} by {@code 1} in this buffer.

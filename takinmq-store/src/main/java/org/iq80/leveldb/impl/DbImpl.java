@@ -216,7 +216,7 @@ public class DbImpl implements DB {
 
             // open transaction log
             long logFileNumber = versions.getNextFileNumber();
-            this.log = Logs.createLogWriter(new File(databaseDir, Filename.logFileName(logFileNumber)), logFileNumber);
+            this.log = Logs.createLogWriter(new File(databaseDir, Filename.logFileName(logFileNumber)), logFileNumber, true);
             edit.setLogNumber(log.getFileNumber());
 
             // apply recovered edits
@@ -637,7 +637,7 @@ public class DbImpl implements DB {
         // Not in memTables; try live files in level order
         //        LookupResult lookupResult = versions.first();
         LookupResult lookupResult = null;
-        
+
         // schedule compaction if necessary
         mutex.lock();
         try {
@@ -878,7 +878,7 @@ public class DbImpl implements DB {
                 // open a new log
                 long logNumber = versions.getNextFileNumber();
                 try {
-                    this.log = Logs.createLogWriter(new File(databaseDir, Filename.logFileName(logNumber)), logNumber);
+                    this.log = Logs.createLogWriter(new File(databaseDir, Filename.logFileName(logNumber)), logNumber, true);
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to open new log file " + new File(databaseDir, Filename.logFileName(logNumber)).getAbsoluteFile(), e);
                 }

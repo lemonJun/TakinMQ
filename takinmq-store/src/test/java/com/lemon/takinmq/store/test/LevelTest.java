@@ -18,11 +18,10 @@ public class LevelTest {
 
     public static void main(String[] args) {
         try {
-            
-            Map map  = new HashMap<>();
+            Map map = new HashMap<>();
             LevelTest test = new LevelTest();
-            //            test.add();
-            test.read();
+            test.add();
+            //            test.read();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

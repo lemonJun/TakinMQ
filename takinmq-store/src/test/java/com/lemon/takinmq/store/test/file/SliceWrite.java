@@ -3,21 +3,24 @@ package com.lemon.takinmq.store.test.file;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.UUID;
+import java.util.Random;
 
 import org.iq80.leveldb.impl.FileChannelLogWriter;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 import org.iq80.leveldb.impl.LogMonitor;
 import org.iq80.leveldb.impl.LogReader;
+import org.iq80.leveldb.impl.LogWriter;
 import org.iq80.leveldb.util.Slice;
 
 public class SliceWrite {
 
+    private static final Random r = new Random();
+
     private static void init() {
         try {
-            FileChannelLogWriter writer = new FileChannelLogWriter(new File("D:/sfile/slice2"), 3);
-            for (int i = 1; i < 30; i++) {
-                Slice s = new Slice(UUID.randomUUID().toString().getBytes());
+            LogWriter writer = new FileChannelLogWriter(new File("D:/sfile/slice2"), 1, false);
+            for (int i = 1; i < 5; i++) {
+                Slice s = new Slice(String.valueOf(i).getBytes());
                 writer.addRecord(s, true);
             }
         } catch (Exception e) {
@@ -29,7 +32,8 @@ public class SliceWrite {
         try {
             LogReader read = new LogReader(new FileInputStream(new File("D:/sfile/slice2")).getChannel(), throwExceptionMonitor(), true, 0);
             for (Slice record = read.readRecord(); record != null; record = read.readRecord()) {
-                System.out.println(read.getLastRecordOffset());
+                //                System.out.println(record.length());
+                //                System.out.println(read.getLastRecordOffset());
                 System.out.println(Iq80DBFactory.asString(record.getBytes()));
             }
             //            System.out.println(Iq80DBFactory.asString(read.readRecord().getBytes()));
@@ -39,8 +43,8 @@ public class SliceWrite {
     }
 
     public static void main(String[] args) {
-        init();
-        //        read();
+        //        init();
+        read();
     }
 
     public static LogMonitor throwExceptionMonitor() {

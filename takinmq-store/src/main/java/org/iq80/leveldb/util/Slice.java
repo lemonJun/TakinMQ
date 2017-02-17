@@ -265,7 +265,7 @@ public final class Slice implements Comparable<Slice> {
         data[index] = (byte) (value);
         data[index + 1] = (byte) (value >>> 8);
     }
-
+    
     /**
      * Sets the specified 32-bit integer at the specified absolute
      * {@code index} in this buffer.

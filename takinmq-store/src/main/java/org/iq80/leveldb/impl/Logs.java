@@ -27,11 +27,11 @@ public final class Logs {
     private Logs() {
     }
 
-    public static LogWriter createLogWriter(File file, long fileNumber) throws IOException {
+    public static LogWriter createLogWriter(File file, long fileNumber, boolean append) throws IOException {
         if (Iq80DBFactory.USE_MMAP) {
             return new MMapLogWriter(file, fileNumber);
         } else {
-            return new FileChannelLogWriter(file, fileNumber);
+            return new FileChannelLogWriter(file, fileNumber, append);
         }
     }
 

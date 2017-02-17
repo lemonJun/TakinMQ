@@ -133,7 +133,7 @@ public class LogReader {
                 return null;
             }
         }
-
+        
         // Record offset of the logical record that we're reading
         long prospectiveRecordOffset = 0;
 

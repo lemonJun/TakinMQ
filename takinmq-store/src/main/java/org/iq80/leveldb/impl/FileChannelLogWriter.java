@@ -42,17 +42,19 @@ public class FileChannelLogWriter implements LogWriter {
     private final AtomicBoolean closed = new AtomicBoolean();
 
     /**
+     * 当前一个block的位移 对一个新的 这个值会是0 
+     * 
      * Current offset in the current block
      */
-    private int blockOffset;
+    private int blockOffset = 0;
 
-    public FileChannelLogWriter(File file, long fileNumber) throws FileNotFoundException {
+    public FileChannelLogWriter(File file, long fileNumber, boolean append) throws FileNotFoundException {
         Preconditions.checkNotNull(file, "file is null");
         Preconditions.checkArgument(fileNumber >= 0, "fileNumber is negative");
 
         this.file = file;
         this.fileNumber = fileNumber;
-        this.fileChannel = new FileOutputStream(file).getChannel();
+        this.fileChannel = new FileOutputStream(file, append).getChannel();
     }
 
     @Override
@@ -112,9 +114,11 @@ public class FileChannelLogWriter implements LogWriter {
             int bytesRemainingInBlock = BLOCK_SIZE - blockOffset;
             Preconditions.checkState(bytesRemainingInBlock >= 0);
 
+            //是否有必要生成一个新的block
             // Switch to a new block if necessary
             if (bytesRemainingInBlock < HEADER_SIZE) {
                 if (bytesRemainingInBlock > 0) {
+                    //填充成一个完整的block
                     // Fill the rest of the block with zeros
                     // todo lame... need a better way to write zeros
                     fileChannel.write(ByteBuffer.allocate(bytesRemainingInBlock));
@@ -141,13 +145,13 @@ public class FileChannelLogWriter implements LogWriter {
 
             // determine block type
             LogChunkType type;
-            if (begin && end) {
+            if (begin && end) {//剩余空间不够这次写入了  说明已经满了
                 type = LogChunkType.FULL;
-            } else if (begin) {
+            } else if (begin) {//说明是block的开始
                 type = LogChunkType.FIRST;
-            } else if (end) {
+            } else if (end) {//说明是block的最后
                 type = LogChunkType.LAST;
-            } else {
+            } else {//说明在block中间
                 type = LogChunkType.MIDDLE;
             }
 
@@ -170,6 +174,7 @@ public class FileChannelLogWriter implements LogWriter {
         // create header
         Slice header = newLogRecordHeader(type, slice, slice.length());
 
+        //先写入头部  再写入数据
         // write the header and the payload
         header.getBytes(0, fileChannel, header.length());
         slice.getBytes(0, fileChannel, slice.length());
@@ -177,6 +182,13 @@ public class FileChannelLogWriter implements LogWriter {
         blockOffset += HEADER_SIZE + slice.length();
     }
 
+    /**
+     * 根据记录的类型 和 记录本身，生成头部信息
+     * @param type
+     * @param slice
+     * @param length
+     * @return
+     */
     private Slice newLogRecordHeader(LogChunkType type, Slice slice, int length) {
         int crc = Logs.getChunkChecksum(type.getPersistentId(), slice.getRawArray(), slice.getRawOffset(), length);
 

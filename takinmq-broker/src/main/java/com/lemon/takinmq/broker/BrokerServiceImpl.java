@@ -9,13 +9,18 @@ import org.slf4j.LoggerFactory;
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.PutMessageStatus;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
-import com.lemon.takinmq.common.datainfo.TopicConfigSerializeWrapper;
 import com.lemon.takinmq.common.message.MessageAccessor;
 import com.lemon.takinmq.common.message.MessageDecoder;
-import com.lemon.takinmq.common.naming.RegisterBrokerResult;
 import com.lemon.takinmq.common.service.IBrokerService;
 import com.lemon.takinmq.store.MessageExtBrokerInner;
 
+/**
+ * 
+ *
+ * @author WangYazhou
+ * @date  2017年2月18日 下午6:36:56
+ * @see
+ */
 public class BrokerServiceImpl implements IBrokerService {
 
     private static final Logger logger = LoggerFactory.getLogger(BrokerServiceImpl.class);
@@ -26,11 +31,6 @@ public class BrokerServiceImpl implements IBrokerService {
     public BrokerServiceImpl(BrokerStartUp brokerStartup) {
         this.brokerStartup = brokerStartup;
         this.storeHost = new InetSocketAddress(brokerStartup.getBrokerConfig().getBrokerIP1(), brokerStartup.getNettyServerConfig().getListenPort());
-    }
-
-    @Override
-    public RegisterBrokerResult register(String clustername, String brokeraddress, String brokername, Long brokerId, TopicConfigSerializeWrapper topic) throws Exception {
-        return null;
     }
 
     @Override
@@ -63,6 +63,60 @@ public class BrokerServiceImpl implements IBrokerService {
 
     public SocketAddress getStoreHost() {
         return storeHost;
+    }
+
+    @Override
+    public void consumerSendMsgBack() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void queryMessage(String msgid) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void pullMessage(String topic, boolean needAck) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void getConsumerListByGroup(String group) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void queryConsumerOffset(String topic, String client) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void registerClient(String topic, String client) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void unregisterClient(String topic, String client) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void createTopic(String topic) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void getAllTopicConfig(String topic) throws Exception {
+        // TODO Auto-generated method stub
+
     }
 
 }

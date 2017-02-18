@@ -19,6 +19,7 @@ package com.lemon.takinmq.store;
 import java.util.HashMap;
 import java.util.Set;
 
+import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.heartbeat.SubscriptionData;
 import com.lemon.takinmq.common.message.MessageExt;
 

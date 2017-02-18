@@ -52,6 +52,7 @@ public interface IBrokerService {
      * 查看一个客户端的消费进度
      * @param topic
      * @param client
+     * 
      * @throws Exception
      */
     public abstract void queryConsumerOffset(String topic, String client) throws Exception;

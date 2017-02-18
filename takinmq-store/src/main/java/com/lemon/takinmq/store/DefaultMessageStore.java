@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Stopwatch;
 import com.lemon.takinmq.common.BrokerConfig;
 import com.lemon.takinmq.common.ThreadFactoryImpl;
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
@@ -19,7 +20,7 @@ import com.lemon.takinmq.common.message.MessageExt;
 import com.lemon.takinmq.common.util.SystemClock;
 import com.lemon.takinmq.store.config.BrokerRole;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
-import com.lemon.takinmq.store.index.IndexService;
+import com.lemon.takinmq.store.leveldb.CommitLog;
 
 /**
  * 
@@ -36,7 +37,6 @@ public class DefaultMessageStore implements MessageStore {
 
     //存入的是每一个主题 下的队列ID与消费进度情况
     private final ConcurrentHashMap<String, ConcurrentHashMap<Integer, ConsumeQueue>> consumeMap = new ConcurrentHashMap<>();
-    private final IndexService indexService;
 
     private final RunningFlags runningFlags = new RunningFlags();
     private final SystemClock systemClock = SystemClock.instance();
@@ -47,10 +47,12 @@ public class DefaultMessageStore implements MessageStore {
     private volatile boolean shutdown = true;
     private AtomicLong printTimes = new AtomicLong(0);
 
+    private final CommitLog msgQueue;
+
     public DefaultMessageStore(final MessageStoreConfig messageStoreConfig, final BrokerConfig brokerConfig) {
         this.messageStoreConfig = messageStoreConfig;
-        this.indexService = new IndexService();
         this.brokerConfig = brokerConfig;
+        this.msgQueue = new CommitLog(this);
     }
 
     @Override
@@ -75,49 +77,53 @@ public class DefaultMessageStore implements MessageStore {
 
     @Override
     public PutMessageResult putMessage(MessageExtBrokerInner msg) {
-        if (this.shutdown) {//停了  就不接受消息了 
-            logger.warn("message store has shutdown, so putMessage is forbidden");
-            return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE);
-        }
-
-        //如果是从   则不接受写消息  ？   这样怎么样做到数据HA的
-        if (BrokerRole.SLAVE == this.messageStoreConfig.getBrokerRole()) {
-            long value = this.printTimes.getAndIncrement();
-            if ((value % 50000) == 0) {
-                logger.warn("message store is slave mode, so putMessage is forbidden ");
-            }
-            return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE);
-        }
-
-        if (!this.runningFlags.isWriteable()) {
-            long value = this.printTimes.getAndIncrement();
-            if ((value % 50000) == 0) {
-                logger.warn("message store is not writeable, so putMessage is forbidden " + this.runningFlags.getFlagBits());
+        try {
+            Stopwatch watch = Stopwatch.createUnstarted();
+            if (this.shutdown) {//停了  就不接受消息了 
+                logger.warn("message store has shutdown, so putMessage is forbidden");
+                return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE);
             }
 
-            return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE);
-        } else {
-            this.printTimes.set(0);
+            //如果是从   则不接受写消息  ？   这样怎么样做到数据HA的
+            if (BrokerRole.SLAVE == this.messageStoreConfig.getBrokerRole()) {
+                long value = this.printTimes.getAndIncrement();
+                if ((value % 50000) == 0) {
+                    logger.warn("message store is slave mode, so putMessage is forbidden ");
+                }
+                return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE);
+            }
+
+            if (!this.runningFlags.isWriteable()) {
+                long value = this.printTimes.getAndIncrement();
+                if ((value % 50000) == 0) {
+                    logger.warn("message store is not writeable, so putMessage is forbidden " + this.runningFlags.getFlagBits());
+                }
+
+                return new PutMessageResult(PutMessageStatus.SERVICE_NOT_AVAILABLE);
+            } else {
+                this.printTimes.set(0);
+            }
+
+            if (msg.getTopic().length() > Byte.MAX_VALUE) {
+                logger.warn("putMessage message topic length too long " + msg.getTopic().length());
+                return new PutMessageResult(PutMessageStatus.MESSAGE_ILLEGAL);
+            }
+
+            if (msg.getPropertiesString() != null && msg.getPropertiesString().length() > Short.MAX_VALUE) {
+                logger.warn("putMessage message properties length too long " + msg.getPropertiesString().length());
+                return new PutMessageResult(PutMessageStatus.PROPERTIES_SIZE_EXCEEDED);
+            }
+            watch.start();
+            //        if (this.isOSPageCacheBusy()) {
+            //            return new PutMessageResult(PutMessageStatus.OS_PAGECACHE_BUSY);
+            //        }
+            PutMessageResult result = msgQueue.putMessage(msg);
+            watch.stop();
+            return result;
+        } catch (Exception e) {
+            logger.error("put msg error", e);
         }
-
-        if (msg.getTopic().length() > Byte.MAX_VALUE) {
-            logger.warn("putMessage message topic length too long " + msg.getTopic().length());
-            return new PutMessageResult(PutMessageStatus.MESSAGE_ILLEGAL);
-        }
-
-        if (msg.getPropertiesString() != null && msg.getPropertiesString().length() > Short.MAX_VALUE) {
-            logger.warn("putMessage message properties length too long " + msg.getPropertiesString().length());
-            return new PutMessageResult(PutMessageStatus.PROPERTIES_SIZE_EXCEEDED);
-        }
-
-        if (this.isOSPageCacheBusy()) {
-            return new PutMessageResult(PutMessageStatus.OS_PAGECACHE_BUSY);
-        }
-
-        long beginTime = this.getSystemClock().now();
-
-        long eclipseTime = this.getSystemClock().now() - beginTime;
-        return null;
+        return new PutMessageResult(PutMessageStatus.UNKNOWN_ERROR);
     }
 
     public SystemClock getSystemClock() {

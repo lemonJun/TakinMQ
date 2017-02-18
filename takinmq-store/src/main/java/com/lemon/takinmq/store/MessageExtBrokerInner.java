@@ -32,7 +32,7 @@ public class MessageExtBrokerInner extends MessageExt {
     public static long tagsString2tagsCode(final TopicFilterType filter, final String tags) {
         if (null == tags || tags.length() == 0)
             return 0;
-
+        
         return tags.hashCode();
     }
 

@@ -366,7 +366,10 @@ public class BrokerStartUp implements ImoduleService {
         logger.info("slave fall behind master, how much, {} bytes", diff);
     }
 
-    //注册broker特有的nettyhandler类
+    /**
+     * 注册broker特有的nettyhandler类
+     * 虽然没用到  但可以先留着
+     */
     private void registerProcessor() {
 
     }

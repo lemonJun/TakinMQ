@@ -3,6 +3,7 @@ package com.lemon.takinmq.broker.process;
 import com.lemon.takinmq.broker.BrokerStartUp;
 
 /**
+ * 这个对应的应该是一个接口类
  * 拉消息请求处理
  *
  * @author WangYazhou

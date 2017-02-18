@@ -77,7 +77,7 @@ public final class Filename {
     public static String currentFileName() {
         return "CURRENT";
     }
-
+    
     /**
      * 锁文件的名称
      * Return the name of the lock file.
@@ -189,7 +189,7 @@ public final class Filename {
         Preconditions.checkNotNull(suffix, "suffix is null");
         return String.format("%06d.%s", number, suffix);
     }
-
+    
     private static String removePrefix(String value, String prefix) {
         return value.substring(prefix.length());
     }

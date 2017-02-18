@@ -31,7 +31,7 @@ public class MessageExt extends Message {
     private static final long serialVersionUID = 5720810158625748049L;
 
     private int queueId;//队列ID
-
+    
     private int storeSize; //存储记录大小
 
     private long queueOffset; //队列偏移量

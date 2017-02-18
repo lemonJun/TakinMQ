@@ -1,10 +1,10 @@
 package com.lemon.takinmq.store.leveldb;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.io.FileUtils;
 import org.iq80.leveldb.impl.FileChannelLogWriter;
 import org.iq80.leveldb.impl.LogWriter;
 import org.iq80.leveldb.util.Slice;
@@ -24,7 +24,7 @@ import com.lemon.takinmq.store.MessageExtBrokerInner;
  * 
  * @author WangYazhou
  * @date  2017年2月18日 下午12:04:21
- * @see
+ * @see   
  */
 public class CommitLog {
 
@@ -41,33 +41,35 @@ public class CommitLog {
         this.levelStore = new LevelStore();
     }
 
-    private LogWriter makeSureFile(String topic) {
+    private LogWriter makeSureTopic(String topic) {
         LogWriter writer = topicMap.get(topic);
         try {
             if (writer == null) {
                 lock.lock();
-                writer = new FileChannelLogWriter(new File(String.format("D:/takin/%s/queue", topic)), 1, false);
+                String path = String.format("D:/takin/%s", topic);
+                FileUtils.forceMkdir(new File(path));
+                writer = new FileChannelLogWriter(new File(String.format("%s/queue", path, topic)), 1, false);
                 topicMap.put(topic, writer);
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             logger.error("make file error", e);
         } finally {
-            lock.unlock();
+            if (lock.isLocked()) {
+                lock.unlock();
+            }
         }
         return writer;
     }
 
     public PutMessageResult putMessage(final MessageExtBrokerInner msg) throws Exception {
         PutMessageResult result = new PutMessageResult(PutMessageStatus.PUT_OK);
-        LogWriter writer = makeSureFile(msg.getTopic());
+        LogWriter writer = makeSureTopic(msg.getTopic());
         String key = String.valueOf(SnowFlakeUuid.getInstance().nextId());
         Slice record = new Slice(key.getBytes());//写入队列
         writer.addRecord(record, true);//写入消息数据
         levelStore.put(msg, key);
         return result;
     }
-    
-    
-    
 
 }

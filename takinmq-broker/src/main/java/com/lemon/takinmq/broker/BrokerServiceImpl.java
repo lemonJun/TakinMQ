@@ -3,6 +3,11 @@ package com.lemon.takinmq.broker;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.lemon.takinmq.common.datainfo.PutMessageResult;
+import com.lemon.takinmq.common.datainfo.PutMessageStatus;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
 import com.lemon.takinmq.common.datainfo.TopicConfigSerializeWrapper;
 import com.lemon.takinmq.common.message.MessageAccessor;
@@ -10,9 +15,10 @@ import com.lemon.takinmq.common.message.MessageDecoder;
 import com.lemon.takinmq.common.naming.RegisterBrokerResult;
 import com.lemon.takinmq.common.service.IBrokerService;
 import com.lemon.takinmq.store.MessageExtBrokerInner;
-import com.lemon.takinmq.store.PutMessageResult;
 
 public class BrokerServiceImpl implements IBrokerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BrokerServiceImpl.class);
 
     private final BrokerStartUp brokerStartup;
     protected final SocketAddress storeHost;
@@ -28,9 +34,8 @@ public class BrokerServiceImpl implements IBrokerService {
     }
 
     @Override
-    public RegisterBrokerResult sendMessage(String message, SendMessageRequestHeader requestHeader) throws Exception {
+    public PutMessageResult sendMessage(String message, SendMessageRequestHeader requestHeader) throws Exception {
         try {
-
             //组装一个消息实体
             MessageExtBrokerInner msgInner = new MessageExtBrokerInner();
             msgInner.setTopic(requestHeader.getTopic());
@@ -48,10 +53,12 @@ public class BrokerServiceImpl implements IBrokerService {
             msgInner.setReconsumeTimes(requestHeader.getReconsumeTimes() == null ? 0 : requestHeader.getReconsumeTimes());
 
             PutMessageResult putMessageResult = this.brokerStartup.getMessageStore().putMessage(msgInner);
-
+            return putMessageResult;
         } catch (Exception e) {
+            logger.error("put message error", e);
         }
-        return null;
+        return new PutMessageResult(PutMessageStatus.UNKNOWN_ERROR);
+
     }
 
     public SocketAddress getStoreHost() {

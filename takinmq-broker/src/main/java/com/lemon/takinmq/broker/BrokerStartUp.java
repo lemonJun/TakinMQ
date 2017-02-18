@@ -45,7 +45,6 @@ import com.lemon.takinmq.store.DefaultMessageStore;
 import com.lemon.takinmq.store.MessageStore;
 import com.lemon.takinmq.store.config.BrokerRole;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
-import com.lemon.takinmq.store.stat.BrokerStats;
 import com.lemon.takinmq.store.stat.BrokerStatsManager;
 
 /**
@@ -99,7 +98,6 @@ public class BrokerStartUp implements ImoduleService {
     //定时任务
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("BrokerControllerScheduledThread"));
     //
-    private BrokerStats brokerStats;
     private boolean updateMasterHAServerAddrPeriodically = false;
 
     //初始化对象
@@ -146,7 +144,6 @@ public class BrokerStartUp implements ImoduleService {
         if (result) {
             //创建消息持久化服务
             this.messageStore = new DefaultMessageStore(messageStoreConfig, brokerConfig);//底层存储实现改成leveldb的话  
-            this.brokerStats = new BrokerStats((DefaultMessageStore) messageStore);
         }
         result = result & this.messageStore.load();//重启时 加载数据
         if (result) {
@@ -165,10 +162,6 @@ public class BrokerStartUp implements ImoduleService {
 
     }
 
-    public BrokerStats getBrokerStats() {
-        return brokerStats;
-    }
-
     @Override
     public void start() throws Exception {
         this.brokerOuterAPI.start();
@@ -178,16 +171,16 @@ public class BrokerStartUp implements ImoduleService {
     private void scheduler() {
         final long initialDelay = UtilAll.computNextMorningTimeMillis() - System.currentTimeMillis();
         final long period = 1000 * 60 * 60 * 24;
-        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    BrokerStartUp.this.getBrokerStats().record();
-                } catch (Throwable e) {
-                    logger.error("schedule record error.", e);
-                }
-            }
-        }, initialDelay, period, TimeUnit.MILLISECONDS);
+        //        this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+        //            @Override
+        //            public void run() {
+        //                try {
+        //                    BrokerStartUp.this.getBrokerStats().record();
+        //                } catch (Throwable e) {
+        //                    logger.error("schedule record error.", e);
+        //                }
+        //            }
+        //        }, initialDelay, period, TimeUnit.MILLISECONDS);
 
         //周期记录消费进度
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {

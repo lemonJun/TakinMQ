@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.iq80.leveldb.impl.FileChannelLogWriter;
 import org.iq80.leveldb.impl.Iq80DBFactory;
@@ -16,10 +17,12 @@ public class SliceWrite {
 
     private static final Random r = new Random();
 
+    private static final AtomicLong readcnt = new AtomicLong(0);
+
     private static void init() {
         try {
             LogWriter writer = new FileChannelLogWriter(new File("D:/sfile/slice2"), 1, false);
-            for (int i = 1; i < 5; i++) {
+            for (int i = 1; i < 3100; i++) {
                 Slice s = new Slice(String.valueOf(i).getBytes());
                 writer.addRecord(s, true);
             }
@@ -30,10 +33,9 @@ public class SliceWrite {
 
     private static void read() {
         try {
-            LogReader read = new LogReader(new FileInputStream(new File("D:/sfile/slice2")).getChannel(), throwExceptionMonitor(), true, 0);
+            LogReader read = new LogReader(new FileInputStream(new File("D:/sfile/slice2")).getChannel(), throwExceptionMonitor(), true, 32790);
             for (Slice record = read.readRecord(); record != null; record = read.readRecord()) {
-                //                System.out.println(record.length());
-                //                System.out.println(read.getLastRecordOffset());
+                System.out.println("->" + readcnt.addAndGet(record.length() + 7));
                 System.out.println(Iq80DBFactory.asString(record.getBytes()));
             }
             //            System.out.println(Iq80DBFactory.asString(read.readRecord().getBytes()));

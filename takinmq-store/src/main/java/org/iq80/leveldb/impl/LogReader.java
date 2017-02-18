@@ -25,6 +25,7 @@ import org.iq80.leveldb.util.Slices;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.iq80.leveldb.impl.LogChunkType.BAD_CHUNK;
 import static org.iq80.leveldb.impl.LogChunkType.EOF;
@@ -82,6 +83,9 @@ public class LogReader {
      */
     private Slice currentChunk = Slices.EMPTY_SLICE;
 
+    private final AtomicBoolean skipBlockOnce = new AtomicBoolean(false);
+    private final AtomicBoolean skipOffsetOnce = new AtomicBoolean(false);
+
     public LogReader(FileChannel fileChannel, LogMonitor monitor, boolean verifyChecksums, long initialOffset) {
         this.fileChannel = fileChannel;
         this.monitor = monitor;
@@ -120,7 +124,6 @@ public class LogReader {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -128,12 +131,14 @@ public class LogReader {
         recordScratch.reset();
 
         // advance to the first record, if we haven't already
-        if (lastRecordOffset < initialOffset) {
-            if (!skipToInitialBlock()) {
-                return null;
+        if (skipBlockOnce.compareAndSet(false, true)) {//这一个判断是后加的   如果不加就不能真正的从起始位置开始读了
+            if (lastRecordOffset < initialOffset) {
+                if (!skipToInitialBlock()) {
+                    return null;
+                }
             }
         }
-        
+
         // Record offset of the logical record that we're reading
         long prospectiveRecordOffset = 0;
 
@@ -231,6 +236,11 @@ public class LogReader {
                     return EOF;
                 }
             }
+        }
+        
+        if(skipOffsetOnce.compareAndSet(false, true)){
+            int offsetInBlock = (int) (initialOffset % BLOCK_SIZE);
+            currentBlock.setPosition(offsetInBlock);
         }
 
         // parse header

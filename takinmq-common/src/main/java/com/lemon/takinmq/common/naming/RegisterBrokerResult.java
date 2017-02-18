@@ -28,7 +28,7 @@ public class RegisterBrokerResult {
     private String haServerAddr;
     private String masterAddr;
     private KVTable kvTable;
-
+    
     public String getHaServerAddr() {
         return haServerAddr;
     }

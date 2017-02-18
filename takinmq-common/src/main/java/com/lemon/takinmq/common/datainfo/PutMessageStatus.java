@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.lemon.takinmq.store;
+package com.lemon.takinmq.common.datainfo;
 
 /**
  * @author lemon

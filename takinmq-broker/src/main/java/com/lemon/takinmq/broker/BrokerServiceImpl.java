@@ -70,55 +70,46 @@ public class BrokerServiceImpl implements IBrokerService {
 
     @Override
     public void consumerSendMsgBack() throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void queryMessage(String msgid) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void pullMessage(String topic, boolean needAck) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void getConsumerListByGroup(String group) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void queryConsumerOffset(String topic, String client) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void registerClient(String topic, String client) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void unregisterClient(String topic, String client) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void createTopic(String topic) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void getAllTopicConfig(String topic) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 

@@ -24,7 +24,6 @@ public class ClientMessageHandler extends ChannelHandlerAdapter {
         final ResponseFuture responseFuture = RemotingNettyClient.responseTable.get(message.getOpaque());
 
         if (responseFuture != null) {
-            System.out.println("response is not null");
             responseFuture.putResponse(message);
         }
         RemotingNettyClient.responseTable.remove(message.getOpaque());

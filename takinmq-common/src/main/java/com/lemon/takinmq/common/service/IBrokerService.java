@@ -1,5 +1,6 @@
 package com.lemon.takinmq.common.service;
 
+import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
 import com.lemon.takinmq.common.message.Message;
@@ -11,6 +12,7 @@ import com.lemon.takinmq.common.message.Message;
  * @date  2017年2月18日 下午6:37:05
  * @see
  */
+@ImplementBy(implclass = "com.lemon.takinmq.broker.BrokerServiceImpl")
 public interface IBrokerService {
 
     /**

@@ -114,6 +114,7 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
             synchronized (RemotingInvokeHandler.class) {
                 if (implMap.get(clazz) == null) {
                     try {
+                        //此处需要无参的构造器
                         Object obj = Class.forName(clazz).newInstance();
                         implMap.put(clazz, obj);
                     } catch (Exception e) {

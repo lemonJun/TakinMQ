@@ -57,7 +57,7 @@ public class JDKProxy {
                 message.setMethod(method.getName());
                 message.setArgs(args);
                 message.setmParamsTypes(method.getParameterTypes());
-                String address = "127.0.0.1:6871";//应该从某个地方获取到
+                String address = "127.0.0.1:6876";//应该从某个地方获取到
                 logger.info(String.format("request: %s", JSONObject.toJSONString(message)));
                 RemotingMessage resultMessage = remotingclient.invokeSync(address, message, 2000);
                 //                logger.info(String.format("response: %s", JSONObject.toJSONString(message)));

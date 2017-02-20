@@ -9,7 +9,7 @@ import com.lemon.takinmq.remoting.netty5.NettyServerConfig;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
 
 public class BrokerTest {
-    
+
     public static void main(String[] args) {
         try {
             PropertyConfigurator.configure("D:/log4j.properties");

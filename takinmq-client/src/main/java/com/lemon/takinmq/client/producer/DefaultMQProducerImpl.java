@@ -22,13 +22,13 @@ public class DefaultMQProducerImpl {
     }
 
     public void start() {
-
+        remotingclient.start();
+    }
+    
+    public void shutdown() {
+        remotingclient.shutdown();
     }
 
-    public void shutdown() {
-
-    } 
-    
     public SendResult send(Message msg, long timeout) throws MQClientException, RemotingException, MQBrokerException, InterruptedException, Exception {
         SendMessageRequestHeader header = new SendMessageRequestHeader();
         brokerService.sendMessage(msg, header);

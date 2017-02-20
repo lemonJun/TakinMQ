@@ -53,11 +53,12 @@ public class DefaultMessageStore implements MessageStore {
         this.messageStoreConfig = messageStoreConfig;
         this.brokerConfig = brokerConfig;
         this.msgQueue = new CommitLog(this);
+        logger.info("default message store init succ");
     }
 
     @Override
     public boolean load() {
-        return false;
+        return true;
     }
 
     @Override

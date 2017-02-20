@@ -8,7 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.lemon.takinmq.common.util.SystemClock;
 import com.lemon.takinmq.remoting.codec.KyroMsgDecoder;
@@ -25,7 +26,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class RemotingNettyServer {
 
-    private static final Logger logger = Logger.getLogger(RemotingNettyServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(RemotingNettyServer.class);
 
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup;
@@ -60,7 +61,7 @@ public class RemotingNettyServer {
             }
         });
 
-        this.bootstrap.bind(6871).sync();
+        this.bootstrap.bind().sync();
         logger.info("server started on port:" + serverconfig.getListenPort());
         respScheduler.scheduleAtFixedRate(new Runnable() {
             @Override

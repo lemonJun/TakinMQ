@@ -145,6 +145,7 @@ public class BrokerStartUp implements ImoduleService {
             //创建消息持久化服务
             this.messageStore = new DefaultMessageStore(messageStoreConfig, brokerConfig);//底层存储实现改成leveldb的话  
         }
+
         result = result & this.messageStore.load();//重启时 加载数据
         if (result) {
             this.remotingServer = new RemotingNettyServer(this.nettyServerConfig);
@@ -164,8 +165,9 @@ public class BrokerStartUp implements ImoduleService {
 
     @Override
     public void start() throws Exception {
+        this.remotingServer.start();
         this.brokerOuterAPI.start();
-        this.registerBrokerAll(false, false);
+        //        this.registerBrokerAll(false, false);
     }
 
     private void scheduler() {

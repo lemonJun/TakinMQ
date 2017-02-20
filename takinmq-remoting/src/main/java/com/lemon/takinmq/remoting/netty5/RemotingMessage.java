@@ -15,9 +15,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public final class RemotingMessage implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     private static AtomicLong RequestId = new AtomicLong(1);

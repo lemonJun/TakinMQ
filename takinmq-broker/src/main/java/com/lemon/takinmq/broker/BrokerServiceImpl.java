@@ -6,6 +6,7 @@ import java.net.SocketAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.PutMessageStatus;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
@@ -37,6 +38,7 @@ public class BrokerServiceImpl implements IBrokerService {
     @Override
     public PutMessageResult sendMessage(Message message, SendMessageRequestHeader requestHeader) throws Exception {
         try {
+            logger.info("send msg" + JSON.toJSONString(message));
             //组装一个消息实体
             MessageExtBrokerInner msgInner = new MessageExtBrokerInner();
             msgInner.setTopic(requestHeader.getTopic());

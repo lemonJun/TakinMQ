@@ -44,7 +44,7 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
             String methodName = msg.getMethod();
             Object[] args = msg.getArgs();
             Class<?>[] mParamsType = msg.getmParamsTypes();
-            logger.info(String.format("invoke class:%s method:%s params:%s", clazzName, methodName, Joiner.on(",").join(args)));
+            logger.info(String.format("invoke class:%s method:%s params:%s", clazzName, methodName, args != null ? Joiner.on(",").join(args) : ""));
             Class<?> mc[] = null;
             if (args != null) {//存在
                 mc = new Class[args.length];

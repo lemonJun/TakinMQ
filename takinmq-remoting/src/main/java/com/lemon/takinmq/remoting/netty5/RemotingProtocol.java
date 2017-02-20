@@ -13,9 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see 
  * @since
  */
-public final class RemotingProtocol implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public final class RemotingProtocol {
 
     private static AtomicLong RequestId = new AtomicLong(1);
     private String clazz;

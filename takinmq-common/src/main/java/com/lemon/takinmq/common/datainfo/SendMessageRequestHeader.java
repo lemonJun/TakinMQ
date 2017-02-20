@@ -32,7 +32,7 @@ public class SendMessageRequestHeader {
 
     private int defaultTopicQueueNums;
 
-    private Integer queueId;
+    private int queueId;
 
     private int sysFlag;
 
@@ -82,11 +82,11 @@ public class SendMessageRequestHeader {
         this.defaultTopicQueueNums = defaultTopicQueueNums;
     }
 
-    public Integer getQueueId() {
+    public int getQueueId() {
         return queueId;
     }
 
-    public void setQueueId(Integer queueId) {
+    public void setQueueId(int queueId) {
         this.queueId = queueId;
     }
 

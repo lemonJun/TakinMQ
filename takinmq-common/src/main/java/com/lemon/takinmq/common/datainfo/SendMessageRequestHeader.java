@@ -30,22 +30,22 @@ public class SendMessageRequestHeader {
 
     private String defaultTopic;
 
-    private Integer defaultTopicQueueNums;
+    private int defaultTopicQueueNums;
 
     private Integer queueId;
 
-    private Integer sysFlag;
+    private int sysFlag;
 
-    private Long bornTimestamp;
+    private long bornTimestamp;
 
-    private Integer flag;
+    private int flag;
 
     private String properties;
 
-    private Integer reconsumeTimes;
+    private int reconsumeTimes;
 
     private boolean unitMode = false;
-    private Integer maxReconsumeTimes;
+    private int maxReconsumeTimes;
 
     public void checkFields() {
     }
@@ -74,11 +74,11 @@ public class SendMessageRequestHeader {
         this.defaultTopic = defaultTopic;
     }
 
-    public Integer getDefaultTopicQueueNums() {
+    public int getDefaultTopicQueueNums() {
         return defaultTopicQueueNums;
     }
 
-    public void setDefaultTopicQueueNums(Integer defaultTopicQueueNums) {
+    public void setDefaultTopicQueueNums(int defaultTopicQueueNums) {
         this.defaultTopicQueueNums = defaultTopicQueueNums;
     }
 
@@ -90,27 +90,27 @@ public class SendMessageRequestHeader {
         this.queueId = queueId;
     }
 
-    public Integer getSysFlag() {
+    public int getSysFlag() {
         return sysFlag;
     }
 
-    public void setSysFlag(Integer sysFlag) {
+    public void setSysFlag(int sysFlag) {
         this.sysFlag = sysFlag;
     }
 
-    public Long getBornTimestamp() {
+    public long getBornTimestamp() {
         return bornTimestamp;
     }
 
-    public void setBornTimestamp(Long bornTimestamp) {
+    public void setBornTimestamp(long bornTimestamp) {
         this.bornTimestamp = bornTimestamp;
     }
 
-    public Integer getFlag() {
+    public int getFlag() {
         return flag;
     }
 
-    public void setFlag(Integer flag) {
+    public void setFlag(int flag) {
         this.flag = flag;
     }
 
@@ -122,11 +122,11 @@ public class SendMessageRequestHeader {
         this.properties = properties;
     }
 
-    public Integer getReconsumeTimes() {
+    public int getReconsumeTimes() {
         return reconsumeTimes;
     }
 
-    public void setReconsumeTimes(Integer reconsumeTimes) {
+    public void setReconsumeTimes(int reconsumeTimes) {
         this.reconsumeTimes = reconsumeTimes;
     }
 
@@ -134,15 +134,16 @@ public class SendMessageRequestHeader {
         return unitMode;
     }
 
-    public void setUnitMode(boolean isUnitMode) {
-        this.unitMode = isUnitMode;
+    public void setUnitMode(boolean unitMode) {
+        this.unitMode = unitMode;
     }
 
-    public Integer getMaxReconsumeTimes() {
+    public int getMaxReconsumeTimes() {
         return maxReconsumeTimes;
     }
 
-    public void setMaxReconsumeTimes(final Integer maxReconsumeTimes) {
+    public void setMaxReconsumeTimes(int maxReconsumeTimes) {
         this.maxReconsumeTimes = maxReconsumeTimes;
     }
+
 }

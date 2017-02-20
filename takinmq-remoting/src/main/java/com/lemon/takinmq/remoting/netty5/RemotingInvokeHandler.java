@@ -35,7 +35,7 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     //设置环境变量
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
-        RemotingMessage msg = (RemotingMessage) obj;
+        RemotingProtocol msg = (RemotingProtocol) obj;
         try {
             logger.info("REQUEST: " + JSON.toJSONString(msg));
             RemotingContext context = new RemotingContext(ctx);
@@ -60,9 +60,9 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
                     ImplementBy impl = (ImplementBy) clazz.getAnnotation(ImplementBy.class);
                     Object target = getOjbectFromClass(impl.implclass());
                     Method[] methods = target.getClass().getDeclaredMethods();
-                    for (Method m : methods) {
-                        logger.info(m.toString());
-                    }
+                    //                    for (Method m : methods) {
+                    //                        logger.info(m.toString());
+                    //                    }
                     Method method = getMethod(target, methodName, mParamsType, mc);
                     if (method != null) {
                         method.setAccessible(true);

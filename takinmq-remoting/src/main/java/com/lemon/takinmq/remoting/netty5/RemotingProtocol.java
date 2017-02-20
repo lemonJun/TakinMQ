@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see 
  * @since
  */
-public final class RemotingMessage implements Serializable {
+public final class RemotingProtocol implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

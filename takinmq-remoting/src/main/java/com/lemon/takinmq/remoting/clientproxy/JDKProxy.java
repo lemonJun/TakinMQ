@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lemon.takinmq.common.util.SerializeUtil;
-import com.lemon.takinmq.remoting.netty5.RemotingMessage;
+import com.lemon.takinmq.remoting.netty5.RemotingProtocol;
 import com.lemon.takinmq.remoting.netty5.RemotingNettyClient;
 import com.lemon.takinmq.remoting.util.GenericsUtils;
 
@@ -52,14 +52,14 @@ public class JDKProxy {
         Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] { clazz }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                RemotingMessage message = new RemotingMessage();
+                RemotingProtocol message = new RemotingProtocol();
                 message.setClazz(clazz.getName());
                 message.setMethod(method.getName());
                 message.setArgs(args);
                 message.setmParamsTypes(method.getParameterTypes());
                 String address = "127.0.0.1:6876";//应该从某个地方获取到
                 logger.info(String.format("request: %s", JSONObject.toJSONString(message)));
-                RemotingMessage resultMessage = remotingclient.invokeSync(address, message, 2000);
+                RemotingProtocol resultMessage = remotingclient.invokeSync(address, message, 2000);
                 //                logger.info(String.format("response: %s", JSONObject.toJSONString(message)));
                 return SerializeUtil.jsonDeserialize(resultMessage.getResultJson());
             }

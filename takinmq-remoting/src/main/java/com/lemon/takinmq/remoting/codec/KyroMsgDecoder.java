@@ -7,7 +7,7 @@ import java.util.List;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
-import com.lemon.takinmq.remoting.netty5.RemotingMessage;
+import com.lemon.takinmq.remoting.netty5.RemotingProtocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,11 +37,11 @@ public class KyroMsgDecoder extends ByteToMessageDecoder {
 
         byte[] body = new byte[dataLength]; //传输正常
         in.readBytes(body);
-        RemotingMessage o = convertToObject(body); //将byte数据转化为我们需要的对象
+        RemotingProtocol o = convertToObject(body); //将byte数据转化为我们需要的对象
         out.add(o);
     }
 
-    private RemotingMessage convertToObject(byte[] body) {
+    private RemotingProtocol convertToObject(byte[] body) {
 
         Input input = null;
         ByteArrayInputStream bais = null;
@@ -49,7 +49,7 @@ public class KyroMsgDecoder extends ByteToMessageDecoder {
             bais = new ByteArrayInputStream(body);
             input = new Input(bais);
 
-            return kryo.readObject(input, RemotingMessage.class);
+            return kryo.readObject(input, RemotingProtocol.class);
         } catch (KryoException e) {
             e.printStackTrace();
         } finally {

@@ -8,7 +8,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.log4j.Logger;
 
 import com.lemon.takinmq.remoting.netty5.MessageType;
-import com.lemon.takinmq.remoting.netty5.RemotingMessage;
+import com.lemon.takinmq.remoting.netty5.RemotingProtocol;
 
 /**
  * 检测空闲连接
@@ -33,7 +33,7 @@ public class CustomIdleHandler extends ChannelHandlerAdapter {
                 logger.info(String.format("Channed Read Idle ,id=%s", ctx.channel().id()));
                 ctx.close();
             } else if (e.state() == IdleState.WRITER_IDLE) {
-                RemotingMessage msg = new RemotingMessage();
+                RemotingProtocol msg = new RemotingProtocol();
                 msg.setTimestamp(System.currentTimeMillis());
                 msg.setType(MessageType.HEARTBEAT_RES.value());
                 msg.setResultJson(String.format("Channed Write Idle ,id=%s", ctx.channel().id()));

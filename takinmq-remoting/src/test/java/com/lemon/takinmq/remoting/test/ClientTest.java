@@ -6,7 +6,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import com.lemon.takinmq.remoting.netty5.RemotingNettyClient;
 import com.lemon.takinmq.remoting.netty5.NettyClientConfig;
-import com.lemon.takinmq.remoting.netty5.RemotingMessage;
+import com.lemon.takinmq.remoting.netty5.RemotingProtocol;
 
 public class ClientTest {
 
@@ -17,7 +17,7 @@ public class ClientTest {
             NettyClientConfig config = new NettyClientConfig();
             RemotingNettyClient client = new RemotingNettyClient(config);
             client.start();
-            RemotingMessage msg = new RemotingMessage();
+            RemotingProtocol msg = new RemotingProtocol();
             for (int i = 0; i < 1; i++) {
                 client.invokeSync("127.0.0.1:6871", msg, 3000);
                 TimeUnit.SECONDS.sleep(1);

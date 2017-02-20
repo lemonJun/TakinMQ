@@ -18,7 +18,7 @@ public class ClientMessageHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        RemotingMessage message = (RemotingMessage) msg;
+        RemotingProtocol message = (RemotingProtocol) msg;
         logger.info(message.getResultJson());
 
         final ResponseFuture responseFuture = RemotingNettyClient.responseTable.get(message.getOpaque());

@@ -27,6 +27,10 @@ public class PutMessageResult {
     private String msgId;
     private long storeTimestamp;
 
+    public PutMessageResult() {
+        
+    }
+
     public PutMessageResult(PutMessageStatus putMessageStatus) {
         this.putMessageStatus = putMessageStatus;
     }

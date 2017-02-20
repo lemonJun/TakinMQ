@@ -163,12 +163,12 @@ public class RemotingNettyClient extends RemotingAbstract {
      * @return 
      * @throws Exception
      */
-    public RemotingMessage invokeSync(String address, final RemotingMessage message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
+    public RemotingProtocol invokeSync(String address, final RemotingProtocol message, int timeout) throws Exception, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException {
         final Channel channel = this.createChannel(address);
         long start = System.currentTimeMillis();
         if (channel != null && channel.isActive()) {
             try {
-                RemotingMessage result = invokeSyncImpl(channel, message, timeout);
+                RemotingProtocol result = invokeSyncImpl(channel, message, timeout);
                 long end = System.currentTimeMillis();
                 logger.info(String.format("invoke address:%s , use time:%dms", address, (end - start)));
                 return result;

@@ -49,7 +49,7 @@ public class BrokerServiceImpl implements IBrokerService {
             msgInner.setBornTimestamp(requestHeader.getBornTimestamp());
             //            msgInner.setBornHost();
             msgInner.setStoreHost(this.getStoreHost());
-            msgInner.setReconsumeTimes(requestHeader.getReconsumeTimes() == null ? 0 : requestHeader.getReconsumeTimes());
+            msgInner.setReconsumeTimes(requestHeader.getReconsumeTimes());
 
             PutMessageResult putMessageResult = MessageStoreFactory.getInstance().getMessageStore().putMessage(msgInner);
             return putMessageResult;

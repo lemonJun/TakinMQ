@@ -3,7 +3,7 @@ package com.lemon.takinmq.remoting.codec;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
-import com.lemon.takinmq.remoting.netty5.RemotingMessage;
+import com.lemon.takinmq.remoting.netty5.RemotingProtocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,7 +30,7 @@ public class JsonDecode extends ByteToMessageDecoder {
 
         byte[] body = new byte[dataLength]; //传输正常
         in.readBytes(body);
-        RemotingMessage o = JSON.parseObject(body.toString(), RemotingMessage.class); //将byte数据转化为我们需要的对象
+        RemotingProtocol o = JSON.parseObject(body.toString(), RemotingProtocol.class); //将byte数据转化为我们需要的对象
         out.add(o);
     }
 

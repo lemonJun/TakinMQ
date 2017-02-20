@@ -35,7 +35,6 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
     //设置环境变量
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
-        logger.info("receive request");
         RemotingMessage msg = (RemotingMessage) obj;
         try {
             logger.info("REQUEST: " + JSON.toJSONString(msg));

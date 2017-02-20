@@ -24,7 +24,7 @@ public class DefaultMQProducerImpl {
     public void start() {
         remotingclient.start();
     }
-    
+
     public void shutdown() {
         remotingclient.shutdown();
     }

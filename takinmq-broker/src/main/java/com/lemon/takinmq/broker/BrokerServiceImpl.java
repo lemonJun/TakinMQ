@@ -38,7 +38,7 @@ public class BrokerServiceImpl implements IBrokerService {
     @Override
     public PutMessageResult sendMessage(Message message, SendMessageRequestHeader requestHeader) throws Exception {
         try {
-            logger.info("send msg" + JSON.toJSONString(message));
+            logger.info("receive" + JSON.toJSONString(message));
             //组装一个消息实体
             MessageExtBrokerInner msgInner = new MessageExtBrokerInner();
             msgInner.setTopic(requestHeader.getTopic());

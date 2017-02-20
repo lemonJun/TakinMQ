@@ -65,12 +65,10 @@ public abstract class RemotingAbstract {
                     if (f.isSuccess()) {
                         //                    if (f.isDone()) {
                         responseFuture.setSendRequestOK(true);
-                        logger.info("channel future is succ");
                         return;
                     } else {
                         responseFuture.setSendRequestOK(false);
                     }
-                    logger.info("channel future is false");
                     //无结果 返回原因
                     responseTable.remove(message.getOpaque());
                     responseFuture.setCause(f.cause());

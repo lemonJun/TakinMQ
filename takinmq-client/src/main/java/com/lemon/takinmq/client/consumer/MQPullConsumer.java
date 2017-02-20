@@ -4,6 +4,8 @@ import java.util.Set;
 
 import com.lemon.takinmq.common.message.MessageExt;
 import com.lemon.takinmq.common.message.MessageQueue;
+import com.lemon.takinmq.common.message.PullCallback;
+import com.lemon.takinmq.common.message.PullResult;
 import com.lemon.takinmq.remoting.exception.MQBrokerException;
 import com.lemon.takinmq.remoting.exception.MQClientException;
 import com.lemon.takinmq.remoting.exception.RemotingException;

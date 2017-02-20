@@ -4,6 +4,8 @@ import com.lemon.takinmq.common.anno.ImplementBy;
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
 import com.lemon.takinmq.common.message.Message;
+import com.lemon.takinmq.common.message.PullMessageRequestHeader;
+import com.lemon.takinmq.common.message.PullResult;
 
 /**
  * broker主要实现的功能
@@ -42,7 +44,7 @@ public interface IBrokerService {
      * @param topic
      * @throws Exception
      */
-    public abstract void pullMessage(String topic, boolean needAck) throws Exception;
+    public abstract PullResult pullMessage(PullMessageRequestHeader pullRequest) throws Exception;
 
     /**
      * 获取一个组下的消费者

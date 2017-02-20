@@ -14,21 +14,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.lemon.takinmq.client.consumer;
+package com.lemon.takinmq.common.message;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.lemon.takinmq.common.message.MessageExt;
 
 /**
  * @author lemon
  */
 public class PullResult {
-    private final PullStatus pullStatus;
-    private final long nextBeginOffset;
-    private final long minOffset;
-    private final long maxOffset;
-    private List<MessageExt> msgFoundList;
+    private PullStatus pullStatus;
+    private long nextBeginOffset;
+    private long minOffset;
+    private long maxOffset;
+    private List<MessageExt> msgFoundList = new ArrayList<MessageExt>();
+
+    public PullResult() {
+
+    }
 
     public PullResult(PullStatus pullStatus, long nextBeginOffset, long minOffset, long maxOffset, List<MessageExt> msgFoundList) {
         super();

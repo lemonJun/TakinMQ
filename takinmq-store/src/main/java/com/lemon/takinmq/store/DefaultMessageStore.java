@@ -15,8 +15,8 @@ import com.lemon.takinmq.common.BrokerConfig;
 import com.lemon.takinmq.common.ThreadFactoryImpl;
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.PutMessageStatus;
-import com.lemon.takinmq.common.heartbeat.SubscriptionData;
 import com.lemon.takinmq.common.message.MessageExt;
+import com.lemon.takinmq.common.message.PullResult;
 import com.lemon.takinmq.common.util.SystemClock;
 import com.lemon.takinmq.store.config.BrokerRole;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
@@ -132,8 +132,8 @@ public class DefaultMessageStore implements MessageStore {
     }
 
     @Override
-    public GetMessageResult getMessage(String group, String topic, int queueId, long offset, int maxMsgNums, SubscriptionData subscriptionData) {
-        return null;
+    public PullResult getMessage(String group, String topic, int queueId, long offset, int maxMsgNums, String subscriptionData) {
+        return this.msgQueue.readMessage(topic);
     }
 
     @Override

@@ -14,15 +14,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.lemon.takinmq.client.consumer;
+package com.lemon.takinmq.common.message;
 
 /**
- * Async message pulling interface
- *
  * @author lemon
  */
-public interface PullCallback {
-    public void onSuccess(final PullResult pullResult);
-
-    public void onException(final Throwable e);
+public enum PullStatus {
+    /**
+     * Founded
+     */
+    FOUND,
+    /**
+     * No new message can be pull
+     */
+    NO_NEW_MSG,
+    /**
+     * Filtering results can not match
+     */
+    NO_MATCHED_MSG,
+    /**
+     * Illegal offset,may be too big or too small
+     */
+    OFFSET_ILLEGAL
 }

@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
-import com.lemon.takinmq.common.heartbeat.SubscriptionData;
 import com.lemon.takinmq.common.message.MessageExt;
+import com.lemon.takinmq.common.message.PullResult;
 
 /**
  * 
@@ -48,7 +48,7 @@ public interface MessageStore {
     PutMessageResult putMessage(final MessageExtBrokerInner msg);
 
     //读取消息，如果types为null，则不做过滤
-    GetMessageResult getMessage(final String group, final String topic, final int queueId, final long offset, final int maxMsgNums, final SubscriptionData subscriptionData);
+    PullResult getMessage(final String group, final String topic, final int queueId, final long offset, final int maxMsgNums, final String subscriptionData);
 
     //获取指定队列最大Offset 如果队列不存在，返回-1
     long getMaxOffsetInQuque(final String topic, final int queueId);

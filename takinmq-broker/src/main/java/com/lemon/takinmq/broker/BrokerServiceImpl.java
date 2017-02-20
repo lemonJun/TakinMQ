@@ -12,7 +12,10 @@ import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
 import com.lemon.takinmq.common.message.Message;
 import com.lemon.takinmq.common.message.MessageAccessor;
 import com.lemon.takinmq.common.message.MessageDecoder;
+import com.lemon.takinmq.common.message.PullMessageRequestHeader;
+import com.lemon.takinmq.common.message.PullResult;
 import com.lemon.takinmq.common.service.IBrokerService;
+import com.lemon.takinmq.store.GetMessageResult;
 import com.lemon.takinmq.store.MessageExtBrokerInner;
 import com.lemon.takinmq.store.MessageStoreFactory;
 
@@ -75,8 +78,13 @@ public class BrokerServiceImpl implements IBrokerService {
     }
 
     @Override
-    public void pullMessage(String topic, boolean needAck) throws Exception {
+    public PullResult pullMessage(PullMessageRequestHeader pullRequest) throws Exception {
+        PullResult result = new PullResult();
+        PullResult msgresult = MessageStoreFactory.getInstance().getMessageStore().getMessage(pullRequest.getConsumerGroup(), //
+                        pullRequest.getTopic(), pullRequest.getQueueId(), pullRequest.getQueueOffset(), //
+                        pullRequest.getMaxMsgNums(), pullRequest.getSubscription());
 
+        return result;
     }
 
     @Override

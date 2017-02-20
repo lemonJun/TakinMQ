@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.PutMessageStatus;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
+import com.lemon.takinmq.common.message.Message;
 import com.lemon.takinmq.common.message.MessageAccessor;
 import com.lemon.takinmq.common.message.MessageDecoder;
 import com.lemon.takinmq.common.service.IBrokerService;
@@ -34,12 +35,12 @@ public class BrokerServiceImpl implements IBrokerService {
     }
 
     @Override
-    public PutMessageResult sendMessage(String message, SendMessageRequestHeader requestHeader) throws Exception {
+    public PutMessageResult sendMessage(Message message, SendMessageRequestHeader requestHeader) throws Exception {
         try {
             //组装一个消息实体
             MessageExtBrokerInner msgInner = new MessageExtBrokerInner();
             msgInner.setTopic(requestHeader.getTopic());
-            msgInner.setBody(message.getBytes());
+            msgInner.setBody(message.getBody());
             msgInner.setFlag(requestHeader.getFlag());
             MessageAccessor.setProperties(msgInner, MessageDecoder.string2messageProperties(requestHeader.getProperties()));
             msgInner.setPropertiesString(requestHeader.getProperties());

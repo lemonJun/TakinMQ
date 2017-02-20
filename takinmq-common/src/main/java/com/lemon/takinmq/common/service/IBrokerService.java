@@ -2,6 +2,7 @@ package com.lemon.takinmq.common.service;
 
 import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
+import com.lemon.takinmq.common.message.Message;
 
 /**
  * broker主要实现的功能
@@ -19,7 +20,7 @@ public interface IBrokerService {
      * @return
      * @throws Exception
      */
-    public abstract PutMessageResult sendMessage(String message, SendMessageRequestHeader requestHeader) throws Exception;
+    public abstract PutMessageResult sendMessage(Message message, SendMessageRequestHeader requestHeader) throws Exception;
 
     /**
      * 客户端发送的消息消费确认

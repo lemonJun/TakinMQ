@@ -17,7 +17,7 @@ public interface MQProducer {
 
     public abstract List<MessageQueue> fetchPublishMessageQueues(final String topic) throws MQClientException;
 
-    public abstract SendResult send(final Message msg) throws MQClientException, RemotingException, MQBrokerException, InterruptedException;
+    public abstract SendResult send(final Message msg) throws MQClientException, RemotingException, MQBrokerException, InterruptedException, Exception;
 
     public abstract SendResult send(final Message msg, final long timeout) throws MQClientException, RemotingException, MQBrokerException, InterruptedException;
 

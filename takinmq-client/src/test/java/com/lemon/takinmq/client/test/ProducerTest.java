@@ -2,9 +2,11 @@ package com.lemon.takinmq.client.test;
 
 import org.apache.log4j.PropertyConfigurator;
 
+import com.alibaba.fastjson.JSON;
 import com.lemon.takinmq.client.producer.DefaultMQProducer;
 import com.lemon.takinmq.client.producer.MQProducer;
 import com.lemon.takinmq.common.message.Message;
+import com.lemon.takinmq.common.message.SendResult;
 import com.lemon.takinmq.remoting.netty5.NettyClientConfig;
 
 public class ProducerTest {
@@ -18,8 +20,9 @@ public class ProducerTest {
             producer.start();
             Message msg = new Message();
             msg.setTopic("Test");
-            msg.setBody("haha".getBytes());
-            producer.send(msg);
+            msg.setBody("haha2".getBytes());
+            SendResult result = producer.send(msg);
+            System.out.println(JSON.toJSONString(result));
         } catch (Exception e) {
             e.printStackTrace();
         }

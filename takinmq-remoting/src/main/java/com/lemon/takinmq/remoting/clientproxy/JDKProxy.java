@@ -61,6 +61,7 @@ public class JDKProxy {
                 logger.info(String.format("request: %s", JSONObject.toJSONString(message)));
                 RemotingProtocol resultMessage = remotingclient.invokeSync(address, message, 2000);
                 //                logger.info(String.format("response: %s", JSONObject.toJSONString(message)));
+                System.out.println("return:" + resultMessage.getResultJson());
                 return SerializeUtil.jsonDeserialize(resultMessage.getResultJson());
             }
         });

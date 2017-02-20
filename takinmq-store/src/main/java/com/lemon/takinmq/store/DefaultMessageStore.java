@@ -44,7 +44,7 @@ public class DefaultMessageStore implements MessageStore {
 
     private final BrokerConfig brokerConfig;
 
-    private volatile boolean shutdown = true;
+    private volatile boolean shutdown = false;
     private AtomicLong printTimes = new AtomicLong(0);
 
     private final CommitLog msgQueue;

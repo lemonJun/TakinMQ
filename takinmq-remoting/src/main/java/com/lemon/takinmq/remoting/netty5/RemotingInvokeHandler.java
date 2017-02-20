@@ -71,7 +71,7 @@ public class RemotingInvokeHandler extends ChannelHandlerAdapter {
                             msg.setResultJson(SerializeUtil.jsonSerialize(result));
                         }
                     } else {
-                        msg.setResultJson("no method found");
+                        msg.setResultJson("");
                     }
                 }
             } else {

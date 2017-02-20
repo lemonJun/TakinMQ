@@ -37,7 +37,7 @@ public class BrokerServiceImpl implements IBrokerService {
             logger.info("receive" + JSON.toJSONString(message));
             //组装一个消息实体
             MessageExtBrokerInner msgInner = new MessageExtBrokerInner();
-            msgInner.setTopic(requestHeader.getTopic());
+            msgInner.setTopic(message.getTopic());
             msgInner.setBody(message.getBody());
             msgInner.setFlag(requestHeader.getFlag());
             MessageAccessor.setProperties(msgInner, MessageDecoder.string2messageProperties(requestHeader.getProperties()));

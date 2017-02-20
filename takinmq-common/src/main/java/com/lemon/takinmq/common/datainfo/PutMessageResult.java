@@ -28,8 +28,8 @@ public class PutMessageResult {
     private long storeTimestamp;
 
     public PutMessageResult() {
-        
-    }
+
+    } 
 
     public PutMessageResult(PutMessageStatus putMessageStatus) {
         this.putMessageStatus = putMessageStatus;

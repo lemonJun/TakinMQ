@@ -26,7 +26,7 @@ public class LevelStore {
                 lock.lock();
                 Options options = new Options();
                 options.createIfMissing(true);
-                db = Iq80DBFactory.factory.open(new File(String.format("D:/takin/%s/sore", topic)), options);
+                db = Iq80DBFactory.factory.open(new File(String.format("D:/takin/%s/", topic)), options);
                 dbMap.put(topic, db);
             }
         } catch (Exception e) {

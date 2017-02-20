@@ -1,8 +1,10 @@
 package com.lemon.takinmq.client.producer;
 
+import com.lemon.takinmq.common.datainfo.PutMessageResult;
 import com.lemon.takinmq.common.datainfo.SendMessageRequestHeader;
 import com.lemon.takinmq.common.message.Message;
 import com.lemon.takinmq.common.message.SendResult;
+import com.lemon.takinmq.common.message.SendStatus;
 import com.lemon.takinmq.common.service.IBrokerService;
 import com.lemon.takinmq.remoting.clientproxy.JDKProxy;
 import com.lemon.takinmq.remoting.exception.MQBrokerException;
@@ -31,8 +33,11 @@ public class DefaultMQProducerImpl {
 
     public SendResult send(Message msg, long timeout) throws MQClientException, RemotingException, MQBrokerException, InterruptedException, Exception {
         SendMessageRequestHeader header = new SendMessageRequestHeader();
-        brokerService.sendMessage(msg, header);
-        return null;
+        PutMessageResult putResult = brokerService.sendMessage(msg, header);
+        SendResult result = new SendResult();
+        result.setSendStatus(SendStatus.SEND_OK);
+        result.setMsgId(putResult.getMsgId());
+        return result;
     }
 
 }

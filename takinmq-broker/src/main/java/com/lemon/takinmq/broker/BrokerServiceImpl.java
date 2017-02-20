@@ -1,6 +1,5 @@
 package com.lemon.takinmq.broker;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import com.lemon.takinmq.common.message.MessageAccessor;
 import com.lemon.takinmq.common.message.MessageDecoder;
 import com.lemon.takinmq.common.service.IBrokerService;
 import com.lemon.takinmq.store.MessageExtBrokerInner;
+import com.lemon.takinmq.store.MessageStoreFactory;
 
 /**
  * 
@@ -27,12 +27,8 @@ public class BrokerServiceImpl implements IBrokerService {
 
     private static final Logger logger = LoggerFactory.getLogger(BrokerServiceImpl.class);
 
-    private final BrokerStartUp brokerStartup;
-    protected final SocketAddress storeHost;
-
-    public BrokerServiceImpl(BrokerStartUp brokerStartup) {
-        this.brokerStartup = brokerStartup;
-        this.storeHost = new InetSocketAddress(brokerStartup.getBrokerConfig().getBrokerIP1(), brokerStartup.getNettyServerConfig().getListenPort());
+    public BrokerServiceImpl() {
+        logger.info("brokerservice init succ");
     }
 
     @Override
@@ -55,7 +51,7 @@ public class BrokerServiceImpl implements IBrokerService {
             msgInner.setStoreHost(this.getStoreHost());
             msgInner.setReconsumeTimes(requestHeader.getReconsumeTimes() == null ? 0 : requestHeader.getReconsumeTimes());
 
-            PutMessageResult putMessageResult = this.brokerStartup.getMessageStore().putMessage(msgInner);
+            PutMessageResult putMessageResult = MessageStoreFactory.getInstance().getMessageStore().putMessage(msgInner);
             return putMessageResult;
         } catch (Exception e) {
             logger.error("put message error", e);
@@ -65,7 +61,7 @@ public class BrokerServiceImpl implements IBrokerService {
     }
 
     public SocketAddress getStoreHost() {
-        return storeHost;
+        return null;
     }
 
     @Override

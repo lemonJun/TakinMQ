@@ -43,6 +43,7 @@ import com.lemon.takinmq.remoting.netty5.NettyServerConfig;
 import com.lemon.takinmq.remoting.netty5.RemotingNettyServer;
 import com.lemon.takinmq.store.DefaultMessageStore;
 import com.lemon.takinmq.store.MessageStore;
+import com.lemon.takinmq.store.MessageStoreFactory;
 import com.lemon.takinmq.store.config.BrokerRole;
 import com.lemon.takinmq.store.config.MessageStoreConfig;
 import com.lemon.takinmq.store.stat.BrokerStatsManager;
@@ -143,7 +144,7 @@ public class BrokerStartUp implements ImoduleService {
         }
         if (result) {
             //创建消息持久化服务
-            this.messageStore = new DefaultMessageStore(messageStoreConfig, brokerConfig);//底层存储实现改成leveldb的话  
+            this.messageStore = MessageStoreFactory.getInstance().buildMessageStore(messageStoreConfig, brokerConfig);//底层存储实现改成leveldb的话  
         }
 
         result = result & this.messageStore.load();//重启时 加载数据

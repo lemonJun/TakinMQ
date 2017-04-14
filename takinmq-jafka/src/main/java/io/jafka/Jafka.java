@@ -22,6 +22,8 @@ import io.jafka.producer.ProducerConfig;
 import io.jafka.server.ServerConfig;
 import io.jafka.server.ServerStartable;
 import io.jafka.utils.Utils;
+
+import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +53,7 @@ public class Jafka implements Closeable {
             System.err.println(String.format("ERROR: Main config file not exist => '%s', copy one from 'conf/server.properties.sample' first.", mainFile.getAbsolutePath()));
             System.exit(2);
         }
-        start(Utils.loadProps(mainFileName), //
-                        consumerFile == null ? null : Utils.loadProps(consumerFile), //
-                        producerFile == null ? null : Utils.loadProps(producerFile));
+        start(Utils.loadProps(mainFileName), consumerFile == null ? null : Utils.loadProps(consumerFile), producerFile == null ? null : Utils.loadProps(producerFile));
     }
 
     public void start(Properties mainProperties, Properties consumerProperties, Properties producerProperties) {
@@ -129,8 +129,9 @@ public class Jafka implements Closeable {
         //            System.exit(1);
         //        }
         //
+        PropertyConfigurator.configure("conf/log4j.properties");
         Jafka jafka = new Jafka();
-        jafka.start(args[0], null, null);
+        jafka.start("conf/server.properties", null, null);
         jafka.awaitShutdown();
         jafka.close();
     }

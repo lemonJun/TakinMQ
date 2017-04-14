@@ -87,7 +87,7 @@ public class SocketServer implements Closeable {
         Utils.newThread("jafka-acceptor", acceptor, false).start();
         acceptor.awaitStartup();
     }
-
+    
     public SocketServerStats getStats() {
         return stats;
     }

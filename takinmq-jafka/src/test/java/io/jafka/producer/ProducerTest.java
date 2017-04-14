@@ -37,7 +37,7 @@ public class ProducerTest extends BaseJafkaServer {
     @Test
     public void testSend() {
         Properties mainProperties = new Properties();
-        mainProperties.put("http.port", "9093");
+        mainProperties.put("http.port", "9092");
         Jafka jafka = createJafka(mainProperties);
         Properties producerConfig = new Properties();
         producerConfig.setProperty("broker.list", "0:localhost:" + jafka.getPort());

@@ -17,8 +17,14 @@
 
 package io.jafka.server;
 
-import io.jafka.http.HttpRequestHandler;
-import io.jafka.http.HttpServer;
+import java.io.Closeable;
+import java.io.File;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.jafka.log.LogManager;
 import io.jafka.mx.ServerInfo;
 import io.jafka.mx.SocketServerStats;
@@ -26,13 +32,6 @@ import io.jafka.network.SocketServer;
 import io.jafka.utils.Mx4jLoader;
 import io.jafka.utils.Scheduler;
 import io.jafka.utils.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Closeable;
-import java.io.File;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The main server container
@@ -57,7 +56,7 @@ public class Server implements Closeable {
     final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
 
     private SocketServer socketServer;
-    private HttpServer httpServer;
+    //    private HttpServer httpServer;
 
     private final File logDir;
 
@@ -97,11 +96,11 @@ public class Server implements Closeable {
             socketServer.startup();
             //
             final int httpPort = config.getHttpPort();
-            if (httpPort > 0) {
-                HttpRequestHandler httpRequestHandler = new HttpRequestHandler(logManager);
-                httpServer = new HttpServer(httpPort, httpRequestHandler);
-                httpServer.start();
-            }
+            //            if (httpPort > 0) {
+            //                HttpRequestHandler httpRequestHandler = new HttpRequestHandler(logManager);
+            //                httpServer = new HttpServer(httpPort, httpRequestHandler);
+            //                httpServer.start();
+            //            }
 
             Mx4jLoader.maybeLoad();
             /**
@@ -132,9 +131,9 @@ public class Server implements Closeable {
                 socketServer.close();
                 Utils.unregisterMBean(socketServer.getStats());
             }
-            if (httpServer != null) {
-                httpServer.close();
-            }
+            //            if (httpServer != null) {
+            //                httpServer.close();
+            //            }
             if (logManager != null) {
                 logManager.close();
             }

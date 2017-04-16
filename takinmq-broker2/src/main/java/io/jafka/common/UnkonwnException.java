@@ -15,25 +15,30 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.common;
 
 /**
- * Server information
+ * If we don't know what else it is, call it this
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class UnkonwnException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-    String getVersion();
+    public UnkonwnException() {
+        super();
+    }
 
-    String getStartupTime();
+    public UnkonwnException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    String getStartedTime();
+    public UnkonwnException(String message) {
+        super(message);
+    }
 
-    String getRunningTime();
+    public UnkonwnException(Throwable cause) {
+        super(cause);
+    }
+
 }
-
-
-
-
-

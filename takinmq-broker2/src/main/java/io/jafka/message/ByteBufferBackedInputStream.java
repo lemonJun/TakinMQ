@@ -15,25 +15,38 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.message;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 /**
- * Server information
+ * Convert ByteBuffer to InputStream
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+class ByteBufferBackedInputStream extends InputStream {
 
-    String getVersion();
+    private final ByteBuffer buffer;
 
-    String getStartupTime();
+    public ByteBufferBackedInputStream(ByteBuffer buffer) {
+        this.buffer = buffer;
+    }
 
-    String getStartedTime();
+    @Override
+    public int read() throws IOException {
+        return buffer.hasRemaining() ? (buffer.get() & 0xFF) : -1;
+    }
 
-    String getRunningTime();
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        if (buffer.hasRemaining()) {
+            int realLen = Math.min(len, buffer.remaining());
+            buffer.get(b, off, realLen);
+            return realLen;
+        }
+        return -1;
+    }
+
 }
-
-
-
-
-

@@ -30,8 +30,7 @@ import java.util.zip.GZIPOutputStream;
 public class GZIPCompression extends CompressionFacade {
 
     public GZIPCompression(InputStream inputStream, ByteArrayOutputStream outputStream) throws IOException {
-        super(inputStream != null ? new GZIPInputStream(inputStream) : null, //
-                        outputStream != null ? new GZIPOutputStream(outputStream) : null);
+        super(inputStream != null ? new GZIPInputStream(inputStream) : null, outputStream != null ? new GZIPOutputStream(outputStream) : null);
     }
 
 }

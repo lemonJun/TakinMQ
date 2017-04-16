@@ -15,25 +15,32 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.common;
 
 /**
- * Server information
  * @author adyliu (imxylz@gmail.com)
  * @since 1.1
  */
-public interface ServerInfoMBean {
+public class ErrorMappingException extends RuntimeException {
 
-    String getVersion();
+    private static final long serialVersionUID = 1L;
 
-    String getStartupTime();
+    public ErrorMappingException() {
+    }
 
-    String getStartedTime();
+    public ErrorMappingException(String message) {
+        super(message);
+    }
 
-    String getRunningTime();
+    public ErrorMappingException(Throwable cause) {
+        super(cause);
+    }
+
+    public ErrorMappingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ErrorMapping getErrorMapping() {
+        return ErrorMapping.UnkonwCode;
+    }
 }
-
-
-
-
-

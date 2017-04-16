@@ -15,25 +15,20 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.message;
 
 /**
- * Server information
+ * Indicates the presense of a message that exceeds the maximum acceptable
+ * length (whatever that happens to be)
+ * 
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class MessageLengthException extends RuntimeException {
 
-    String getVersion();
+    private static final long serialVersionUID = 1L;
 
-    String getStartupTime();
-
-    String getStartedTime();
-
-    String getRunningTime();
+    public MessageLengthException(String message) {
+        super(message);
+    }
 }
-
-
-
-
-

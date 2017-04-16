@@ -15,25 +15,28 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.common;
 
 /**
- * Server information
+ * Indicates that the partition id is not between 0 and numPartitions-1
+ * 
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class InvalidPartitionException extends ErrorMappingException {
 
-    String getVersion();
+    private static final long serialVersionUID = 1L;
 
-    String getStartupTime();
+    public InvalidPartitionException() {
+        super();
+    }
 
-    String getStartedTime();
+    public InvalidPartitionException(String message) {
+        super(message);
+    }
 
-    String getRunningTime();
+    @Override
+    public ErrorMapping getErrorMapping() {
+        return ErrorMapping.WrongPartitionCode;
+    }
 }
-
-
-
-
-

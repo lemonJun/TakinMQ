@@ -17,18 +17,22 @@
 
 package io.jafka.utils.zookeeper;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.github.zkclient.ZkClient;
 import com.github.zkclient.exception.ZkNoNodeException;
 import com.github.zkclient.exception.ZkNodeExistsException;
+
 import io.jafka.cluster.Broker;
 import io.jafka.cluster.Cluster;
 import io.jafka.consumer.TopicCount;
 import io.jafka.utils.Utils;
-
-import java.util.*;
-
-import static io.jafka.utils.Utils.fromBytes;
-import static io.jafka.utils.Utils.getBytes;
 
 /**
  * @author adyliu (imxylz@gmail.com)

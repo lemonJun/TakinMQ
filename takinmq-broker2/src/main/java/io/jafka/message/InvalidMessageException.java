@@ -15,25 +15,22 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.message;
 
 /**
- * Server information
+ * Indicates that a message failed its checksum and is corrupt
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class InvalidMessageException extends RuntimeException {
 
-    String getVersion();
+    private static final long serialVersionUID = 1L;
 
-    String getStartupTime();
+    public InvalidMessageException() {
+        super();
+    }
 
-    String getStartedTime();
-
-    String getRunningTime();
+    public InvalidMessageException(String message) {
+        super(message);
+    }
 }
-
-
-
-
-

@@ -15,25 +15,13 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.log;
 
 /**
- * Server information
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public interface LogSegmentFilter {
 
-    String getVersion();
-
-    String getStartupTime();
-
-    String getStartedTime();
-
-    String getRunningTime();
+    boolean filter(LogSegment segment);
 }
-
-
-
-
-

@@ -33,7 +33,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import io.jafka.api.OffsetRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.jafka.common.InvalidMessageSizeException;
 import io.jafka.common.OffsetOutOfRangeException;
 import io.jafka.message.ByteBufferMessageSet;
@@ -41,13 +43,8 @@ import io.jafka.message.FileMessageSet;
 import io.jafka.message.InvalidMessageException;
 import io.jafka.message.MessageAndOffset;
 import io.jafka.message.MessageSet;
-import io.jafka.mx.BrokerTopicStat;
-import io.jafka.mx.LogStats;
-import io.jafka.utils.KV;
 import io.jafka.utils.Range;
 import io.jafka.utils.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * a log is message sets with more than one files.
@@ -69,7 +66,6 @@ public class Log implements ILog {
 
     final boolean needRecovery;
 
-    ///////////////////////////////////////////////////////////////////////
     private final Object lock = new Object();
 
     private final AtomicInteger unflushed = new AtomicInteger(0);
@@ -77,8 +73,6 @@ public class Log implements ILog {
     private final AtomicLong lastflushedTime = new AtomicLong(System.currentTimeMillis());
 
     public final String name;
-
-    private final LogStats logStats = new LogStats(this);
 
     private final SegmentList segments;
 
@@ -94,8 +88,8 @@ public class Log implements ILog {
         this.needRecovery = needRecovery;
         this.maxMessageSize = maxMessageSize;
         this.name = dir.getName();
-        this.logStats.setMbeanName("jafka:type=jafka.logs." + name);
-        Utils.registerMBean(logStats);
+        //        this.logStats.setMbeanName("jafka:type=jafka.logs." + name);
+        //        Utils.registerMBean(logStats);
         segments = loadSegments();
     }
 
@@ -181,7 +175,7 @@ public class Log implements ILog {
             }
         }
         //unregisterMBean
-        Utils.unregisterMBean(this.logStats);
+        //        Utils.unregisterMBean(this.logStats);
     }
 
     /**
@@ -215,10 +209,11 @@ public class Log implements ILog {
             }
             numberOfMessages += 1;
         }
+
         //
-        BrokerTopicStat.getBrokerTopicStat(getTopicName()).recordMessagesIn(numberOfMessages);
-        BrokerTopicStat.getBrokerAllTopicStat().recordMessagesIn(numberOfMessages);
-        logStats.recordAppendedMessages(numberOfMessages);
+        //        BrokerTopicStat.getBrokerTopicStat(getTopicName()).recordMessagesIn(numberOfMessages);
+        //        BrokerTopicStat.getBrokerAllTopicStat().recordMessagesIn(numberOfMessages);
+        //        logStats.recordAppendedMessages(numberOfMessages);
 
         // truncate the message set's buffer upto validbytes, before appending it to the on-disk log
         ByteBuffer validByteBuffer = messages.getBuffer().duplicate();
@@ -433,41 +428,41 @@ public class Log implements ILog {
         }
     }
 
-    public List<Long> getOffsetsBefore(OffsetRequest offsetRequest) {
-        List<LogSegment> logSegments = segments.getView();
-        final LogSegment lastLogSegent = segments.getLastView();
-        final boolean lastSegmentNotEmpty = lastLogSegent.size() > 0;
-        List<KV<Long, Long>> offsetTimes = new ArrayList<KV<Long, Long>>();
-        for (LogSegment ls : logSegments) {
-            offsetTimes.add(new KV<Long, Long>(//
-                            ls.start(), ls.getFile().lastModified()));
-        }
-        if (lastSegmentNotEmpty) {
-            offsetTimes.add(new KV<Long, Long>(lastLogSegent.start() + lastLogSegent.getMessageSet().highWaterMark(), System.currentTimeMillis()));
-        }
-        int startIndex = -1;
-        final long requestTime = offsetRequest.time;
-        if (requestTime == OffsetRequest.LATES_TTIME) {
-            startIndex = offsetTimes.size() - 1;
-        } else if (requestTime == OffsetRequest.EARLIES_TTIME) {
-            startIndex = 0;
-        } else {
-            boolean isFound = false;
-            startIndex = offsetTimes.size() - 1;
-            for (; !isFound && startIndex >= 0; startIndex--) {
-                if (offsetTimes.get(startIndex).v <= requestTime) {
-                    isFound = true;
-                }
-            }
-        }
-        final int retSize = Math.min(offsetRequest.maxNumOffsets, startIndex + 1);
-        final List<Long> ret = new ArrayList<Long>(retSize);
-        for (int j = 0; j < retSize; j++) {
-            ret.add(offsetTimes.get(startIndex).k);
-            startIndex -= 1;
-        }
-        return ret;
-    }
+    //    public List<Long> getOffsetsBefore(OffsetRequest offsetRequest) {
+    //        List<LogSegment> logSegments = segments.getView();
+    //        final LogSegment lastLogSegent = segments.getLastView();
+    //        final boolean lastSegmentNotEmpty = lastLogSegent.size() > 0;
+    //        List<KV<Long, Long>> offsetTimes = new ArrayList<KV<Long, Long>>();
+    //        for (LogSegment ls : logSegments) {
+    //            offsetTimes.add(new KV<Long, Long>(//
+    //                            ls.start(), ls.getFile().lastModified()));
+    //        }
+    //        if (lastSegmentNotEmpty) {
+    //            offsetTimes.add(new KV<Long, Long>(lastLogSegent.start() + lastLogSegent.getMessageSet().highWaterMark(), System.currentTimeMillis()));
+    //        }
+    //        int startIndex = -1;
+    //        final long requestTime = offsetRequest.time;
+    //        if (requestTime == OffsetRequest.LATES_TTIME) {
+    //            startIndex = offsetTimes.size() - 1;
+    //        } else if (requestTime == OffsetRequest.EARLIES_TTIME) {
+    //            startIndex = 0;
+    //        } else {
+    //            boolean isFound = false;
+    //            startIndex = offsetTimes.size() - 1;
+    //            for (; !isFound && startIndex >= 0; startIndex--) {
+    //                if (offsetTimes.get(startIndex).v <= requestTime) {
+    //                    isFound = true;
+    //                }
+    //            }
+    //        }
+    //        final int retSize = Math.min(offsetRequest.maxNumOffsets, startIndex + 1);
+    //        final List<Long> ret = new ArrayList<Long>(retSize);
+    //        for (int j = 0; j < retSize; j++) {
+    //            ret.add(offsetTimes.get(startIndex).k);
+    //            startIndex -= 1;
+    //        }
+    //        return ret;
+    //    }
 
     @Override
     public String toString() {

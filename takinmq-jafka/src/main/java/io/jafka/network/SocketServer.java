@@ -48,8 +48,7 @@ public class SocketServer implements Closeable {
 
     private final ServerConfig serverConfig;
 
-    public SocketServer(RequestHandlerFactory handlerFactory, //
-                    ServerConfig serverConfig) {
+    public SocketServer(RequestHandlerFactory handlerFactory, ServerConfig serverConfig) {
         super();
         this.serverConfig = serverConfig;
         this.handlerFactory = handlerFactory;
@@ -87,7 +86,7 @@ public class SocketServer implements Closeable {
         Utils.newThread("jafka-acceptor", acceptor, false).start();
         acceptor.awaitStartup();
     }
-    
+
     public SocketServerStats getStats() {
         return stats;
     }

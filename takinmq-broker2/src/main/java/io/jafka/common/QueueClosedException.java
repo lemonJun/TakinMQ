@@ -15,25 +15,31 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.common;
 
 /**
- * Server information
+ * Indicates that client is sending event to a closed queue
+ * 
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class QueueClosedException extends RuntimeException {
 
-    String getVersion();
+    private static final long serialVersionUID = 1L;
 
-    String getStartupTime();
+    public QueueClosedException() {
+    }
 
-    String getStartedTime();
+    public QueueClosedException(String message) {
+        super(message);
+    }
 
-    String getRunningTime();
+    public QueueClosedException(Throwable cause) {
+        super(cause);
+    }
+
+    public QueueClosedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
-
-
-
-
-

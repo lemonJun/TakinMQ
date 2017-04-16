@@ -15,25 +15,28 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.message;
 
 /**
- * Server information
+ * Represents message and offset of the next message. This is used in the
+ * MessageSet to iterate over it
+ * 
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class MessageAndOffset {
 
-    String getVersion();
+    public final Message message;
 
-    String getStartupTime();
+    public final long offset;
 
-    String getStartedTime();
+    public MessageAndOffset(Message message, long offset) {
+        this.message = message;
+        this.offset = offset;
+    }
 
-    String getRunningTime();
+    @Override
+    public String toString() {
+        return String.format("MessageAndOffset [offset=%s, message=%s]", offset, message);
+    }
 }
-
-
-
-
-

@@ -15,25 +15,30 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.common;
 
 /**
- * Server information
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class AsyncProducerInterruptedException extends RuntimeException {
 
-    String getVersion();
+    private static final long serialVersionUID = 1L;
 
-    String getStartupTime();
+    public AsyncProducerInterruptedException() {
+        super();
+    }
 
-    String getStartedTime();
+    public AsyncProducerInterruptedException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    String getRunningTime();
+    public AsyncProducerInterruptedException(String message) {
+        super(message);
+    }
+
+    public AsyncProducerInterruptedException(Throwable cause) {
+        super(cause);
+    }
+
 }
-
-
-
-
-

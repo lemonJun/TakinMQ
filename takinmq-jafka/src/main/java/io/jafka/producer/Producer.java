@@ -17,21 +17,6 @@
 
 package io.jafka.producer;
 
-import io.jafka.api.ProducerRequest;
-import io.jafka.cluster.Broker;
-import io.jafka.cluster.Partition;
-import io.jafka.common.InvalidPartitionException;
-import io.jafka.common.NoBrokersForPartitionException;
-import io.jafka.common.annotations.ClientSide;
-import io.jafka.producer.async.CallbackHandler;
-import io.jafka.producer.async.EventHandler;
-import io.jafka.producer.serializer.Encoder;
-import io.jafka.utils.Utils;
-import io.jafka.utils.ZKConfig;
-import io.jafka.utils.Closer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +26,21 @@ import java.util.Random;
 import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.jafka.utils.Closer.closeQuietly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.jafka.api.ProducerRequest;
+import io.jafka.cluster.Broker;
+import io.jafka.cluster.Partition;
+import io.jafka.common.InvalidPartitionException;
+import io.jafka.common.NoBrokersForPartitionException;
+import io.jafka.common.annotations.ClientSide;
+import io.jafka.producer.async.CallbackHandler;
+import io.jafka.producer.async.EventHandler;
+import io.jafka.producer.serializer.Encoder;
+import io.jafka.utils.Closer;
+import io.jafka.utils.Utils;
+import io.jafka.utils.ZKConfig;
 
 /**
  * Message producer

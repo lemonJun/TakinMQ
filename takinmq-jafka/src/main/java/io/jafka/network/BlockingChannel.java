@@ -1,14 +1,18 @@
 package io.jafka.network;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.GatheringByteChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SocketChannel;
+import java.util.concurrent.locks.ReentrantLock;
+
 import io.jafka.common.ErrorMapping;
 import io.jafka.common.annotations.NotThreadSafe;
 import io.jafka.utils.Closer;
 import io.jafka.utils.KV;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A simple blocking channel with timeouts correctly enabled.

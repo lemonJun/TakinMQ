@@ -20,6 +20,7 @@
 		<module>takinmq-naming</module>
 		<module>takinmq-client</module>
 		<module>takinmq-common</module>
+		<module>takinmq-broker2</module>
 	</modules>
 
 	<properties>

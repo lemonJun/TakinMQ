@@ -15,25 +15,29 @@
  * limitations under the License.
  */
 
-package io.jafka.mx;
+package io.jafka.common;
 
 /**
- * Server information
  * @author adyliu (imxylz@gmail.com)
- * @since 1.1
+ * @since 1.0
  */
-public interface ServerInfoMBean {
+public class QueueFullException extends RuntimeException {
 
-    String getVersion();
+    private static final long serialVersionUID = 1L;
 
-    String getStartupTime();
+    public QueueFullException() {
+    }
 
-    String getStartedTime();
+    public QueueFullException(String message) {
+        super(message);
+    }
 
-    String getRunningTime();
+    public QueueFullException(Throwable cause) {
+        super(cause);
+    }
+
+    public QueueFullException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
-
-
-
-
-

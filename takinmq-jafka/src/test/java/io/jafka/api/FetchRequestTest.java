@@ -17,7 +17,7 @@
 
 package io.jafka.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
 

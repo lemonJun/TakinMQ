@@ -35,7 +35,7 @@ import io.jafka.utils.Utils;
  * 1. 1 byte "magic" identifier to allow format changes
  * 2. 1 byte "attributes" identifier to allow annotations on the message
  * independent of the version (e.g. compression enabled, type of codec used)
- * 3. 4 byte CRC32 of the payload
+ * 3. 4 byte CRC32 of the payload   用于验证 
  * 4. N - 6 byte payload
  * </pre>
  *
@@ -84,6 +84,7 @@ public class Message implements ICalculable {
     public static final byte CrcLength = 4;
 
     /**
+     * 在CRC的基础上计算payload的位移
      * Computes the offset to the message payload based on the magic byte
      * 
      * @param magic Specifies the magic byte value. Possible values are 0

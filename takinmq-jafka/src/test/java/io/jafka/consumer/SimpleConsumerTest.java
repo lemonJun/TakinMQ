@@ -71,7 +71,6 @@ public class SimpleConsumerTest extends BaseJafkaServer {
     @Before
     public void init() throws IOException {
         if (jafka == null) {
-
             Properties props = new Properties();
             //force flush message to disk
             //we will fetch nothing while messages have note been flushed to disk
@@ -80,6 +79,7 @@ public class SimpleConsumerTest extends BaseJafkaServer {
             props.put("log.file.size", "5120");//5k for rolling
             props.put("num.partitions", "" + partitions);//default divided three partitions
             props.put("http.port", "" + httpPort);
+            props.put("log.dir", "D:/jafka");
             jafka = createJafka(props);
             sendSomeMessages(INIT_MESSAGE_COUNT, "demo", "test");
 

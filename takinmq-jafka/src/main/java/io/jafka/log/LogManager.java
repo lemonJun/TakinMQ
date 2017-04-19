@@ -105,7 +105,7 @@ public class LogManager implements PartitionChooser, Closeable {
     private RollingStrategy rollingStategy;
 
     private final int maxMessageSize;
-    
+
     public LogManager(ServerConfig config, Scheduler scheduler, long logCleanupIntervalMs, long logCleanupDefaultAgeMs, boolean needRecovery) {
         super();
         this.config = config;

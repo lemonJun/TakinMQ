@@ -99,6 +99,7 @@ public class Log implements ILog {
         segments = loadSegments();
     }
 
+    //加载所有的文件  并把最后一个文件以“读写”方式打开   其它的以只读方式打开
     private SegmentList loadSegments() throws IOException {
         List<LogSegment> accum = new ArrayList<LogSegment>();
         File[] ls = dir.listFiles(new FileFilter() {

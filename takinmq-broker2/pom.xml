@@ -19,7 +19,30 @@
 			<artifactId>guice</artifactId>
 			<version>3.0</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>com.takinrpc</groupId>
+			<artifactId>takinrpc-server</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.takinrpc</groupId>
+			<artifactId>takinrpc-registry</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.takinrpc</groupId>
+			<artifactId>takinrpc-soa</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.takinrpc</groupId>
+			<artifactId>takinrpc-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.takin</groupId>
 			<artifactId>emmet</artifactId>

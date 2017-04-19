@@ -12,8 +12,9 @@ public class ProducerServiceImpl implements ProducerService {
     private static final Logger logger = LoggerFactory.getLogger(ProducerServiceImpl.class);
 
     @Override
-    public void send(ProducerData data) throws Exception {
+    public int send(StringProducerData data) throws Exception {
         logger.info(JSON.toJSONString(data));
+        return 1;
     }
 
 }

@@ -43,7 +43,7 @@ import com.takin.mq.utils.Utils;
  * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
-public class Message2 {
+public class TakinMsg {
 
     private static final byte MAGIC_VERSION2 = 1;
 
@@ -115,13 +115,13 @@ public class Message2 {
 
     private final int messageSize;
 
-    private Message2(ByteBuffer buffer) {
+    private TakinMsg(ByteBuffer buffer) {
         this.buffer = buffer;
         this.messageSize = buffer.limit();
     }
 
-    private Message2(long checksum, byte[] bytes, CompressionCodec compressionCodec) {
-        this(ByteBuffer.allocate(Message2.headerSize(Message2.CurrentMagicValue) + bytes.length));
+    private TakinMsg(long checksum, byte[] bytes, CompressionCodec compressionCodec) {
+        this(ByteBuffer.allocate(TakinMsg.headerSize(TakinMsg.CurrentMagicValue) + bytes.length));
         buffer.put(CurrentMagicValue);
         byte attributes = 0;
         if (compressionCodec.codec > 0) {
@@ -133,7 +133,7 @@ public class Message2 {
         buffer.rewind();
     }
     
-    public Message2(byte[] bytes, CompressionCodec compressionCodec) {
+    public TakinMsg(byte[] bytes, CompressionCodec compressionCodec) {
         this(Utils.crc32(bytes), bytes, compressionCodec);
     }
 
@@ -143,7 +143,7 @@ public class Message2 {
      * @param bytes message data
      * @see CompressionCodec#NoCompressionCodec
      */
-    public Message2(byte[] bytes) {
+    public TakinMsg(byte[] bytes) {
         this(bytes, CompressionCodec.NoCompressionCodec);
     }
 
@@ -219,8 +219,8 @@ public class Message2 {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Message2) {
-            Message2 m = (Message2) obj;
+        if (obj instanceof TakinMsg) {
+            TakinMsg m = (TakinMsg) obj;
             return getSizeInBytes() == m.getSizeInBytes()//
                             && attributes() == m.attributes()//
                             && checksum() == m.checksum()//

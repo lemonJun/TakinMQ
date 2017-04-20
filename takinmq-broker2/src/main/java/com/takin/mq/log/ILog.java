@@ -24,7 +24,7 @@ import java.util.List;
 
 import com.takin.mq.message.ByteBufferMessageSet;
 import com.takin.mq.message.MessageSet;
-import com.takin.mq.msg.Message2;
+import com.takin.mq.msg.TakinMsg;
 
 /**
  * log interface
@@ -57,7 +57,7 @@ public interface ILog extends Closeable {
      */
     List<Long> append(ByteBufferMessageSet messages);
 
-    long append(Message2 message);
+    long append(TakinMsg message);
 
     String reallogfile();
 

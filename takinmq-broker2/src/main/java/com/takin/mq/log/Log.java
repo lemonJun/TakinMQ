@@ -43,7 +43,7 @@ import com.takin.mq.message.FileMessageSet;
 import com.takin.mq.message.InvalidMessageException;
 import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.message.MessageSet;
-import com.takin.mq.msg.Message2;
+import com.takin.mq.msg.TakinMsg;
 import com.takin.mq.utils.Range;
 import com.takin.mq.utils.Utils;
 
@@ -454,7 +454,7 @@ public class Log implements ILog {
     }
 
     @Override
-    public long append(Message2 message) {
+    public long append(TakinMsg message) {
 
         return 0;
     }

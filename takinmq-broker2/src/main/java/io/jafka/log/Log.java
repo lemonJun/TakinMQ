@@ -483,4 +483,9 @@ public class Log implements ILog {
     public long getLastSegmentAddressingSize() {
         return segments.getLastView().addressingSize();
     }
+
+    @Override
+    public String reallogfile() {
+        return dir.getAbsolutePath();
+    }
 }

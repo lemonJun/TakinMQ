@@ -25,6 +25,8 @@ public class BrokerConfig {
 
     private String hostname;
 
+    private int maxmessagesize;
+
     private int logfilesize;
 
     private int logflushintervalmessages = 100;
@@ -34,6 +36,8 @@ public class BrokerConfig {
     private int logretentionhours = 12;
 
     private int logsegmentbytes = 1073741824;
+
+    private int logCleanupIntervalms = 60 * 1000;
 
     private int logretentioncheckintervalms = 300000;
 
@@ -49,7 +53,7 @@ public class BrokerConfig {
     private BrokerConfig() {
 
     }
-    
+
     public void init(String filepath) {
         try {
             PropertiesHelper prop = new PropertiesHelper(filepath);
@@ -71,6 +75,22 @@ public class BrokerConfig {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int getLogCleanupIntervalms() {
+        return logCleanupIntervalms;
+    }
+
+    public void setLogCleanupIntervalms(int logCleanupIntervalms) {
+        this.logCleanupIntervalms = logCleanupIntervalms;
+    }
+
+    public int getMaxmessagesize() {
+        return maxmessagesize;
+    }
+
+    public void setMaxmessagesize(int maxmessagesize) {
+        this.maxmessagesize = maxmessagesize;
     }
 
     public int getBrokerid() {

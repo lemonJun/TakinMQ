@@ -56,11 +56,6 @@ public interface ILog extends Closeable {
      */
     List<Long> append(ByteBufferMessageSet messages);
 
-    /**
-     * get offsets of before the OffsetRequest's time
-     * 
-     * @param offsetRequest offset request
-     * @return the offsets earlier than the offset request
-     */
-    //    List<Long> getOffsetsBefore(OffsetRequest offsetRequest);
+    String reallogfile();
+
 }

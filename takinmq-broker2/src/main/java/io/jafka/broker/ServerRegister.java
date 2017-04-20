@@ -53,8 +53,6 @@ import io.jafka.utils.MQ;
  */
 public class ServerRegister implements IZkStateListener, Closeable {
 
-    private final LogManager logManager;
-
     private static final Logger logger = LoggerFactory.getLogger(ServerRegister.class);
 
     private final String brokerIdPath;
@@ -66,9 +64,9 @@ public class ServerRegister implements IZkStateListener, Closeable {
     private final Object lock = new Object();
 
     BrokerConfig config = null;
-
-    public ServerRegister(LogManager logManager) {
-        this.logManager = logManager;
+    
+    public ServerRegister() {
+        config = GuiceDI.getInstance(BrokerConfig.class);
         this.brokerIdPath = ZkUtils.BrokerIdsPath + "/" + GuiceDI.getInstance(BrokerConfig.class).getBrokerid();
     }
 
@@ -107,8 +105,8 @@ public class ServerRegister implements IZkStateListener, Closeable {
     }
 
     private int getPartitions(String topic) {
-        Integer numParts = logManager.getTopicPartitionsMap().get(topic);
-        return numParts == null ? config.getNumpartitions() : numParts.intValue();
+        int numParts = config.getNumpartitions();
+        return numParts;
     }
 
     /**

@@ -13,7 +13,9 @@ public class ProducerTest {
         try {
             PropertyConfigurator.configure("conf/log4j.properties");
             final ProducerService producer = ProxyFactory.create(ProducerService.class, "test", null, null);
-            producer.send(new StringProducerData("demo").add("Hello jafka").add("https://github.com/adyliu/jafka"));
+            for (int i = 0; i < 2; i++) {
+                producer.send(new StringProducerData("demo").add("Hello jafka").add("https://github.com/adyliu/jafka"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

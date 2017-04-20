@@ -129,7 +129,6 @@ public class ByteBufferMessageSet extends MessageSet {
     }
 
     class Iter extends IteratorTemplate<MessageAndOffset> {
-
         boolean isShallow;
         ByteBuffer topIter = buffer.slice();
         long currValidBytes = initialOffset;

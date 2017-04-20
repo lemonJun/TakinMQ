@@ -37,9 +37,7 @@ import io.jafka.utils.Utils;
  * will fail on an immutable message set. An optional limit and offset can be applied to the
  * message set which will control the offset into the file and the effective length into the
  * file from which messages will be read
- *
- * @author adyliu (imxylz@gmail.com)
- * @since 1.0
+ * 
  */
 public class FileMessageSet extends MessageSet {
 
@@ -53,7 +51,6 @@ public class FileMessageSet extends MessageSet {
 
     private final AtomicBoolean needRecover;
 
-    /////////////////////////////////////////////////////////////////////////
     private final AtomicLong setSize = new AtomicLong();
 
     private final AtomicLong setHighWaterMark = new AtomicLong();
@@ -205,6 +202,7 @@ public class FileMessageSet extends MessageSet {
     }
 
     /**
+     * 
      * Commit all written data to the physical disk
      *
      * @throws IOException any io exception

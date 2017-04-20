@@ -81,7 +81,7 @@ public class Message {
     }
 
     public static final byte CrcLength = 4;
-
+    
     /**
      * Computes the offset to the message payload based on the magic byte
      * 

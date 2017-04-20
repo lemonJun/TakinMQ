@@ -209,7 +209,6 @@ public class Log implements ILog {
             }
             numberOfMessages += 1;
         }
-
         //
         //        BrokerTopicStat.getBrokerTopicStat(getTopicName()).recordMessagesIn(numberOfMessages);
         //        BrokerTopicStat.getBrokerAllTopicStat().recordMessagesIn(numberOfMessages);

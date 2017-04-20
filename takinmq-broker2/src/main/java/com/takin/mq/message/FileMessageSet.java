@@ -41,7 +41,7 @@ import com.takin.mq.utils.Utils;
  */
 public class FileMessageSet extends MessageSet {
 
-    private final Logger logger = LoggerFactory.getLogger(FileMessageSet.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileMessageSet.class);
 
     private final FileChannel channel;
 
@@ -181,8 +181,7 @@ public class FileMessageSet extends MessageSet {
      * @throws IOException reading file failed
      */
     public MessageSet read(long readOffset, long size) throws IOException {
-        return new FileMessageSet(channel, this.offset + readOffset, //
-                        Math.min(this.offset + readOffset + size, highWaterMark()), false, new AtomicBoolean(false));
+        return new FileMessageSet(channel, this.offset + readOffset, Math.min(this.offset + readOffset + size, highWaterMark()), false, new AtomicBoolean(false));
     }
 
     /**

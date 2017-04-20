@@ -426,7 +426,7 @@ public class Log implements ILog {
             }
             return segments.trunc(numToDelete);
         }
-    } 
+    }
 
     @Override
     public String toString() {

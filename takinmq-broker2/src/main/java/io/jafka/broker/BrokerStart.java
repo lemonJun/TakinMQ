@@ -23,6 +23,7 @@ public class BrokerStart {
     public static void initBroker() {
         BrokerConfig config = GuiceDI.getInstance(BrokerConfig.class);
         config.init(server.getContext().getConfigPath() + File.separator + "broker.properties");
+        
     }
 
 }

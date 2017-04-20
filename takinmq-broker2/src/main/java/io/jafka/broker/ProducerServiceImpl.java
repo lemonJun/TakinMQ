@@ -16,5 +16,10 @@ public class ProducerServiceImpl implements ProducerService {
         logger.info(JSON.toJSONString(data));
         return 1;
     }
+    
+    @Override
+    public int send(StringProducerData data, int partition) throws Exception {
+        return 0;
+    }
 
 }

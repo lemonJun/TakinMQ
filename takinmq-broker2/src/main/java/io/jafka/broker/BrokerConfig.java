@@ -19,6 +19,14 @@ public class BrokerConfig {
 
     private int numpartitions = 1;
 
+    private int port;
+
+    private boolean topicAutoCreated = true;
+
+    private String hostname;
+
+    private int logfilesize;
+
     private int logflushintervalmessages = 100;
 
     private int logflushintervalms = 1000;
@@ -33,18 +41,21 @@ public class BrokerConfig {
 
     private String zkhosts;
 
+    private int zksessiontimeoutms = 600;
+
     private int zookeeperconnectiontimeoutms = 6000;
 
     @Inject
     private BrokerConfig() {
 
     }
-
+    
     public void init(String filepath) {
         try {
             PropertiesHelper prop = new PropertiesHelper(filepath);
             setBrokerid(prop.getInt("broker.id"));
             setLogdirs(prop.getString("log.dirs"));
+            setLogfilesize(prop.getInt("log.file.size"));
             setLogflushintervalmessages(prop.getInt("log.flush.interval.messages"));
             setLogflushintervalms(prop.getInt("log.flush.interval.ms"));
             setLogretentioncheckintervalms(prop.getInt("log.retention.check.interval.ms"));
@@ -53,6 +64,7 @@ public class BrokerConfig {
             setNumpartitions(prop.getInt("num.partitions"));
             setUsezk(prop.getBoolean("zookeeper.use"));
             setZkhosts(prop.getString("zookeeper.connect"));
+            setZksessiontimeoutms(prop.getInt("zk.sessiontimeout.ms"));
             setZookeeperconnectiontimeoutms(prop.getInt("zookeeper.connection.timeout.ms"));
 
             logger.info(JSON.toJSONString(this));
@@ -73,8 +85,44 @@ public class BrokerConfig {
         return logdirs;
     }
 
+    public boolean isTopicAutoCreated() {
+        return topicAutoCreated;
+    }
+
+    public void setTopicAutoCreated(boolean topicAutoCreated) {
+        this.topicAutoCreated = topicAutoCreated;
+    }
+
     public void setLogdirs(String logdirs) {
         this.logdirs = logdirs;
+    }
+
+    public int getLogfilesize() {
+        return logfilesize;
+    }
+
+    public void setLogfilesize(int logfilesize) {
+        this.logfilesize = logfilesize;
+    }
+
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     public int getNumpartitions() {
@@ -139,6 +187,14 @@ public class BrokerConfig {
 
     public void setZkhosts(String zkhosts) {
         this.zkhosts = zkhosts;
+    }
+
+    public int getZksessiontimeoutms() {
+        return zksessiontimeoutms;
+    }
+
+    public void setZksessiontimeoutms(int zksessiontimeoutms) {
+        this.zksessiontimeoutms = zksessiontimeoutms;
     }
 
     public int getZookeeperconnectiontimeoutms() {

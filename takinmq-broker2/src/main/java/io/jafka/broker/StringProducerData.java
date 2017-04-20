@@ -7,10 +7,8 @@ import java.util.List;
 public class StringProducerData {
     private String topic;
 
-    /** the key used by the partitioner to pick a broker partition */
     private String key;
-
-    /** variable length data to be published as Jafka messages under topic */
+    
     private List<String> data;
 
     public StringProducerData() {

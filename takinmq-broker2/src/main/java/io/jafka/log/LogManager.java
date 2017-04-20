@@ -163,7 +163,7 @@ public class LogManager implements Closeable {
         }
         logFlusherScheduler.scheduleWithRate(new Runnable() {
             public void run() {
-                flushAllLogs(false);
+                flushAllLogs(true);
             }
         }, config.getLogflushintervalms(), config.getLogflushintervalms());
     }
@@ -171,7 +171,7 @@ public class LogManager implements Closeable {
     public int choosePartition(String topic) {
         return random.nextInt(getPartitionNum(topic));
     }
-    
+
     /**
      * Create the log if it does not exist or return back exist log
      *
@@ -469,7 +469,6 @@ public class LogManager implements Closeable {
                         logger.error("cleanup log failed.", e);
                     }
                 }
-
             }, 60 * 1000, config.getLogCleanupIntervalms());
         }
     }

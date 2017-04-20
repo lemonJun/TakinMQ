@@ -19,6 +19,5 @@ public class ProducerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

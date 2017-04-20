@@ -55,8 +55,7 @@ public class FileMessageSet extends MessageSet {
 
     private final AtomicLong setHighWaterMark = new AtomicLong();
 
-    public FileMessageSet(FileChannel channel, long offset, long limit, //
-                    boolean mutable, AtomicBoolean needRecover) throws IOException {
+    public FileMessageSet(FileChannel channel, long offset, long limit, boolean mutable, AtomicBoolean needRecover) throws IOException {
         super();
         this.channel = channel;
         this.offset = offset;

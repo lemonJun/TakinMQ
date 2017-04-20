@@ -24,6 +24,7 @@ import java.util.List;
 
 import io.jafka.message.ByteBufferMessageSet;
 import io.jafka.message.MessageSet;
+import io.jafka.msg.Message2;
 
 /**
  * log interface
@@ -55,6 +56,8 @@ public interface ILog extends Closeable {
      * @return all message offsets or null if not supported
      */
     List<Long> append(ByteBufferMessageSet messages);
+
+    long append(Message2 message);
 
     String reallogfile();
 

@@ -50,7 +50,7 @@ public class ByteBufferMessageSet extends MessageSet {
     private long shallowValidByteCount = -1L;
     //
     private long validBytes;
-
+    
     public ByteBufferMessageSet(ByteBuffer buffer) {
         this(buffer, 0L, ErrorMapping.NoError);
     }
@@ -65,7 +65,7 @@ public class ByteBufferMessageSet extends MessageSet {
     public ByteBufferMessageSet(CompressionCodec compressionCodec, Message... messages) {
         this(MessageSet.createByteBuffer(compressionCodec, messages), 0L, ErrorMapping.NoError);
     }
-
+    
     public ByteBufferMessageSet(Message... messages) {
         this(CompressionCodec.NoCompressionCodec, messages);
     }
@@ -194,7 +194,6 @@ public class ByteBufferMessageSet extends MessageSet {
             }
             return new MessageAndOffset(messageAndOffset.message, currValidBytes);
         }
-
     }
 
     @Override

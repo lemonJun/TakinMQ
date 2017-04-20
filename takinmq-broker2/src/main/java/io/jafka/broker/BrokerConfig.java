@@ -70,7 +70,7 @@ public class BrokerConfig {
             setZkhosts(prop.getString("zookeeper.connect"));
             setZksessiontimeoutms(prop.getInt("zk.sessiontimeout.ms"));
             setZookeeperconnectiontimeoutms(prop.getInt("zookeeper.connection.timeout.ms"));
-
+            setMaxmessagesize(prop.getInt("max.message.size"));
             logger.info(JSON.toJSONString(this));
         } catch (Exception e) {
             e.printStackTrace();

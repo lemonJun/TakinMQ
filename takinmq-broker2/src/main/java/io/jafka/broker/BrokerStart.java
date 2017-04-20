@@ -45,7 +45,7 @@ public class BrokerStart {
 
     final String CLEAN_SHUTDOWN_FILE = ".jafka_cleanshutdown";
 
-    public void shutdown() {
+    public void close() {
         try {
             logManager.close();
         } catch (Exception e) {

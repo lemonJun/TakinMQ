@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package io.jafka.message;
+package io.jafka.msg;
 
 import static java.lang.String.format;
 
 import java.nio.ByteBuffer;
 
 import io.jafka.common.UnknownMagicByteException;
+import io.jafka.message.CompressionCodec;
 import io.jafka.utils.Utils;
 
 /**
@@ -42,7 +43,7 @@ import io.jafka.utils.Utils;
  * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
-public class Message {
+public class Message2 {
 
     private static final byte MAGIC_VERSION2 = 1;
 
@@ -113,14 +114,14 @@ public class Message {
     final ByteBuffer buffer;
 
     private final int messageSize;
-    
-    public Message(ByteBuffer buffer) {
+
+    private Message2(ByteBuffer buffer) {
         this.buffer = buffer;
         this.messageSize = buffer.limit();
     }
 
-    public Message(long checksum, byte[] bytes, CompressionCodec compressionCodec) {
-        this(ByteBuffer.allocate(Message.headerSize(Message.CurrentMagicValue) + bytes.length));
+    private Message2(long checksum, byte[] bytes, CompressionCodec compressionCodec) {
+        this(ByteBuffer.allocate(Message2.headerSize(Message2.CurrentMagicValue) + bytes.length));
         buffer.put(CurrentMagicValue);
         byte attributes = 0;
         if (compressionCodec.codec > 0) {
@@ -131,12 +132,8 @@ public class Message {
         buffer.put(bytes);
         buffer.rewind();
     }
-
-    public Message(long checksum, byte[] bytes) {
-        this(checksum, bytes, CompressionCodec.NoCompressionCodec);
-    }
-
-    public Message(byte[] bytes, CompressionCodec compressionCodec) {
+    
+    public Message2(byte[] bytes, CompressionCodec compressionCodec) {
         this(Utils.crc32(bytes), bytes, compressionCodec);
     }
 
@@ -146,7 +143,7 @@ public class Message {
      * @param bytes message data
      * @see CompressionCodec#NoCompressionCodec
      */
-    public Message(byte[] bytes) {
+    public Message2(byte[] bytes) {
         this(bytes, CompressionCodec.NoCompressionCodec);
     }
 
@@ -222,8 +219,8 @@ public class Message {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Message) {
-            Message m = (Message) obj;
+        if (obj instanceof Message2) {
+            Message2 m = (Message2) obj;
             return getSizeInBytes() == m.getSizeInBytes()//
                             && attributes() == m.attributes()//
                             && checksum() == m.checksum()//

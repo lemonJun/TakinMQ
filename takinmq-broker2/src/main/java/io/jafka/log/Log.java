@@ -43,6 +43,7 @@ import io.jafka.message.FileMessageSet;
 import io.jafka.message.InvalidMessageException;
 import io.jafka.message.MessageAndOffset;
 import io.jafka.message.MessageSet;
+import io.jafka.msg.Message2;
 import io.jafka.utils.Range;
 import io.jafka.utils.Utils;
 
@@ -80,7 +81,6 @@ public class Log implements ILog {
     private final int maxMessageSize;
 
     public Log(File dir, int partition, RollingStrategy rollingStategy, int flushInterval, boolean needRecovery, int maxMessageSize) throws IOException {
-        super();
         this.dir = dir;
         this.partition = partition;
         this.rollingStategy = rollingStategy;
@@ -179,6 +179,7 @@ public class Log implements ILog {
     }
 
     /**
+     * 
      * read messages beginning from offset
      * 
      * @param offset next message offset
@@ -425,43 +426,7 @@ public class Log implements ILog {
             }
             return segments.trunc(numToDelete);
         }
-    }
-
-    //    public List<Long> getOffsetsBefore(OffsetRequest offsetRequest) {
-    //        List<LogSegment> logSegments = segments.getView();
-    //        final LogSegment lastLogSegent = segments.getLastView();
-    //        final boolean lastSegmentNotEmpty = lastLogSegent.size() > 0;
-    //        List<KV<Long, Long>> offsetTimes = new ArrayList<KV<Long, Long>>();
-    //        for (LogSegment ls : logSegments) {
-    //            offsetTimes.add(new KV<Long, Long>(//
-    //                            ls.start(), ls.getFile().lastModified()));
-    //        }
-    //        if (lastSegmentNotEmpty) {
-    //            offsetTimes.add(new KV<Long, Long>(lastLogSegent.start() + lastLogSegent.getMessageSet().highWaterMark(), System.currentTimeMillis()));
-    //        }
-    //        int startIndex = -1;
-    //        final long requestTime = offsetRequest.time;
-    //        if (requestTime == OffsetRequest.LATES_TTIME) {
-    //            startIndex = offsetTimes.size() - 1;
-    //        } else if (requestTime == OffsetRequest.EARLIES_TTIME) {
-    //            startIndex = 0;
-    //        } else {
-    //            boolean isFound = false;
-    //            startIndex = offsetTimes.size() - 1;
-    //            for (; !isFound && startIndex >= 0; startIndex--) {
-    //                if (offsetTimes.get(startIndex).v <= requestTime) {
-    //                    isFound = true;
-    //                }
-    //            }
-    //        }
-    //        final int retSize = Math.min(offsetRequest.maxNumOffsets, startIndex + 1);
-    //        final List<Long> ret = new ArrayList<Long>(retSize);
-    //        for (int j = 0; j < retSize; j++) {
-    //            ret.add(offsetTimes.get(startIndex).k);
-    //            startIndex -= 1;
-    //        }
-    //        return ret;
-    //    }
+    } 
 
     @Override
     public String toString() {
@@ -486,5 +451,11 @@ public class Log implements ILog {
     @Override
     public String reallogfile() {
         return dir.getAbsolutePath();
+    }
+
+    @Override
+    public long append(Message2 message) {
+
+        return 0;
     }
 }

@@ -8,41 +8,25 @@ public class StringProducerData {
     private String topic;
 
     private String key;
-    
-    private List<String> data;
+
+    private String data;
 
     public StringProducerData() {
 
     }
 
-    public StringProducerData(String topic, String key, List<String> data) {
+    public StringProducerData(String topic, String key, String data) {
         this.topic = topic;
         this.key = key;
         this.data = data;
-    }
-
-    public StringProducerData(String topic, List<String> data) {
-        this(topic, null, data);
-    }
-
-    public StringProducerData(String topic, String data) {
-        this.topic = topic;
-        getData().add(data);
     }
 
     public StringProducerData(String topic) {
         this.topic = topic;
     }
 
-    public List<String> getData() {
-        if (data == null) {
-            data = new ArrayList<String>();
-        }
-        return data;
-    }
-
     public StringProducerData add(String message) {
-        getData().add(message);
+        setData(message);
         return this;
     }
 
@@ -62,7 +46,11 @@ public class StringProducerData {
         this.key = key;
     }
 
-    public void setData(List<String> data) {
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
         this.data = data;
     }
 

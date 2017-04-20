@@ -9,6 +9,8 @@ import com.takin.rpc.server.anno.ServiceImpl;
 
 import io.jafka.log.ILog;
 import io.jafka.log.LogManager;
+import io.jafka.message.ByteBufferMessageSet;
+import io.jafka.message.Message;
 
 @ServiceImpl
 public class ProducerServiceImpl implements ProducerService {
@@ -25,6 +27,10 @@ public class ProducerServiceImpl implements ProducerService {
     @Override
     public int send(StringProducerData data, int partition) throws Exception {
         ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
+        byte[] databyte = data.getData().getBytes("utf-8");
+        Message msg = new Message(databyte);
+        ByteBufferMessageSet messageset = new ByteBufferMessageSet(msg);
+        log.append(messageset);
         logger.info(log.reallogfile());
         return 0;
     }

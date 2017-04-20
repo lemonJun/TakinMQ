@@ -25,7 +25,7 @@ package io.jafka.message;
  * @since 1.0
  */
 public class MessageAndOffset {
-
+    
     public final Message message;
 
     public final long offset;

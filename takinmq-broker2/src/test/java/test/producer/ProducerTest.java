@@ -2,10 +2,9 @@ package test.producer;
 
 import org.apache.log4j.PropertyConfigurator;
 
+import com.takin.mq.broker.ProducerService;
+import com.takin.mq.broker.StringProducerData;
 import com.takin.rpc.client.ProxyFactory;
-
-import io.jafka.broker.ProducerService;
-import io.jafka.broker.StringProducerData;
 
 public class ProducerTest {
 

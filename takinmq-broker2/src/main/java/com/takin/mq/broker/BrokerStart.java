@@ -2,7 +2,6 @@ package com.takin.mq.broker;
 
 import java.io.File;
 
-import com.takin.mq.log.DailyRollingStrategy;
 import com.takin.mq.log.LogManager;
 import com.takin.mq.log.RollingStrategy;
 import com.takin.mq.utils.Scheduler;
@@ -32,7 +31,7 @@ public class BrokerStart {
         config.init(server.getContext().getConfigPath() + File.separator + "broker.properties");
         //        
         final Scheduler scheduler = new Scheduler(1, "jafka-logcleaner-", false);
-        RollingStrategy rolling = new DailyRollingStrategy();
+        RollingStrategy rolling = null;
         this.logManager = GuiceDI.getInstance(LogManager.class);
         this.logManager.setRollingStategy(rolling);
         this.logManager.setScheduler(scheduler);
@@ -64,7 +63,5 @@ public class BrokerStart {
             e.printStackTrace();
 
         }
-
     }
-
 }

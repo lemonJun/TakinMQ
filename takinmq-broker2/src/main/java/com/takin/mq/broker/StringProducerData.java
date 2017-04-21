@@ -1,9 +1,6 @@
 
 package com.takin.mq.broker;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class StringProducerData {
     private String topic;
 

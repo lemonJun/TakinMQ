@@ -32,7 +32,6 @@ import com.takin.mq.utils.Utils;
  * @author adyliu (imxylz@gmail.com)
  * @since 1.1
  */
-//FIXME: NOT WORK AT STARTUP
 public class DailyRollingStrategy implements RollingStrategy, Runnable {
 
     private boolean firstCheck = true;

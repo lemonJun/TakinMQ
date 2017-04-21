@@ -297,6 +297,7 @@ public class LogManager implements Closeable {
         }
     }
 
+    //
     private Collection<String> getAllTopics() {
         return topicLogMap.keySet();
     }

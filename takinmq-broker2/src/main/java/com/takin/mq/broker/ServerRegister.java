@@ -33,7 +33,6 @@ import com.github.zkclient.ZkClient;
 import com.github.zkclient.exception.ZkNodeExistsException;
 import com.takin.mq.broker.TopicTask.TaskType;
 import com.takin.mq.cluster.Broker;
-import com.takin.mq.log.LogManager;
 import com.takin.mq.utils.MQ;
 import com.takin.rpc.registry.ZkUtils;
 import com.takin.rpc.server.GuiceDI;
@@ -63,10 +62,10 @@ public class ServerRegister implements IZkStateListener, Closeable {
     private final Object lock = new Object();
 
     BrokerConfig config = null;
-    
+
     public ServerRegister() {
         config = GuiceDI.getInstance(BrokerConfig.class);
-        this.brokerIdPath = ZkUtils.BrokerIdsPath + "/" + GuiceDI.getInstance(BrokerConfig.class).getBrokerid();
+        this.brokerIdPath = MQ.BrokerIdsPath + "/" + GuiceDI.getInstance(BrokerConfig.class).getBrokerid();
     }
 
     public void startup() {
@@ -77,7 +76,7 @@ public class ServerRegister implements IZkStateListener, Closeable {
 
     public void processTask(TopicTask task) {
         final String topicPath = MQ.BrokerTopicsPath + "/" + task.topic;
-        final String brokerTopicPath = ZkUtils.BrokerTopicsPath + "/" + task.topic + "/" + config.getBrokerid();
+        final String brokerTopicPath = MQ.BrokerTopicsPath + "/" + task.topic + "/" + config.getBrokerid();
         synchronized (lock) {
             switch (task.type) {
                 case DELETE:

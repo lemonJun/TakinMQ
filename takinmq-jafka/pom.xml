@@ -13,29 +13,7 @@
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 	</properties>
-	<scm>
-		<connection>scm:git:git@github.com:adyliu/jafka.git</connection>
-		<developerConnection>scm:git:git@github.com:adyliu/jafka.git</developerConnection>
-		<url>https://github.com/adyliu/jafka</url>
-	</scm>
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<developers>
-		<developer>
-			<id>imxylz</id>
-			<name>Ady Liu</name>
-			<email>imxylz@gmail.com</email>
-			<url>https://github.com/adyliu</url>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-	</developers>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>

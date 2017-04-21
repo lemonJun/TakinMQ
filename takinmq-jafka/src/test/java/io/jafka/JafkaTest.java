@@ -29,29 +29,23 @@ import io.jafka.utils.Closer;
  */
 public class JafkaTest {
 
-    /**
-     * Test method for
-     * {@link Jafka#start(java.util.Properties, java.util.Properties, java.util.Properties)}
-     * .
-     *
-     * @throws InterruptedException
-     */
     @Test
-    public void testStartPropertiesPropertiesProperties() {
+    public void start() {
         DataLogCleaner.cleanDataLogDir();
         Jafka jafka = new Jafka();
-        int port = PortUtils.checkAvailablePort(9092);
         try {
             Properties mainProperties = new Properties();
-            mainProperties.setProperty("port", "" + port);
             mainProperties.setProperty("brokerid", "0");
-            mainProperties.setProperty("log.dir", DataLogCleaner.defaultDataLogPath);
+            mainProperties.put("http.port", "9092");
+            mainProperties.put("log.dir", "D:/jafka");
+            mainProperties.put("num.partitions", "3");
             jafka.start(mainProperties, null, null);
+            Thread.sleep(Integer.MAX_VALUE);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             Closer.closeQuietly(jafka);
             jafka.awaitShutdown();
         }
-
     }
-
 }

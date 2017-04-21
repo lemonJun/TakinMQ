@@ -49,13 +49,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static java.lang.String.format;
 
 /**
- * The log management system is responsible for log creation, retrieval, and cleaning.
+ * 
  *
- * @author adyliu (imxylz@gmail.com)
- * @since 1.0
+ * @author WangYazhou
+ * @date  2017年4月20日 下午4:10:33
+ * @see
  */
 public class LogManager implements PartitionChooser, Closeable {
-
     final ServerConfig config;
 
     private final Scheduler scheduler;
@@ -340,7 +340,6 @@ public class LogManager implements PartitionChooser, Closeable {
         }
         logger.debug("Starting log flusher every {} ms with the following overrides {}", config.getFlushSchedulerThreadRate(), logFlushIntervalMap);
         logFlusherScheduler.scheduleWithRate(new Runnable() {
-
             public void run() {
                 flushAllLogs(false);
             }

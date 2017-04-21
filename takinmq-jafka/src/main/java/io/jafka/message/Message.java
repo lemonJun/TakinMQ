@@ -26,6 +26,9 @@ import io.jafka.common.UnknownMagicByteException;
 import io.jafka.utils.Utils;
 
 /**
+ * 
+ * 这个类等同于RPC框架中的协议  
+ * 生成的stingdata成为此协议的一部分   针对此协议做单独的
  * * A message. The format of an N byte message is the following:
  * 
  * <p>

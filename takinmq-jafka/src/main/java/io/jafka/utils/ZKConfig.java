@@ -17,8 +17,10 @@
 
 package io.jafka.utils;
 
+import static io.jafka.utils.Utils.getInt;
+import static io.jafka.utils.Utils.getString;
+
 import java.util.Properties;
-import static io.jafka.utils.Utils.*;
 
 /**
  * Configuration for Zookeeper

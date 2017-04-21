@@ -17,19 +17,19 @@
 
 package io.jafka;
 
-import io.jafka.consumer.ConsumerConfig;
-import io.jafka.producer.ProducerConfig;
-import io.jafka.server.ServerConfig;
-import io.jafka.server.ServerStartable;
-import io.jafka.utils.Utils;
+import java.io.Closeable;
+import java.io.File;
+import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
-import java.io.File;
-import java.util.Properties;
+import io.jafka.consumer.ConsumerConfig;
+import io.jafka.producer.ProducerConfig;
+import io.jafka.server.ServerConfig;
+import io.jafka.server.ServerStartable;
+import io.jafka.utils.Utils;
 
 /**
  * Jafka Main point
@@ -71,7 +71,6 @@ public class Jafka implements Closeable {
         }
         //
         shutdownHook = new Thread() {
-
             @Override
             public void run() {
                 serverStartable.close();

@@ -28,6 +28,7 @@ import io.jafka.common.MessageSizeTooLargeException;
 import io.jafka.utils.IteratorTemplate;
 
 /**
+ * 
  * A sequence of messages stored in a byte buffer
  * 
  * There are two ways to create a ByteBufferMessageSet
@@ -38,8 +39,6 @@ import io.jafka.utils.IteratorTemplate;
  * Option 2: Give it a list of messages along with instructions relating to
  * serialization format. Producers will use this method.
  * 
- * @author adyliu (imxylz@gmail.com)
- * @since 1.0
  */
 public class ByteBufferMessageSet extends MessageSet {
 
@@ -209,7 +208,7 @@ public class ByteBufferMessageSet extends MessageSet {
     public long getSizeInBytes() {
         return buffer.limit();
     }
-
+    
     /**
      * check max size of each message
      * @param maxMessageSize the max size for each message

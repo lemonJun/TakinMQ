@@ -17,14 +17,22 @@
 
 package io.jafka.server;
 
-import io.jafka.log.FixedSizeRollingStrategy;
-import io.jafka.log.RollingStrategy;
-import io.jafka.message.Message;
-import static io.jafka.utils.Utils.*;
-import io.jafka.utils.ZKConfig;
+import static io.jafka.utils.Utils.getBoolean;
+import static io.jafka.utils.Utils.getInt;
+import static io.jafka.utils.Utils.getIntInRange;
+import static io.jafka.utils.Utils.getObject;
+import static io.jafka.utils.Utils.getString;
+import static io.jafka.utils.Utils.getTopicFlushIntervals;
+import static io.jafka.utils.Utils.getTopicPartitions;
+import static io.jafka.utils.Utils.getTopicRentionHours;
 
 import java.util.Map;
 import java.util.Properties;
+
+import io.jafka.log.FixedSizeRollingStrategy;
+import io.jafka.log.RollingStrategy;
+import io.jafka.message.Message;
+import io.jafka.utils.ZKConfig;
 
 /**
  * Configuration for the jafka server
@@ -247,7 +255,7 @@ public class ServerConfig extends ZKConfig {
     /**
      * get the rolling strategy (default value is
      * {@link FixedSizeRollingStrategy})
-     *
+     * 
      * @return RollingStrategy Object
      */
     public RollingStrategy getRollingStrategy() {

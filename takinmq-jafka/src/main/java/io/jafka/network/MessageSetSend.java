@@ -36,7 +36,7 @@ public class MessageSetSend extends AbstractSend {
     private long sent = 0;
 
     private long size;
-
+    
     private final ByteBuffer header = ByteBuffer.allocate(6);
 
     //

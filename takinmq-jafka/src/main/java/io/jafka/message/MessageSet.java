@@ -24,7 +24,6 @@ import java.nio.channels.GatheringByteChannel;
 /**
  * Message set helper functions
  * 
- * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
 public abstract class MessageSet implements Iterable<MessageAndOffset> {
@@ -94,9 +93,6 @@ public abstract class MessageSet implements Iterable<MessageAndOffset> {
             }
     }
 
-    /////////////////////////////////////////////////////////////////////////
-    //                             abstract method
-    /////////////////////////////////////////////////////////////////////////
     /**
      * Write the messages in this set to the given channel starting at the
      * given offset byte. Less than the complete amount may be written, but

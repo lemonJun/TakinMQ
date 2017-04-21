@@ -69,7 +69,6 @@ public class Log implements ILog {
 
     final boolean needRecovery;
 
-    ///////////////////////////////////////////////////////////////////////
     private final Object lock = new Object();
 
     private final AtomicInteger unflushed = new AtomicInteger(0);

@@ -100,7 +100,7 @@ public class ConsumerConfig extends ZKConfig {
         this.mirrorTopicsWhitelist = get("mirror.topics.whitelist", "");
         this.mirrorTopicsBlackList = get("mirror.topics.blacklist", "");
         this.mirrorConsumerNumThreads = get("mirror.consumer.numthreads", 1);
-
+        
     }
 
     /**

@@ -33,12 +33,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * 
  * An on-disk message set. The set can be opened either mutably or immutably. Mutation attempts
  * will fail on an immutable message set. An optional limit and offset can be applied to the
  * message set which will control the offset into the file and the effective length into the
  * file from which messages will be read
  *
- * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
 public class FileMessageSet extends MessageSet {
@@ -53,13 +53,11 @@ public class FileMessageSet extends MessageSet {
 
     private final AtomicBoolean needRecover;
 
-    /////////////////////////////////////////////////////////////////////////
     private final AtomicLong setSize = new AtomicLong();
 
     private final AtomicLong setHighWaterMark = new AtomicLong();
 
-    public FileMessageSet(FileChannel channel, long offset, long limit, //
-                    boolean mutable, AtomicBoolean needRecover) throws IOException {
+    public FileMessageSet(FileChannel channel, long offset, long limit, boolean mutable, AtomicBoolean needRecover) throws IOException {
         super();
         this.channel = channel;
         this.offset = offset;

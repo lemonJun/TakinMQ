@@ -32,6 +32,7 @@ import com.takin.emmet.store.GZIPCompression;
  * @version 1.0
  * @date  2017年4月16日 下午1:08:43
  * @see 
+ * 
  * @since
  */
 public class CompressionUtils {

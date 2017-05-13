@@ -44,7 +44,6 @@ import com.takin.emmet.util.Tuple;
 import com.takin.mq.broker.BrokerConfig;
 import com.takin.mq.broker.ServerRegister;
 import com.takin.mq.broker.TopicTask;
-import com.takin.mq.common.InvalidPartitionException;
 import com.takin.mq.utils.IteratorTemplate;
 import com.takin.mq.utils.Scheduler;
 import com.takin.mq.utils.Utils;

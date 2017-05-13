@@ -11,11 +11,11 @@ public class ProducerTest {
     public static void main(String[] args) {
         try {
             PropertyConfigurator.configure("conf/log4j.properties");
-            final ProducerService producer = ProxyFactory.create(ProducerService.class, "test", null, null);
+            final ProducerService producer = ProxyFactory.create(ProducerService.class, "broker", null, null);
             //            for (int i = 0; i < 1; i++) {
             //                producer.send(new StringProducerData("demo").add("Hello jafka"));
             //            }
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 1; i++) {
                 producer.send(new StringProducerData("demo").add("Hello jafka"), 1);
             }
         } catch (Exception e) {

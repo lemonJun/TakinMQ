@@ -28,14 +28,14 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.zkclient.IZkStateListener;
-import com.github.zkclient.ZkClient;
-import com.github.zkclient.exception.ZkNodeExistsException;
 import com.takin.mq.broker.TopicTask.TaskType;
 import com.takin.mq.cluster.Broker;
 import com.takin.mq.utils.MQ;
-import com.takin.rpc.registry.ZkUtils;
 import com.takin.rpc.server.GuiceDI;
+import com.takin.rpc.zkclient.IZkStateListener;
+import com.takin.rpc.zkclient.ZkClient;
+import com.takin.rpc.zkclient.ZkUtils;
+import com.takin.rpc.zkclient.exception.ZkNodeExistsException;
 
 /**
  * Handles the server's interaction with zookeeper. The server needs to register the following

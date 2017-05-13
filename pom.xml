@@ -14,13 +14,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>takinmq-remoting</module>
-		<module>takinmq-broker</module>
-		<module>takinmq-store</module>
-		<module>takinmq-naming</module>
-		<module>takinmq-client</module>
-		<module>takinmq-common</module>
 		<module>takinmq-broker2</module>
+		<module>takinmq-jafka</module>
 	</modules>
 
 	<properties>
@@ -43,7 +38,6 @@
 		<testng.version>6.10</testng.version>
 		<guava.version>21.0</guava.version>
 		<jgroups.version>3.6.12.Final</jgroups.version>
-		<netty.version>5.0.0.Alpha2</netty.version>
 		<marshalling.version>2.0.0.Beta2</marshalling.version>
 		<leveldb.version>1.8</leveldb.version>
 		<jgroups-raft.version>0.2</jgroups-raft.version>
@@ -54,40 +48,13 @@
 		<dependencies>
 			<dependency>
 				<groupId>lemon.takinmq</groupId>
-				<artifactId>takinmq-remoting</artifactId>
+				<artifactId>takinmq-jafka</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>lemon.takinmq</groupId>
-				<artifactId>takinmq-common</artifactId>
+				<artifactId>takinmq-broker2</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>lemon.takinmq</groupId>
-				<artifactId>takinmq-store</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>lemon.takinmq</groupId>
-				<artifactId>takinmq-client</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jgroups</groupId>
-				<artifactId>jgroups</artifactId>
-				<version>${jgroups.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-all</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jboss.marshalling</groupId>
-				<artifactId>jboss-marshalling-serial</artifactId>
-				<version>${marshalling.version}</version>
 			</dependency>
 
 			<dependency>
@@ -95,18 +62,7 @@
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
 			</dependency>
-
-			<dependency>
-				<groupId>org.fusesource.leveldbjni</groupId>
-				<artifactId>leveldbjni</artifactId>
-				<version>${leveldb.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jgroups</groupId>
-				<artifactId>jgroups-raft</artifactId>
-				<version>${jgroups-raft.version}</version>
-			</dependency>
+			
 
 			<dependency>
 				<groupId>org.javassist</groupId>
@@ -143,18 +99,7 @@
 				<version>${junit.version}</version>
 			</dependency>
 
-			<!-- logback-access访问模块与Servlet容器集成提供通过Http来访问日记的功能 -->
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-access</artifactId>
-				<version>${logback.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>${logback.version}</version>
-			</dependency>
-
+			
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>

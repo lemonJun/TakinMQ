@@ -14,7 +14,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>takinmq-broker2</module>
+		<module>takinmq-mq</module>
 		<module>takinmq-jafka</module>
 	</modules>
 

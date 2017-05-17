@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.takin.mq.log;
+package com.takin.mq.store;
 
 /**
  * @author adyliu (imxylz@gmail.com)

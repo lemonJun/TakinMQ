@@ -10,7 +10,7 @@ import com.takin.mq.producer.ProducerService;
 import com.takin.rpc.client.ProxyFactory;
 
 public class ProducerTest {
-
+    
     private static final RateLimiter limit = RateLimiter.create(100d);
 
     private static final AtomicInteger total = new AtomicInteger(0);

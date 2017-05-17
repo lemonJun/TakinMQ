@@ -6,11 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-import com.takin.mq.log.ILog;
-import com.takin.mq.log.LogManager;
 import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.message.MessageSet;
 import com.takin.mq.message.StringProducerData;
+import com.takin.mq.store.ILog;
+import com.takin.mq.store.LogManager;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.anno.ServiceImpl;
 

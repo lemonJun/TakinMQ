@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.takin.mq.log;
+package com.takin.mq.store;
 
 import java.util.ArrayList;
 import java.util.List;

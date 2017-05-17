@@ -1,4 +1,4 @@
-package com.takin.mq.log;
+package com.takin.mq.store;
 
 import java.io.Closeable;
 

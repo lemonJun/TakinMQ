@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-import com.takin.emmet.collection.CollectionUtil;
 import com.takin.mq.message.ByteBufferMessageSet;
 import com.takin.mq.message.Message;
 import com.takin.mq.message.StringProducerData;

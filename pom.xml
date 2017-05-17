@@ -40,11 +40,6 @@
 		<fastjson.version>1.2.23</fastjson.version>
 		<testng.version>6.10</testng.version>
 		<guava.version>21.0</guava.version>
-		<jgroups.version>3.6.12.Final</jgroups.version>
-		<marshalling.version>2.0.0.Beta2</marshalling.version>
-		<leveldb.version>1.8</leveldb.version>
-		<jgroups-raft.version>0.2</jgroups-raft.version>
-		<javassist.version>3.17.1-GA</javassist.version>
 	</properties>
 
 	<dependencyManagement>
@@ -65,13 +60,7 @@
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
 			</dependency>
-			
 
-			<dependency>
-				<groupId>org.javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>${javassist.version}</version>
-			</dependency>
 
 			<!-- log framework start -->
 			<dependency>
@@ -89,11 +78,6 @@
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>${logback.version}</version>
-			</dependency>
 			<!-- log framework end -->
 
 			<dependency>
@@ -102,7 +86,7 @@
 				<version>${junit.version}</version>
 			</dependency>
 
-			
+
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>

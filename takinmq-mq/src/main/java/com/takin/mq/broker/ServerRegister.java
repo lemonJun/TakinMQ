@@ -28,7 +28,7 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.takin.mq.broker.TopicTask.TaskType;
+import com.takin.mq.broker.TopicCommand.TaskType;
 import com.takin.mq.cluster.Broker;
 import com.takin.mq.utils.MQ;
 import com.takin.rpc.server.GuiceDI;
@@ -73,8 +73,8 @@ public class ServerRegister implements IZkStateListener, Closeable {
         zkClient = new ZkClient(config.getZkhosts(), config.getZksessiontimeoutms(), config.getZookeeperconnectiontimeoutms());
         zkClient.subscribeStateChanges(this);
     }
-
-    public void processTask(TopicTask task) {
+    
+    public void processTask(TopicCommand task) {
         final String topicPath = MQ.BrokerTopicsPath + "/" + task.topic;
         final String brokerTopicPath = MQ.BrokerTopicsPath + "/" + task.topic + "/" + config.getBrokerid();
         synchronized (lock) {
@@ -157,7 +157,7 @@ public class ServerRegister implements IZkStateListener, Closeable {
         synchronized (lock) {
             logger.info("re-registering broker topics in zookeeper for broker " + config.getBrokerid());
             for (String topic : topics) {
-                processTask(new TopicTask(TaskType.CREATE, topic));
+                processTask(new TopicCommand(TaskType.CREATE, topic));
             }
         }
 

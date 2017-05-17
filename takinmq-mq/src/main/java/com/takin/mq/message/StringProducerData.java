@@ -2,10 +2,9 @@
 package com.takin.mq.message;
 
 public class StringProducerData {
+
     private String topic;
-
     private String key;
-
     private String data;
 
     public StringProducerData() {
@@ -46,7 +45,7 @@ public class StringProducerData {
     public String getData() {
         return data;
     }
-
+    
     public void setData(String data) {
         this.data = data;
     }

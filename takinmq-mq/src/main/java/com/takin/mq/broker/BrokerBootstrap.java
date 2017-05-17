@@ -2,29 +2,31 @@ package com.takin.mq.broker;
 
 import java.io.File;
 
+import org.apache.log4j.PropertyConfigurator;
+
+import com.google.common.util.concurrent.AbstractService;
 import com.takin.mq.log.LogManager;
 import com.takin.mq.log.RollingStrategy;
 import com.takin.mq.utils.Scheduler;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.RPCServer;
 
-public class BrokerStart {
-
+public class BrokerBootstrap extends AbstractService {
     private static final RPCServer server = new RPCServer();
 
-    public static void main(String[] args) {
+    private LogManager logManager;
+    private BrokerConfig config;
+
+    public void init(String[] args, boolean online) {
         try {
+            PropertyConfigurator.configure("conf/log4j.properties");
             server.init(new String[] {}, false);
-            server.start();
-            new BrokerStart().initBroker();
+            initBroker();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }
     }
-
-    private LogManager logManager;
-    private BrokerConfig config;
 
     public void initBroker() throws Exception {
         config = GuiceDI.getInstance(BrokerConfig.class);
@@ -43,7 +45,7 @@ public class BrokerStart {
 
     final String CLEAN_SHUTDOWN_FILE = ".jafka_cleanshutdown";
 
-    public void close() {
+    public void dostop() {
         try {
             logManager.close();
         } catch (Exception e) {
@@ -63,5 +65,20 @@ public class BrokerStart {
             e.printStackTrace();
 
         }
+    }
+
+    @Override
+    protected void doStart() {
+        try {
+            server.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
+    @Override
+    protected void doStop() {
+
     }
 }

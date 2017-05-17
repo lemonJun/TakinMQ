@@ -12,7 +12,7 @@ public interface ProducerService {
      * @return
      * @throws Exception
      */
-    public abstract int send(StringProducerData data) throws Exception;
+    public abstract long send(StringProducerData data) throws Exception;
 
     /**
     * 指定要发送的消息所在的分区
@@ -21,6 +21,6 @@ public interface ProducerService {
     * @return
     * @throws Exception
     */
-    public abstract int send(StringProducerData data, int partition) throws Exception;
+    public abstract long send(StringProducerData data, int partition) throws Exception;
 
 }

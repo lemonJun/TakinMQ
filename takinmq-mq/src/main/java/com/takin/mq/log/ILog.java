@@ -56,7 +56,7 @@ public interface ILog extends Closeable {
      * @return all message offsets or null if not supported
      */
     List<Long> append(ByteBufferMessageSet messages);
-
+    
     long append(TakinMsg message);
 
     String reallogfile();

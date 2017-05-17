@@ -25,7 +25,7 @@ public class BrokerConfig {
 
     private String hostname;
 
-    private int maxmessagesize;
+    private int maxmessagesize = 1048576;
 
     private int logfilesize;
 
@@ -51,11 +51,11 @@ public class BrokerConfig {
 
     @Inject
     private BrokerConfig() {
-
     }
 
     public void init(String filepath) {
         try {
+            logger.info(filepath);
             PropertiesHelper prop = new PropertiesHelper(filepath);
             setBrokerid(prop.getInt("broker.id"));
             setLogdirs(prop.getString("log.dirs"));

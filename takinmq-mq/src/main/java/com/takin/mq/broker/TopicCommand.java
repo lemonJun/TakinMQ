@@ -22,20 +22,20 @@ package com.takin.mq.broker;
  * @author adyliu (imxylz@gmail.com)
  * @since 1.2
  */
-public class TopicTask {
+public class TopicCommand {
 
     public static enum TaskType {
         CREATE, //
-        DELETE, //
-        ENLARGE, //
+        DELETE, // 
+        ENLARGE, // 
         SHUTDOWN;
     }
-
+    
     public final String topic;
 
     public final TaskType type;
 
-    public TopicTask(TaskType type, String topic) {
+    public TopicCommand(TaskType type, String topic) {
         this.type = type;
         this.topic = topic;
     }

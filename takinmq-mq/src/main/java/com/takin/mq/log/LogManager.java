@@ -43,7 +43,7 @@ import com.takin.emmet.util.Closer;
 import com.takin.emmet.util.Tuple;
 import com.takin.mq.broker.BrokerConfig;
 import com.takin.mq.broker.ServerRegister;
-import com.takin.mq.broker.TopicTask;
+import com.takin.mq.broker.TopicCommand;
 import com.takin.mq.utils.IteratorTemplate;
 import com.takin.mq.utils.Scheduler;
 import com.takin.mq.utils.Utils;
@@ -81,7 +81,7 @@ public class LogManager implements Closeable {
 
     private final Scheduler logFlusherScheduler = new Scheduler(1, "jafka-logflusher-", false);
 
-    private final LinkedBlockingQueue<TopicTask> topicRegisterTasks = new LinkedBlockingQueue<TopicTask>();
+    private final LinkedBlockingQueue<TopicCommand> topicRegisterTasks = new LinkedBlockingQueue<TopicCommand>();
 
     private volatile boolean stopTopicRegisterTasks = false;
 
@@ -155,7 +155,7 @@ public class LogManager implements Closeable {
         if (config.isUsezk()) {
             serverRegister.registerBrokerInZk();
             for (String topic : getAllTopics()) {
-                serverRegister.processTask(new TopicTask(TopicTask.TaskType.CREATE, topic));
+                serverRegister.processTask(new TopicCommand(TopicCommand.TaskType.CREATE, topic));
             }
             startupLatch.countDown();
         }
@@ -212,7 +212,7 @@ public class LogManager implements Closeable {
             }
         }
         if (hasNewTopic && config.isUsezk()) {
-            topicRegisterTasks.add(new TopicTask(TopicTask.TaskType.CREATE, topic));
+            topicRegisterTasks.add(new TopicCommand(TopicCommand.TaskType.CREATE, topic));
         }
         return log;
     }
@@ -234,9 +234,9 @@ public class LogManager implements Closeable {
             }
             if (config.isUsezk()) {
                 if (topicLogMap.get(topic) != null) {//created already
-                    topicRegisterTasks.add(new TopicTask(TopicTask.TaskType.ENLARGE, topic));
+                    topicRegisterTasks.add(new TopicCommand(TopicCommand.TaskType.ENLARGE, topic));
                 } else {
-                    topicRegisterTasks.add(new TopicTask(TopicTask.TaskType.CREATE, topic));
+                    topicRegisterTasks.add(new TopicCommand(TopicCommand.TaskType.CREATE, topic));
                 }
             }
             return partitions;
@@ -361,7 +361,7 @@ public class LogManager implements Closeable {
                 }
             }
             if (config.isUsezk()) {
-                topicRegisterTasks.add(new TopicTask(TopicTask.TaskType.DELETE, topic));
+                topicRegisterTasks.add(new TopicCommand(TopicCommand.TaskType.DELETE, topic));
             }
         }
         return value;
@@ -475,8 +475,8 @@ public class LogManager implements Closeable {
     private void registeredTaskLooply() {
         while (!stopTopicRegisterTasks) {
             try {
-                TopicTask task = topicRegisterTasks.take();
-                if (task.type == TopicTask.TaskType.SHUTDOWN)
+                TopicCommand task = topicRegisterTasks.take();
+                if (task.type == TopicCommand.TaskType.SHUTDOWN)
                     break;
                 serverRegister.processTask(task);
             } catch (Exception e) {
@@ -502,8 +502,8 @@ public class LogManager implements Closeable {
         if (config.isUsezk()) {
             stopTopicRegisterTasks = true;
             //wake up again and again
-            topicRegisterTasks.add(new TopicTask(TopicTask.TaskType.SHUTDOWN, null));
-            topicRegisterTasks.add(new TopicTask(TopicTask.TaskType.SHUTDOWN, null));
+            topicRegisterTasks.add(new TopicCommand(TopicCommand.TaskType.SHUTDOWN, null));
+            topicRegisterTasks.add(new TopicCommand(TopicCommand.TaskType.SHUTDOWN, null));
             Closer.closeQuietly(serverRegister);
         }
     }

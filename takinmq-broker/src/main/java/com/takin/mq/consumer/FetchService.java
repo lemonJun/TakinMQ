@@ -1,7 +1,7 @@
 
 package com.takin.mq.consumer;
 
-import com.takin.mq.message.SimpleSendData;
+import com.takin.mq.message.SimpleFetchData;
 import com.takin.rpc.server.anno.ServiceDefine;
 
 @ServiceDefine
@@ -14,7 +14,7 @@ public interface FetchService {
      * @return
      * @throws Exception
      */
-    public abstract SimpleSendData fetch(String topic, int offset) throws Exception;
+    public abstract SimpleFetchData fetch(String topic, long offset) throws Exception;
 
     /**
      * 
@@ -25,6 +25,6 @@ public interface FetchService {
     * @return 
     * @throws Exception
     */
-    public abstract SimpleSendData fetch(String topic, int partition, int offset) throws Exception;
+    public abstract SimpleFetchData fetch(String topic, long offset, int partition) throws Exception;
 
 }

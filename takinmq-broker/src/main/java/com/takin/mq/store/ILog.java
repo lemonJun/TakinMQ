@@ -46,7 +46,7 @@ public interface ILog extends Closeable {
      * @return message objects
      * @throws IOException any Exception
      */
-    MessageSet read(long offset, int length) throws IOException;
+    MessageSet read(long offset, int size) throws IOException;
 
     /**
      * append messages to log

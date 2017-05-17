@@ -10,5 +10,5 @@ public abstract class ESBReceiveHandler {
     }
 
     public abstract void messageReceived(ESBMessage msg);
-
+    
 }

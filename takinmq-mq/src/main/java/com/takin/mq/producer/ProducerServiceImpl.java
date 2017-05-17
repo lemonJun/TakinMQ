@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.takin.mq.message.ByteBufferMessageSet;
 import com.takin.mq.message.Message;
-import com.takin.mq.message.StringProducerData;
+import com.takin.mq.message.SimpleSendData;
 import com.takin.mq.store.ILog;
 import com.takin.mq.store.LogManager;
 import com.takin.rpc.server.GuiceDI;
@@ -20,7 +20,7 @@ public class ProducerServiceImpl implements ProducerService {
     private static final Logger logger = LoggerFactory.getLogger(ProducerServiceImpl.class);
 
     @Override
-    public long send(StringProducerData data) throws Exception {
+    public long send(SimpleSendData data) throws Exception {
         try {
             logger.info(JSON.toJSONString(data));
             int partion = GuiceDI.getInstance(LogManager.class).choosePartition(data.getTopic());
@@ -31,7 +31,7 @@ public class ProducerServiceImpl implements ProducerService {
     }
 
     @Override
-    public long send(StringProducerData data, int partition) throws Exception {
+    public long send(SimpleSendData data, int partition) throws Exception {
         try {
             ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
             byte[] databyte = data.getData().getBytes("utf-8");
@@ -46,12 +46,12 @@ public class ProducerServiceImpl implements ProducerService {
     }
 
     @Override
-    public long send(List<StringProducerData> datas) throws Exception {
+    public long send(List<SimpleSendData> datas) throws Exception {
         return 0;
     }
 
     @Override
-    public long send(List<StringProducerData> datas, int partition) throws Exception {
+    public long send(List<SimpleSendData> datas, int partition) throws Exception {
         return 0;
     }
 

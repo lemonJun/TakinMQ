@@ -19,8 +19,6 @@ package com.takin.mq.common;
 
 import java.nio.ByteBuffer;
 
-import com.takin.mq.message.InvalidMessageException;
-
 /**
  * A bi-directional mapping between error codes and exceptions x
  * 

@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.takin.mq.message.StringProducerData;
+import com.takin.mq.message.SimpleSendData;
 import com.takin.mq.producer.ProducerService;
 import com.takin.rpc.client.ProxyFactory;
 
@@ -28,7 +28,7 @@ public class ProducerTest {
 
             while (true) {
                 if (limit.tryAcquire()) {
-                    long address = producer.send(new StringProducerData("test").add("Hello jafka" + total.getAndIncrement()));
+                    long address = producer.send(new SimpleSendData("test").add("Hello jafka" + total.getAndIncrement()));
                     System.out.println(address);
                 }
             }

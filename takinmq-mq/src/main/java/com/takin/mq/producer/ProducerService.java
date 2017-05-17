@@ -2,7 +2,7 @@ package com.takin.mq.producer;
 
 import java.util.List;
 
-import com.takin.mq.message.StringProducerData;
+import com.takin.mq.message.SimpleSendData;
 import com.takin.rpc.server.anno.ServiceDefine;
 
 @ServiceDefine
@@ -14,7 +14,7 @@ public interface ProducerService {
      * @return
      * @throws Exception
      */
-    public abstract long send(StringProducerData data) throws Exception;
+    public abstract long send(SimpleSendData data) throws Exception;
 
     /**
     * 指定要发送的消息所在的分区
@@ -23,7 +23,7 @@ public interface ProducerService {
     * @return
     * @throws Exception
     */
-    public abstract long send(StringProducerData data, int partition) throws Exception;
+    public abstract long send(SimpleSendData data, int partition) throws Exception;
 
     /**
      * 一次发送多条数据
@@ -31,7 +31,7 @@ public interface ProducerService {
      * @return
      * @throws Exception
      */
-    public abstract long send(List<StringProducerData> datas) throws Exception;
+    public abstract long send(List<SimpleSendData> datas) throws Exception;
 
     /**
      * 指定要发送的消息所在的分区
@@ -40,6 +40,6 @@ public interface ProducerService {
      * @return
      * @throws Exception
      */
-    public abstract long send(List<StringProducerData> datas, int partition) throws Exception;
+    public abstract long send(List<SimpleSendData> datas, int partition) throws Exception;
 
 }

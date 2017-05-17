@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.takin.mq.message;
+package com.takin.mq.common;
 
 /**
  * Indicates the presense of a message that exceeds the maximum acceptable

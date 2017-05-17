@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 
+import com.takin.mq.common.InvalidMessageException;
+
 /**
  * 
  * 在message的基础上组合多个消息 

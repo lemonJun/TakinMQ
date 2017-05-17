@@ -36,11 +36,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.takin.mq.common.InvalidMessageException;
 import com.takin.mq.common.InvalidMessageSizeException;
 import com.takin.mq.common.OffsetOutOfRangeException;
 import com.takin.mq.message.ByteBufferMessageSet;
 import com.takin.mq.message.FileMessageSet;
-import com.takin.mq.message.InvalidMessageException;
 import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.message.MessageSet;
 import com.takin.mq.msg.TakinMsg;

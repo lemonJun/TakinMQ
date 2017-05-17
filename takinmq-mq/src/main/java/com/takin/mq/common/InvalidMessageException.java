@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.takin.mq.message;
+package com.takin.mq.common;
 
 /**
  * Indicates that a message failed its checksum and is corrupt

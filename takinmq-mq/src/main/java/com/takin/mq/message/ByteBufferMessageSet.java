@@ -23,6 +23,7 @@ import java.nio.channels.GatheringByteChannel;
 import java.util.Iterator;
 
 import com.takin.mq.common.ErrorMapping;
+import com.takin.mq.common.InvalidMessageException;
 import com.takin.mq.common.InvalidMessageSizeException;
 import com.takin.mq.common.MessageSizeTooLargeException;
 import com.takin.mq.utils.IteratorTemplate;

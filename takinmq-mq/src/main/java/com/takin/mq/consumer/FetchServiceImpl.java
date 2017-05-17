@@ -1,4 +1,4 @@
-package com.takin.mq.broker;
+package com.takin.mq.consumer;
 
 import java.util.Iterator;
 
@@ -10,6 +10,7 @@ import com.takin.mq.log.ILog;
 import com.takin.mq.log.LogManager;
 import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.message.MessageSet;
+import com.takin.mq.message.StringProducerData;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.anno.ServiceImpl;
 

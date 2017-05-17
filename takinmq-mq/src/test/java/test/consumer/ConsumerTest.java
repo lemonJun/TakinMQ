@@ -3,8 +3,8 @@ package test.consumer;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.alibaba.fastjson.JSON;
-import com.takin.mq.broker.FetchService;
-import com.takin.mq.broker.StringProducerData;
+import com.takin.mq.consumer.FetchService;
+import com.takin.mq.message.StringProducerData;
 import com.takin.rpc.client.ProxyFactory;
 
 public class ConsumerTest {

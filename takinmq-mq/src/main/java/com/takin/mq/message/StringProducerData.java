@@ -1,5 +1,5 @@
 
-package com.takin.mq.broker;
+package com.takin.mq.message;
 
 public class StringProducerData {
     private String topic;

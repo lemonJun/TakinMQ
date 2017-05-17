@@ -1,4 +1,4 @@
-package com.takin.mq.broker;
+package com.takin.mq.producer;
 
 import com.takin.mq.message.StringProducerData;
 import com.takin.rpc.server.anno.ServiceDefine;

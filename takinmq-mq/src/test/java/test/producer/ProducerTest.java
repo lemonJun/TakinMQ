@@ -2,8 +2,8 @@ package test.producer;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import com.takin.mq.broker.ProducerService;
-import com.takin.mq.broker.StringProducerData;
+import com.takin.mq.message.StringProducerData;
+import com.takin.mq.producer.ProducerService;
 import com.takin.rpc.client.ProxyFactory;
 
 public class ProducerTest {

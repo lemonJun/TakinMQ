@@ -29,14 +29,14 @@ public class XMLHelper {
         Document doc = null;
         try {
             File f = new File(filePath);
-            if(db != null){
-            	doc = db.parse(f);
+            if (db != null) {
+                doc = db.parse(f);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(doc != null){
-        	return (Element) doc.getDocumentElement();
+        if (doc != null) {
+            return (Element) doc.getDocumentElement();
         }
         return null;
     }

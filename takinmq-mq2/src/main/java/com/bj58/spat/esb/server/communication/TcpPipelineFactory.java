@@ -21,21 +21,21 @@ import com.bj58.spat.esb.server.protocol.ProtocolConst;
  * 
  */
 public class TcpPipelineFactory implements ChannelPipelineFactory {
-	
-	private final ChannelHandler handler;
-	private int frameMaxLength;
 
-	public TcpPipelineFactory(ChannelHandler handler, int frameMaxLength) {
-		this.handler = handler;
-		this.frameMaxLength = frameMaxLength;
-	}
+    private final ChannelHandler handler;
+    private int frameMaxLength;
 
-	public ChannelPipeline getPipeline() throws Exception {
-		ChannelPipeline pipeline = pipeline();
-		ChannelBuffer buf = directBuffer(ProtocolConst.P_END_TAG.length);
-		buf.writeBytes(ProtocolConst.P_END_TAG);
-		pipeline.addLast("framer", new DelimiterBasedFrameDecoder(this.frameMaxLength, true, buf));
-		pipeline.addLast("handler", handler);
-		return pipeline;
-	}
+    public TcpPipelineFactory(ChannelHandler handler, int frameMaxLength) {
+        this.handler = handler;
+        this.frameMaxLength = frameMaxLength;
+    }
+
+    public ChannelPipeline getPipeline() throws Exception {
+        ChannelPipeline pipeline = pipeline();
+        ChannelBuffer buf = directBuffer(ProtocolConst.P_END_TAG.length);
+        buf.writeBytes(ProtocolConst.P_END_TAG);
+        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(this.frameMaxLength, true, buf));
+        pipeline.addLast("handler", handler);
+        return pipeline;
+    }
 }

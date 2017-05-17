@@ -1,100 +1,98 @@
 package com.bj58.spat.esbclient.config;
 
 public class ServerConfig {
-	
-	private String ip;
-	private int port;
-	private int initConn;
-	private boolean keepAlive;
-	private int connectTimeOut;
-	private boolean nagle;
-	private int maxPakageSize;
-	private int recvBufferSize;
-	private int sendBufferSize;
-	
-	public ServerConfig() {
-		super();
-		this.initConn = 1;
-		this.keepAlive = true;
-		this.connectTimeOut = 1000 * 3;
-		this.nagle = false;
-		this.maxPakageSize = 1024 * 1024 * 2;
-		this.recvBufferSize = 1024 * 1024 * 2;
-		this.sendBufferSize = 1024 * 1024 * 2;
-	}
-	
 
-	public String getIp() {
-		return ip;
-	}
+    private String ip;
+    private int port;
+    private int initConn;
+    private boolean keepAlive;
+    private int connectTimeOut;
+    private boolean nagle;
+    private int maxPakageSize;
+    private int recvBufferSize;
+    private int sendBufferSize;
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+    public ServerConfig() {
+        super();
+        this.initConn = 1;
+        this.keepAlive = true;
+        this.connectTimeOut = 1000 * 3;
+        this.nagle = false;
+        this.maxPakageSize = 1024 * 1024 * 2;
+        this.recvBufferSize = 1024 * 1024 * 2;
+        this.sendBufferSize = 1024 * 1024 * 2;
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public String getIp() {
+        return ip;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-	public int getInitConn() {
-		return initConn;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public void setInitConn(int initConn) {
-		this.initConn = initConn;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
+    public int getInitConn() {
+        return initConn;
+    }
 
-	public boolean isKeepAlive() {
-		return keepAlive;
-	}
+    public void setInitConn(int initConn) {
+        this.initConn = initConn;
+    }
 
-	public void setKeepAlive(boolean keepAlive) {
-		this.keepAlive = keepAlive;
-	}
+    public boolean isKeepAlive() {
+        return keepAlive;
+    }
 
-	public int getConnectTimeOut() {
-		return connectTimeOut;
-	}
+    public void setKeepAlive(boolean keepAlive) {
+        this.keepAlive = keepAlive;
+    }
 
-	public void setConnectTimeOut(int connectTimeOut) {
-		this.connectTimeOut = connectTimeOut;
-	}
+    public int getConnectTimeOut() {
+        return connectTimeOut;
+    }
 
-	public boolean isNagle() {
-		return nagle;
-	}
+    public void setConnectTimeOut(int connectTimeOut) {
+        this.connectTimeOut = connectTimeOut;
+    }
 
-	public void setNagle(boolean nagle) {
-		this.nagle = nagle;
-	}
+    public boolean isNagle() {
+        return nagle;
+    }
 
-	public int getMaxPakageSize() {
-		return maxPakageSize;
-	}
+    public void setNagle(boolean nagle) {
+        this.nagle = nagle;
+    }
 
-	public void setMaxPakageSize(int maxPakageSize) {
-		this.maxPakageSize = maxPakageSize;
-	}
+    public int getMaxPakageSize() {
+        return maxPakageSize;
+    }
 
-	public int getRecvBufferSize() {
-		return recvBufferSize;
-	}
+    public void setMaxPakageSize(int maxPakageSize) {
+        this.maxPakageSize = maxPakageSize;
+    }
 
-	public void setRecvBufferSize(int recvBufferSize) {
-		this.recvBufferSize = recvBufferSize;
-	}
+    public int getRecvBufferSize() {
+        return recvBufferSize;
+    }
 
-	public void setSendBufferSize(int sendBufferSize) {
-		this.sendBufferSize = sendBufferSize;
-	}
+    public void setRecvBufferSize(int recvBufferSize) {
+        this.recvBufferSize = recvBufferSize;
+    }
 
-	public int getSendBufferSize() {
-		return sendBufferSize;
-	}
+    public void setSendBufferSize(int sendBufferSize) {
+        this.sendBufferSize = sendBufferSize;
+    }
+
+    public int getSendBufferSize() {
+        return sendBufferSize;
+    }
 
 }

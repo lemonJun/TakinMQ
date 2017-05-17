@@ -19,55 +19,53 @@ import com.bj58.spat.esb.server.util.ClientChannelListHelper;
 
 public class TcpHandler extends SimpleChannelUpstreamHandler {
 
-	private static final Log logger = LogFactory.getLog(TcpHandler.class);
-	
-	private static LogWorker logworker = LogWorker.logworker ;
-	
-	@Override
-	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-		ByteBuffer buffer = ((ChannelBuffer) e.getMessage()).toByteBuffer();
-		byte[] reciveByte = buffer.array();	
-		Channel channel = e.getChannel();
-		ContextDispatcher.dispatch(new ESBContext(channel, reciveByte , System.nanoTime()));
-		//记录日志
-		logworker.offer(new Object[]{reciveByte,channel});
-	}
+    private static final Log logger = LogFactory.getLog(TcpHandler.class);
 
-	@Override
-	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
-		if (e instanceof ChannelStateEvent) {
-			logger.debug(e.toString());
-		}
-		super.handleUpstream(ctx, e);
-	}
+    private static LogWorker logworker = LogWorker.logworker;
 
-	@Override
-	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
-		if(ServerState.isRebooting()){
-			e.getChannel().close();
-			logger.warn("this server will reboot "+e.getChannel()+" is close");
-		}else{
-			TcpServer.allChannels.add(e.getChannel());
-			logger.info("new channel open:" + e.getChannel().getRemoteAddress().toString());
-		}
-	}
+    @Override
+    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
+        ByteBuffer buffer = ((ChannelBuffer) e.getMessage()).toByteBuffer();
+        byte[] reciveByte = buffer.array();
+        Channel channel = e.getChannel();
+        ContextDispatcher.dispatch(new ESBContext(channel, reciveByte, System.nanoTime()));
+        //记录日志
+        logworker.offer(new Object[] { reciveByte, channel });
+    }
 
-	@Override
-	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-		
-	}
+    @Override
+    public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
+        if (e instanceof ChannelStateEvent) {
+            logger.debug(e.toString());
+        }
+        super.handleUpstream(ctx, e);
+    }
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		logger.error("unexpected exception from downstream remoteAddress("
-				+ e.getChannel().getRemoteAddress().toString() + ")",
-				e.getCause());
-	}
+    @Override
+    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
+        if (ServerState.isRebooting()) {
+            e.getChannel().close();
+            logger.warn("this server will reboot " + e.getChannel() + " is close");
+        } else {
+            TcpServer.allChannels.add(e.getChannel());
+            logger.info("new channel open:" + e.getChannel().getRemoteAddress().toString());
+        }
+    }
 
-	@Override
-	public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
-		logger.info("channel is closed:" + e.getChannel().getRemoteAddress().toString());
-		ClientChannelListHelper.removeChannelListWithClose(e.getChannel());
-		TcpServer.allChannels.remove(e.getChannel());
-	}
+    @Override
+    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
+        logger.error("unexpected exception from downstream remoteAddress(" + e.getChannel().getRemoteAddress().toString() + ")", e.getCause());
+    }
+
+    @Override
+    public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
+        logger.info("channel is closed:" + e.getChannel().getRemoteAddress().toString());
+        ClientChannelListHelper.removeChannelListWithClose(e.getChannel());
+        TcpServer.allChannels.remove(e.getChannel());
+    }
 }

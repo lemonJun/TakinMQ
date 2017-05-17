@@ -14,30 +14,32 @@
  *  limitations under the License.
  */
 package com.bj58.spat.esb.server.store.filestore;
+
 /**
  *@author sunli
  *@date 2011-5-18
  *@version $Id: ConfigException.java 2 2011-07-31 12:25:36Z sunli1223@gmail.com $
  */
 public class ConfigException extends RuntimeException {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5680376999772385539L;
-	public ConfigException() { 
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5680376999772385539L;
 
-	public ConfigException(String message) {
-		super(message);
-	}
+    public ConfigException() {
+    }
 
-	public ConfigException(Throwable cause) {
-		super(cause);
-	}
+    public ConfigException(String message) {
+        super(message);
+    }
 
-	public ConfigException(String message, Throwable cause) {
-		super(message, cause);
-		
-	}
+    public ConfigException(Throwable cause) {
+        super(cause);
+    }
+
+    public ConfigException(String message, Throwable cause) {
+        super(message, cause);
+
+    }
 
 }

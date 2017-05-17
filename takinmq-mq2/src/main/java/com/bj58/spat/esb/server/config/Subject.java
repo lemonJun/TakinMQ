@@ -3,47 +3,48 @@ package com.bj58.spat.esb.server.config;
 import java.util.List;
 
 public class Subject {
-	private int subject;
-	private boolean isQueue;
-	private boolean canAbandon = false ;
-	public boolean isCanAbandon() {
-		return canAbandon;
-	}
+    private int subject;
+    private boolean isQueue;
+    private boolean canAbandon = false;
 
-	public void setCanAbandon(boolean canAbandon) {
-		this.canAbandon = canAbandon;
-	}
+    public boolean isCanAbandon() {
+        return canAbandon;
+    }
 
-	private List<Client> clientList;
-	
-	public Subject(int subject, List<Client> clientList, boolean isQueue,boolean canAbandon){
-		this.subject = subject;
-		this.clientList = clientList;
-		this.isQueue = isQueue;
-		this.canAbandon = canAbandon ;
-	}
-	
-	public List<Client> getClientList() {
-		return clientList;
-	}
+    public void setCanAbandon(boolean canAbandon) {
+        this.canAbandon = canAbandon;
+    }
 
-	public void setClientList(List<Client> clientList) {
-		this.clientList = clientList;
-	}
+    private List<Client> clientList;
 
-	public boolean isQueue() {
-		return isQueue;
-	}
+    public Subject(int subject, List<Client> clientList, boolean isQueue, boolean canAbandon) {
+        this.subject = subject;
+        this.clientList = clientList;
+        this.isQueue = isQueue;
+        this.canAbandon = canAbandon;
+    }
 
-	public void setQueue(boolean isQueue) {
-		this.isQueue = isQueue;
-	}
+    public List<Client> getClientList() {
+        return clientList;
+    }
 
-	public int getSubject() {
-		return subject;
-	}
+    public void setClientList(List<Client> clientList) {
+        this.clientList = clientList;
+    }
 
-	public void setSubject(int subject) {
-		this.subject = subject;
-	}
+    public boolean isQueue() {
+        return isQueue;
+    }
+
+    public void setQueue(boolean isQueue) {
+        this.isQueue = isQueue;
+    }
+
+    public int getSubject() {
+        return subject;
+    }
+
+    public void setSubject(int subject) {
+        this.subject = subject;
+    }
 }

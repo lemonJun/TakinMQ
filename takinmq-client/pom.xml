@@ -33,7 +33,7 @@
 
 		<dependency>
 			<groupId>lemon.takinmq</groupId>
-			<artifactId>takinmq-mq</artifactId>
+			<artifactId>takinmq-broker</artifactId>
 		</dependency>
 
 		<dependency>

@@ -1,13 +1,13 @@
-package test.producer;
+package test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.PropertyConfigurator;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.takin.mq.client.ProducerProvider;
 import com.takin.mq.message.SimpleSendData;
 import com.takin.mq.producer.ProducerService;
-import com.takin.rpc.client.ProxyFactory;
 
 public class ProducerTest {
 
@@ -18,14 +18,7 @@ public class ProducerTest {
     public static void main(String[] args) {
         try {
             PropertyConfigurator.configure("conf/log4j.properties");
-            final ProducerService producer = ProxyFactory.create(ProducerService.class, "broker", null, null);
-            //            for (int i = 0; i < 1; i++) {
-            //                producer.send(new StringProducerData("demo").add("Hello jafka"));
-            //            }
-            //            for (int i = 0; i < 1; i++) {
-            //                producer.send(new StringProducerData("demo").add("Hello jafka"));
-            //            }
-
+            final ProducerService producer = ProducerProvider.getProducerByTopic("broker");
             while (true) {
                 if (limit.tryAcquire()) {
                     long address = producer.send(new SimpleSendData("test").add("Hello jafka" + total.getAndIncrement()));

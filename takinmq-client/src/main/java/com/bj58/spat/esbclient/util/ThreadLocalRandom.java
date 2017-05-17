@@ -60,13 +60,11 @@ public class ThreadLocalRandom extends Random {
     /**
      * The actual ThreadLocal
      */
-    private static final ThreadLocal<ThreadLocalRandom> localRandom =
-        new ThreadLocal<ThreadLocalRandom>() {
-            protected ThreadLocalRandom initialValue() {
-                return new ThreadLocalRandom();
-            }
+    private static final ThreadLocal<ThreadLocalRandom> localRandom = new ThreadLocal<ThreadLocalRandom>() {
+        protected ThreadLocalRandom initialValue() {
+            return new ThreadLocalRandom();
+        }
     };
-
 
     /**
      * Constructor called only by localRandom.initialValue.
@@ -101,7 +99,7 @@ public class ThreadLocalRandom extends Random {
 
     protected int next(int bits) {
         rnd = (rnd * multiplier + addend) & mask;
-        return (int) (rnd >>> (48-bits));
+        return (int) (rnd >>> (48 - bits));
     }
 
     /**

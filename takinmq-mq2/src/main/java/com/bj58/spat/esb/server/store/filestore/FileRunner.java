@@ -33,14 +33,14 @@ import org.apache.commons.logging.LogFactory;
  * @version $Id: FileRunner.java 74 2012-03-21 13:51:26Z sunli1223@gmail.com $
  */
 public class FileRunner implements Runnable {
-	private static final Log logger = LogFactory.getLog(FileRunner.class);
+    private static final Log logger = LogFactory.getLog(FileRunner.class);
     // 删除队列
     private final Queue<String> deleteQueue = new ConcurrentLinkedQueue<String>();
     // 新创建队
     private final Queue<String> createQueue = new ConcurrentLinkedQueue<String>();
     private String baseDir = null;
     private int fileLimitLength = 0;
-    public  boolean transCorrect = false;
+    public boolean transCorrect = false;
 
     public void addDeleteFile(String path) {
         deleteQueue.add(path);
@@ -49,9 +49,9 @@ public class FileRunner implements Runnable {
     public void addCreateFile(String path) {
         createQueue.add(path);
     }
-    
+
     public void removeDeleteFile(String path) {
-    	deleteQueue.remove(path);
+        deleteQueue.remove(path);
     }
 
     public FileRunner(String baseDir, int fileLimitLength) {
@@ -63,31 +63,31 @@ public class FileRunner implements Runnable {
     public void run() {
         String filePath, fileNum;
         while (true) {
-        	if (transCorrect == false) {
-        		try {
-        			Thread.sleep(1000);
-        		} catch (InterruptedException e) {
-        			logger.error(e.getMessage(), e);
-        		}
-        		continue;
-        	}
+            if (transCorrect == false) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage(), e);
+                }
+                continue;
+            }
             filePath = deleteQueue.poll();
             fileNum = createQueue.poll();
             if (filePath == null && fileNum == null) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                	logger.error(e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
                 continue;
             }
             if (filePath != null) {
                 File delFile = new File(filePath);
-                
+
                 if (delFile.delete()) {
                     System.out.println("delete" + " " + filePath);
                 } else {
-                	System.out.println("delete failed" + filePath);
+                    System.out.println("delete failed" + filePath);
                 }
             }
 
@@ -96,7 +96,7 @@ public class FileRunner implements Runnable {
                 try {
                     create(filePath);
                 } catch (IOException e) {
-                	logger.error("预创建数据文件失败");
+                    logger.error("预创建数据文件失败");
                 }
             }
             transCorrect = false;
@@ -118,7 +118,7 @@ public class FileRunner implements Runnable {
             mappedByteBuffer.putInt(-1);// 12next fileindex
             mappedByteBuffer.putInt(-2);// 16 endpoint
             mappedByteBuffer.force();
-//          MappedByteBufferUtil.clean(mappedByteBuffer);
+            //          MappedByteBufferUtil.clean(mappedByteBuffer);
             fc.close();
             raFile.close();
             return true;

@@ -71,7 +71,7 @@ public class ESBClient {
             servPool.send(msg);
         }
     }
-    
+
     /**
      * 发送消息(顺序性)
      * @param msg

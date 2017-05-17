@@ -14,11 +14,14 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>takinmq-mq</module>
-		<module>takinmq-jafka</module>
+		<module>takinmq-broker</module>
 		<module>takinmq-client</module>
+	<!--  
+		<module>takinmq-jafka</module>
 		<module>takinmq-store</module>
 		<module>takinmq-mq2</module>
+		<module>taminmq-common</module>
+		-->
 	</modules>
 
 	<properties>
@@ -51,7 +54,7 @@
 			</dependency>
 			<dependency>
 				<groupId>lemon.takinmq</groupId>
-				<artifactId>takinmq-mq</artifactId>
+				<artifactId>takinmq-broker</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

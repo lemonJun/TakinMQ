@@ -5,6 +5,7 @@
  */
 
 package com.bj58.spat.esb.server.jsr166;
+
 import java.util.concurrent.*;
 
 /**
@@ -103,8 +104,7 @@ public interface TransferQueue<E> extends BlockingQueue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
-    boolean tryTransfer(E e, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    boolean tryTransfer(E e, long timeout, TimeUnit unit) throws InterruptedException;
 
     /**
      * Returns {@code true} if there is at least one consumer waiting

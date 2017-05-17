@@ -38,12 +38,22 @@ public class ProducerServiceImpl implements ProducerService {
             byte[] databyte = data.getData().getBytes("utf-8");
             Message msg = new Message(databyte);
             ByteBufferMessageSet messageset = new ByteBufferMessageSet(msg);
-            List<Long> address = log.append(messageset);
+            long offset = log.append(messageset);
             logger.info(log.reallogfile());
-            return CollectionUtil.isEmpty(address) ? 0 : address.get(0).longValue();
+            return offset;
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    @Override
+    public long send(List<StringProducerData> datas) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public long send(List<StringProducerData> datas, int partition) throws Exception {
+        return 0;
     }
 
 }

@@ -50,7 +50,6 @@ import com.takin.mq.utils.Utils;
 /**
  * a log is message sets with more than one files.
  * 
- * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
 public class Log implements ILog {
@@ -88,8 +87,6 @@ public class Log implements ILog {
         this.needRecovery = needRecovery;
         this.maxMessageSize = maxMessageSize;
         this.name = dir.getName();
-        //        this.logStats.setMbeanName("jafka:type=jafka.logs." + name);
-        //        Utils.registerMBean(logStats);
         segments = loadSegments();
     }
 
@@ -200,8 +197,7 @@ public class Log implements ILog {
         return found.getMessageSet().read(offset - found.start(), length);
     }
 
-    public List<Long> append(ByteBufferMessageSet messages) {
-        //validate the messages
+    public long append(ByteBufferMessageSet messages) {
         messages.verifyMessageSize(maxMessageSize);
         int numberOfMessages = 0;
         for (MessageAndOffset messageAndOffset : messages) {
@@ -211,9 +207,6 @@ public class Log implements ILog {
             numberOfMessages += 1;
         }
         //
-        //        BrokerTopicStat.getBrokerTopicStat(getTopicName()).recordMessagesIn(numberOfMessages);
-        //        BrokerTopicStat.getBrokerAllTopicStat().recordMessagesIn(numberOfMessages);
-        //        logStats.recordAppendedMessages(numberOfMessages);
 
         // truncate the message set's buffer upto validbytes, before appending it to the on-disk log
         ByteBuffer validByteBuffer = messages.getBuffer().duplicate();
@@ -224,17 +217,16 @@ public class Log implements ILog {
         validByteBuffer.limit((int) messageSetValidBytes);
         ByteBufferMessageSet validMessages = new ByteBufferMessageSet(validByteBuffer);
 
+        long offset = 0l;
         // they are valid, insert them in the log
         synchronized (lock) {
             try {
                 LogSegment lastSegment = segments.getLastView();
                 long[] writtenAndOffset = lastSegment.getMessageSet().append(validMessages);
-                if (logger.isTraceEnabled()) {
-                    logger.trace(String.format("[%s,%s] save %d messages, bytes %d", name, lastSegment.getName(), numberOfMessages, writtenAndOffset[0]));
-                }
+                logger.info(String.format("[%s,%s] save %d messages, bytes %d", name, lastSegment.getName(), numberOfMessages, writtenAndOffset[0]));
                 maybeFlush(numberOfMessages);
                 maybeRoll(lastSegment);
-
+                offset = writtenAndOffset[1];
             } catch (IOException e) {
                 logger.error("Halting due to unrecoverable I/O error while handling producer request", e);
                 Runtime.getRuntime().halt(1);
@@ -242,7 +234,7 @@ public class Log implements ILog {
                 throw re;
             }
         }
-        return (List<Long>) null;
+        return offset;
     }
 
     /**

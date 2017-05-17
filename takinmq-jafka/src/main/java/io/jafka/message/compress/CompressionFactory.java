@@ -37,9 +37,7 @@ public final class CompressionFactory {
         return create(compressionCodec, in, null);
     }
 
-    private static CompressionFacade create(CompressionCodec compressionCodec, //
-                    InputStream in, //
-                    ByteArrayOutputStream out) {
+    private static CompressionFacade create(CompressionCodec compressionCodec, InputStream in, ByteArrayOutputStream out) {
         try {
             switch (compressionCodec) {
                 case GZIPCompressionCodec:

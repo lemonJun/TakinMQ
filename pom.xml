@@ -16,6 +16,9 @@
 	<modules>
 		<module>takinmq-mq</module>
 		<module>takinmq-jafka</module>
+		<module>takinmq-client</module>
+		<module>takinmq-store</module>
+		<module>takinmq-mq2</module>
 	</modules>
 
 	<properties>
@@ -53,7 +56,7 @@
 			</dependency>
 			<dependency>
 				<groupId>lemon.takinmq</groupId>
-				<artifactId>takinmq-broker2</artifactId>
+				<artifactId>takinmq-mq</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

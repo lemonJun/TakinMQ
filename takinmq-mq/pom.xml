@@ -34,11 +34,6 @@
 
 		<dependency>
 			<groupId>com.takinrpc</groupId>
-			<artifactId>takinrpc-soa</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.takinrpc</groupId>
 			<artifactId>takinrpc-client</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -51,12 +46,10 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.5</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

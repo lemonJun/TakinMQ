@@ -32,7 +32,6 @@ import com.takin.mq.msg.TakinMsg;
  * A log describes a topic with partition(default value is 0).
  * </p>
  * 
- * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
 public interface ILog extends Closeable {
@@ -55,8 +54,8 @@ public interface ILog extends Closeable {
      * @param messages message set
      * @return all message offsets or null if not supported
      */
-    List<Long> append(ByteBufferMessageSet messages);
-    
+    long append(ByteBufferMessageSet messages);
+
     long append(TakinMsg message);
 
     String reallogfile();

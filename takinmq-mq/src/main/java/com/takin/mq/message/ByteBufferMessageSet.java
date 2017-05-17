@@ -70,7 +70,8 @@ public class ByteBufferMessageSet extends MessageSet {
         this(CompressionCodec.NoCompressionCodec, messages);
     }
 
-    /** get valid bytes of buffer
+    /** 
+     * get valid bytes of buffer
      * <p>
      * The size of buffer is equal or larger than the size of valid messages.
      * The last message maybe is not integrate.
@@ -96,6 +97,7 @@ public class ByteBufferMessageSet extends MessageSet {
     }
 
     /**
+     * 
      * @return the initialOffset
      */
     public long getInitialOffset() {

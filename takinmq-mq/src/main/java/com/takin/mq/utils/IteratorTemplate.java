@@ -22,8 +22,7 @@ import java.util.NoSuchElementException;
 
 /**
  * a template for object iterator
- *
- * @author adyliu (imxylz@gmail.com)
+ * 
  * @since 1.0
  */
 public abstract class IteratorTemplate<T> implements Iterator<T> {

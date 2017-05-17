@@ -21,106 +21,68 @@ import static java.lang.String.format;
 
 import java.nio.ByteBuffer;
 
-import com.takin.mq.common.UnknownMagicByteException;
 import com.takin.mq.utils.Utils;
 
 /**
  * * A message. The format of an N byte message is the following:
  * 
- * <p>
- * magic byte is 1
- * 
  * <pre>
  * 1. 1 byte "magic" identifier to allow format changes
- * 2. 1 byte "attributes" identifier to allow annotations on the message
- * independent of the version (e.g. compression enabled, type of codec used)
+ * 2. 1 byte "attributes" identifier to allow annotations on the message  independent of the version (e.g. compression enabled, type of codec used)
  * 3. 4 byte CRC32 of the payload
  * 4. N - 6 byte payload
  * </pre>
- *
- * 
- * @author adyliu (imxylz@gmail.com)
+ *  
+ *  
  * @since 1.0
  */
 public class Message {
 
-    private static final byte MAGIC_VERSION2 = 1;
-
     public static final byte CurrentMagicValue = 1;
+    public static final byte ATTRIBUTE_OFFSET = 1;
+    public static final byte CrcLength = 4;
 
-    public static final byte MAGIC_OFFSET = 0;
-
-    public static final byte MAGIC_LENGTH = 1;
-
-    public static final byte ATTRIBUTE_OFFSET = MAGIC_OFFSET + MAGIC_LENGTH;
-
-    public static final byte ATTRIBUT_ELENGTH = 1;
-
-    /**
-     * Specifies the mask for the compression code. 2 bits to hold the
-     * compression codec. 0 is reserved to indicate no compression
-     */
     public static final int CompressionCodeMask = 0x03; //
 
     public static final int NoCompression = 0;
 
     /**
-     * Computes the CRC value based on the magic byte
+     * crc的偏移 
      * 
      * @param magic Specifies the magic byte value. Possible values are 1
      *        (compression)
-     * @return crc value
+     * @return  2
      */
-    public static int crcOffset(byte magic) {
-        switch (magic) {
-            case MAGIC_VERSION2:
-                return ATTRIBUTE_OFFSET + ATTRIBUT_ELENGTH;
-
-        }
-        throw new UnknownMagicByteException(format("Magic byte value of %d is unknown", magic));
+    public static int crcOffset() {
+        return ATTRIBUTE_OFFSET + 1;
     }
 
-    public static final byte CrcLength = 4;
-
     /**
-     * Computes the offset to the message payload based on the magic byte
+     * payload的偏移  
      * 
      * @param magic Specifies the magic byte value. Possible values are 0
      *        and 1 0 for no compression 1 for compression
-     * @return offset data
+     * @return 4
      */
-    public static int payloadOffset(byte magic) {
-        return crcOffset(magic) + CrcLength;
+    public static int payloadOffset() {
+        return crcOffset() + CrcLength;
     }
 
     /**
-     * Computes the size of the message header based on the magic byte
-     * 
-     * @param magic Specifies the magic byte value. Possible values are 0
-     *        and 1 0 for no compression 1 for compression
-     * @return size of header
-     */
-    public static int headerSize(byte magic) {
-        return payloadOffset(magic);
-    }
-
-    /**
-     * Size of the header for magic byte 0. This is the minimum size of any
      * message header
      */
-    public static final int MinHeaderSize = headerSize((byte) 1);
 
     final ByteBuffer buffer;
 
     private final int messageSize;
-    
+
     public Message(ByteBuffer buffer) {
         this.buffer = buffer;
         this.messageSize = buffer.limit();
     }
 
     public Message(long checksum, byte[] bytes, CompressionCodec compressionCodec) {
-        this(ByteBuffer.allocate(Message.headerSize(Message.CurrentMagicValue) + bytes.length));
+        this(ByteBuffer.allocate(Message.payloadOffset() + bytes.length));
         buffer.put(CurrentMagicValue);
         byte attributes = 0;
         if (compressionCodec.codec > 0) {
@@ -130,10 +92,6 @@ public class Message {
         Utils.putUnsignedInt(buffer, checksum);
         buffer.put(bytes);
         buffer.rewind();
-    }
-
-    public Message(long checksum, byte[] bytes) {
-        this(checksum, bytes, CompressionCodec.NoCompressionCodec);
     }
 
     public Message(byte[] bytes, CompressionCodec compressionCodec) {
@@ -150,22 +108,16 @@ public class Message {
         this(bytes, CompressionCodec.NoCompressionCodec);
     }
 
-    //
-    public int getSizeInBytes() {
+    public int getMessageSize() {
         return messageSize;
     }
 
-    /**
-     * magic code ( constant 1)
-     * 
-     * @return 1
-     */
     public byte magic() {
-        return buffer.get(MAGIC_OFFSET);
+        return buffer.get(1);
     }
 
     public int payloadSize() {
-        return getSizeInBytes() - headerSize(magic());
+        return getMessageSize() - payloadOffset();
     }
 
     public byte attributes() {
@@ -184,7 +136,7 @@ public class Message {
     }
 
     public long checksum() {
-        return Utils.getUnsignedInt(buffer, crcOffset(magic()));
+        return Utils.getUnsignedInt(buffer, crcOffset());
     }
 
     /**
@@ -193,7 +145,7 @@ public class Message {
      */
     public ByteBuffer payload() {
         ByteBuffer payload = buffer.duplicate();
-        payload.position(headerSize(magic()));
+        payload.position(payloadOffset());
         payload = payload.slice();
         payload.limit(payloadSize());
         payload.rewind();
@@ -201,11 +153,11 @@ public class Message {
     }
 
     public boolean isValid() {
-        return checksum() == Utils.crc32(buffer.array(), buffer.position() + buffer.arrayOffset() + payloadOffset(magic()), payloadSize());
+        return checksum() == Utils.crc32(buffer.array(), buffer.position() + buffer.arrayOffset() + payloadOffset(), payloadSize());
     }
 
     public int serializedSize() {
-        return 4 /* int size */ + buffer.limit();
+        return 4 + buffer.limit();
     }
 
     public void serializeTo(ByteBuffer serBuffer) {
@@ -216,15 +168,14 @@ public class Message {
     //
     @Override
     public String toString() {
-        return format("message(magic = %d, attributes = %d, crc = %d, payload = %s)", //
-                        magic(), attributes(), checksum(), payload());
+        return format("message(magic = %d, attributes = %d, crc = %d, payload = %s)", magic(), attributes(), checksum(), payload());
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Message) {
             Message m = (Message) obj;
-            return getSizeInBytes() == m.getSizeInBytes()//
+            return getMessageSize() == m.getMessageSize()//
                             && attributes() == m.attributes()//
                             && checksum() == m.checksum()//
                             && payload() == m.payload()//

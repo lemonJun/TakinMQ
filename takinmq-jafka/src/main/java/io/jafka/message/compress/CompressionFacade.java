@@ -33,7 +33,7 @@ import io.jafka.utils.Closer;
 public abstract class CompressionFacade implements Closeable {
 
     protected final InputStream inputStream;
-
+    
     protected final OutputStream outputStream;
 
     public CompressionFacade(InputStream inputStream, OutputStream outputStream) {

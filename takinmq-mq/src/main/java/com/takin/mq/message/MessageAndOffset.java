@@ -21,7 +21,6 @@ package com.takin.mq.message;
  * Represents message and offset of the next message. This is used in the
  * MessageSet to iterate over it
  * 
- * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
 public class MessageAndOffset {

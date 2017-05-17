@@ -23,7 +23,8 @@ import java.nio.channels.GatheringByteChannel;
 
 /**
  * 
- * Message set helper functions
+ * 在message的基础上组合多个消息 
+ * offset(long)+messagesize(int)+message
  * 
  */
 public abstract class MessageSet implements Iterable<MessageAndOffset> {
@@ -43,9 +44,7 @@ public abstract class MessageSet implements Iterable<MessageAndOffset> {
         }
         //
         if (messages.length == 0) {
-            ByteBuffer buffer = ByteBuffer.allocate(messageSetSize(messages));
-            buffer.rewind();
-            return buffer;
+            return null;
         }
         //
         Message message = CompressionUtils.compress(messages, compressionCodec);
@@ -55,22 +54,10 @@ public abstract class MessageSet implements Iterable<MessageAndOffset> {
         return buffer;
     }
 
-    public static int entrySize(Message message) {
-        return LogOverhead + message.getSizeInBytes();
-    }
-
-    public static int messageSetSize(Iterable<Message> messages) {
-        int size = 0;
-        for (Message message : messages) {
-            size += entrySize(message);
-        }
-        return size;
-    }
-
     public static int messageSetSize(Message... messages) {
         int size = 0;
         for (Message message : messages) {
-            size += entrySize(message);
+            size += (LogOverhead + message.getMessageSize());
         }
         return size;
     }

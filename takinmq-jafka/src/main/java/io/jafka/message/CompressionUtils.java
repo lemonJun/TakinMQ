@@ -34,9 +34,7 @@ public class CompressionUtils {
     public static Message compress(Message[] messages, CompressionCodec compressionCodec) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         CompressionCodec codec = compressionCodec;
-        final CompressionFacade compressionFacade = CompressionFactory.create(//
-                        codec == CompressionCodec.DefaultCompressionCodec ? //
-                                        CompressionCodec.GZIPCompressionCodec : codec//
+        final CompressionFacade compressionFacade = CompressionFactory.create(codec == CompressionCodec.DefaultCompressionCodec ? CompressionCodec.GZIPCompressionCodec : codec//
                         , outputStream);
         ByteBuffer messageByteBuffer = ByteBuffer.allocate(MessageSet.messageSetSize(messages));
         for (Message message : messages) {

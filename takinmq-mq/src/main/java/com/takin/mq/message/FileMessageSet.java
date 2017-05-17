@@ -131,7 +131,6 @@ public class FileMessageSet extends MessageSet {
             @Override
             protected MessageAndOffset makeNext() {
                 try {
-
                     ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
                     channel.read(sizeBuffer, location);
                     if (sizeBuffer.hasRemaining()) {
@@ -139,7 +138,7 @@ public class FileMessageSet extends MessageSet {
                     }
                     sizeBuffer.rewind();
                     int size = sizeBuffer.getInt();
-                    if (size < Message.MinHeaderSize) {
+                    if (size < Message.payloadOffset()) {
                         return allDone();
                     }
                     ByteBuffer buffer = ByteBuffer.allocate(size);
@@ -198,7 +197,7 @@ public class FileMessageSet extends MessageSet {
         long beforeOffset = setSize.getAndAdd(written);
         return new long[] { written, beforeOffset };
     }
-
+    
     /**
      * 
      * Commit all written data to the physical disk
@@ -268,7 +267,7 @@ public class FileMessageSet extends MessageSet {
 
         // check that we have sufficient bytes left in the file
         int size = buffer.getInt(0);
-        if (size < Message.MinHeaderSize)
+        if (size < Message.payloadOffset())
             return -1;
 
         long next = start + 4 + size;

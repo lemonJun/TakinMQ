@@ -37,11 +37,7 @@ public enum CompressionCodec {
     /**
      * Snappy compression (NOT USED)
      */
-    SnappyCompressionCodec(2), //
-    /**
-     * DEFAULT compression(equals GZIPCompressionCode)
-     */
-    DefaultCompressionCodec(1);
+    SnappyCompressionCodec(2);
 
     /**
      * the codec value

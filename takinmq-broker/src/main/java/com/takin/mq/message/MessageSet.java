@@ -28,6 +28,7 @@ import com.takin.mq.common.InvalidMessageException;
  * 在message的基础上组合多个消息 
  * offset(long)+messagesize(int)+message
  * 
+ * 
  */
 public abstract class MessageSet implements Iterable<MessageAndOffset> {
 

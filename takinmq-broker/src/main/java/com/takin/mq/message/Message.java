@@ -44,70 +44,29 @@ public class Message {
     public static final byte ATTRIBUTE_OFFSET = 1;
     public static final byte CrcLength = 4;
 
-    public static final int CompressionCodeMask = 0x03; //
-
-    public static final int NoCompression = 0;
-
-    /**
-     * crc的偏移 
-     * 
-     * @param magic Specifies the magic byte value. Possible values are 1
-     *        (compression)
-     * @return  2
-     */
-    public static int crcOffset() {
-        return ATTRIBUTE_OFFSET + 1;
-    }
-
-    /**
-     * payload的偏移  
-     * 
-     * @param magic Specifies the magic byte value. Possible values are 0
-     *        and 1 0 for no compression 1 for compression
-     * @return 4
-     */
-    public static int payloadOffset() {
-        return crcOffset() + CrcLength;
-    }
-
-    /**
-     * message header
-     */
-
     final ByteBuffer buffer;
-
     private final int messageSize;
 
-    public Message(ByteBuffer buffer) {
-        this.buffer = buffer;
-        this.messageSize = buffer.limit();
-    }
-
-    public Message(long checksum, byte[] bytes, CompressionCodec compressionCodec) {
-        this(ByteBuffer.allocate(Message.payloadOffset() + bytes.length));
+    public Message(String messageString) throws Exception {
+        byte[] bytes = messageString.getBytes(ENCODING);
+        buffer = ByteBuffer.allocate(Message.payloadOffset() + bytes.length);
+        messageSize = buffer.limit();
         buffer.put(CurrentMagicValue);
-        byte attributes = 0;
-        if (compressionCodec.codec > 0) {
-            attributes = (byte) (attributes | (CompressionCodeMask & compressionCodec.codec));
-        }
-        buffer.put(attributes);
-        buffer.putInt((int) (checksum & 0xffffffffL));
+        buffer.put((byte) 0);//不压缩
+        long crc = Utils.crc32(bytes);
+        buffer.putInt((int) (crc & 0xffffffffL));//crc32
         buffer.put(bytes);
         buffer.rewind();
     }
 
-    public Message(byte[] bytes, CompressionCodec compressionCodec) {
-        this(Utils.crc32(bytes), bytes, compressionCodec);
+    public static final int NoCompression = 0;
+
+    public static int crcOffset() {
+        return ATTRIBUTE_OFFSET + 1;
     }
 
-    /**
-     * create no compression message
-     * 
-     * @param bytes message data
-     * @see CompressionCodec#NoCompressionCodec
-     */
-    public Message(byte[] bytes) {
-        this(bytes, CompressionCodec.NoCompressionCodec);
+    public static int payloadOffset() {
+        return crcOffset() + CrcLength;
     }
 
     public int getMessageSize() {
@@ -124,17 +83,6 @@ public class Message {
 
     public byte attributes() {
         return buffer.get(ATTRIBUTE_OFFSET);
-    }
-
-    public CompressionCodec compressionCodec() {
-        byte magicByte = magic();
-        switch (magicByte) {
-            case 0:
-                return CompressionCodec.NoCompressionCodec;
-            case 1:
-                return CompressionCodec.valueOf(buffer.get(ATTRIBUTE_OFFSET) & CompressionCodeMask);
-        }
-        throw new RuntimeException("Invalid magic byte " + magicByte);
     }
 
     public long checksum() {
@@ -157,7 +105,7 @@ public class Message {
     public boolean isValid() {
         return checksum() == Utils.crc32(buffer.array(), buffer.position() + buffer.arrayOffset() + payloadOffset(), payloadSize());
     }
-
+    
     public int serializedSize() {
         return 4 + buffer.limit();
     }

@@ -4,8 +4,8 @@ package com.takin.mq.message;
 public class SimpleSendData {
 
     private String topic;
-    private String data;
-
+    private String data; 
+    
     public SimpleSendData() {
     }
 
@@ -26,7 +26,7 @@ public class SimpleSendData {
     public String getTopic() {
         return topic;
     }
-
+    
     public void setTopic(String topic) {
         this.topic = topic;
     }

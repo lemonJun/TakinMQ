@@ -18,10 +18,10 @@ public class ProducerTest {
     public static void main(String[] args) {
         try {
             PropertyConfigurator.configure("conf/log4j.properties");
-            final ProducerService producer = ProducerProvider.getProducerByTopic("broker");
+            final ProducerService producer = ProducerProvider.getProducerByTopic();
             while (true) {
                 if (limit.tryAcquire()) {
-                    long address = producer.send(new SimpleSendData("test").add("Hello jafka" + total.getAndIncrement()));
+                    long address = producer.send(new SimpleSendData("test").add("Hello jafka" + total.getAndIncrement()), 2);
                     System.out.println(address);
                 }
             }

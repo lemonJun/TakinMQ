@@ -38,6 +38,8 @@ import com.takin.mq.utils.Utils;
  */
 public class Message {
 
+    public static final String ENCODING = "UTF-8";
+
     public static final byte CurrentMagicValue = 1;
     public static final byte ATTRIBUTE_OFFSET = 1;
     public static final byte CrcLength = 4;
@@ -89,7 +91,7 @@ public class Message {
             attributes = (byte) (attributes | (CompressionCodeMask & compressionCodec.codec));
         }
         buffer.put(attributes);
-        Utils.putUnsignedInt(buffer, checksum);
+        buffer.putInt((int) (checksum & 0xffffffffL));
         buffer.put(bytes);
         buffer.rewind();
     }

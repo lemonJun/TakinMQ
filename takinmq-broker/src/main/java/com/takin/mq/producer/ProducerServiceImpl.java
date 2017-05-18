@@ -31,7 +31,7 @@ public class ProducerServiceImpl implements ProducerService {
     }
 
     @Override
-    public long send(SimpleSendData data, int partition) throws Exception {
+    public long send(SimpleSendData data, Integer partition) throws Exception {
         try {
             ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
             byte[] databyte = data.getData().getBytes("utf-8");

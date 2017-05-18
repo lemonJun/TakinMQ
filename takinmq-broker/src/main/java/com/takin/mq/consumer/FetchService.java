@@ -14,7 +14,7 @@ public interface FetchService {
      * @return
      * @throws Exception
      */
-    public abstract SimpleFetchData fetch(String topic, long offset) throws Exception;
+    public abstract SimpleFetchData fetch(String topic, Long offset) throws Exception;
 
     /**
      * 
@@ -25,6 +25,6 @@ public interface FetchService {
     * @return 
     * @throws Exception
     */
-    public abstract SimpleFetchData fetch(String topic, long offset, int partition) throws Exception;
+    public abstract SimpleFetchData fetch(String topic, Long offset, Integer partition) throws Exception;
 
 }

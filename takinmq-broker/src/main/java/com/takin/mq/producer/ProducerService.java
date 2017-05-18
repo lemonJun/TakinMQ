@@ -23,7 +23,7 @@ public interface ProducerService {
     * @return
     * @throws Exception
     */
-    public abstract long send(SimpleSendData data, int partition) throws Exception;
+    public abstract long send(SimpleSendData data, Integer partition) throws Exception;
 
     /**
      * 一次发送多条数据

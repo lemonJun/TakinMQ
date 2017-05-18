@@ -7,7 +7,7 @@ public abstract class ReceiveHandler {
     public void notify(SimpleFetchData fetchdata) {
         messageReceived(fetchdata.getData());
     }
-
+    
     public abstract void messageReceived(String msg);
 
 }

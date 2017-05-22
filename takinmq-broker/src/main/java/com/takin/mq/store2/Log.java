@@ -22,7 +22,6 @@ import static java.lang.String.format;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,13 +35,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.takin.mq.common.InvalidMessageException;
-import com.takin.mq.common.InvalidMessageSizeException;
 import com.takin.mq.common.OffsetOutOfRangeException;
-import com.takin.mq.message.ByteBufferMessageSet;
-import com.takin.mq.message.FileMessageSet;
+import com.takin.mq.message.FileMessage;
+import com.takin.mq.message.Message;
 import com.takin.mq.message.MessageAndOffset;
-import com.takin.mq.message.MessageSet;
 import com.takin.mq.msg.TakinMsg;
 import com.takin.mq.utils.Range;
 import com.takin.mq.utils.Utils;
@@ -56,14 +52,13 @@ public class Log implements ILog {
 
     private final Logger logger = LoggerFactory.getLogger(Log.class);
 
-    private static final String FileSuffix = ".jafka";
+    private static final String FileSuffix = ".queue";
 
     public final File dir;
 
     private final RollingStrategy rollingStategy;
 
     final int flushInterval;
-
     final boolean needRecovery;
 
     private final Object lock = new Object();
@@ -106,13 +101,13 @@ public class Log implements ILog {
             long start = Long.parseLong(filename.substring(0, filename.length() - FileSuffix.length()));
             final String logFormat = "LOADING_LOG_FILE[%2d], start(offset)=%d, size=%d, path=%s";
             logger.info(String.format(logFormat, n, start, f.length(), f.getAbsolutePath()));
-            FileMessageSet messageSet = new FileMessageSet(f, false);
+            FileMessage messageSet = new FileMessage(f, false);
             accum.add(new LogSegment(f, messageSet, start));
         }
         if (accum.size() == 0) {
             // no existing segments, create a new mutable segment
             File newFile = new File(dir, Log.nameFromOffset(0));
-            FileMessageSet fileMessageSet = new FileMessageSet(newFile, true);
+            FileMessage fileMessageSet = new FileMessage(newFile, true);
             accum.add(new LogSegment(newFile, fileMessageSet, 0));
         } else {
             // there is at least one existing segment, validate and recover them/it
@@ -124,7 +119,7 @@ public class Log implements ILog {
         LogSegment last = accum.remove(accum.size() - 1);
         last.getMessageSet().close();
         logger.info("Loading the last segment " + last.getFile().getAbsolutePath() + " in mutable mode, recovery " + needRecovery);
-        LogSegment mutable = new LogSegment(last.getFile(), new FileMessageSet(last.getFile(), true, new AtomicBoolean(needRecovery)), last.start());
+        LogSegment mutable = new LogSegment(last.getFile(), new FileMessage(last.getFile(), true, new AtomicBoolean(needRecovery)), last.start());
         accum.add(mutable);
         return new SegmentList(name, accum);
     }
@@ -185,44 +180,46 @@ public class Log implements ILog {
      * @see MessageSet#Empty
      * @throws IOException any exception
      */
-    public MessageSet read(long offset, int length) throws IOException {
+    @Override
+    public MessageAndOffset read(long offset, int length) throws IOException {
         List<LogSegment> views = segments.getView();
         LogSegment found = findRange(views, offset, views.size());
         if (found == null) {
             if (logger.isTraceEnabled()) {
                 logger.trace(format("NOT FOUND MessageSet from Log[%s], offset=%d, length=%d", name, offset, length));
             }
-            return MessageSet.Empty;
+            return null;
         }
         return found.getMessageSet().read(offset - found.start(), length);
     }
 
-    public long append(ByteBufferMessageSet messages) {
-        messages.verifyMessageSize(maxMessageSize);
+    //
+    public long append(Message message) {
+        message.verifyMessageSize(maxMessageSize);
         int numberOfMessages = 0;
-        for (MessageAndOffset messageAndOffset : messages) {
-            if (!messageAndOffset.message.isValid()) {
-                throw new InvalidMessageException();
-            }
-            numberOfMessages += 1;
-        }
+        //        for (MessageAndOffset messageAndOffset : messages) {
+        //            if (!messageAndOffset.message.isValid()) {
+        //                throw new InvalidMessageException();
+        //            }
+        //            numberOfMessages += 1;
+        //        }
         //
 
         // truncate the message set's buffer upto validbytes, before appending it to the on-disk log
-        ByteBuffer validByteBuffer = messages.getBuffer().duplicate();
-        long messageSetValidBytes = messages.getValidBytes();
-        if (messageSetValidBytes > Integer.MAX_VALUE || messageSetValidBytes < 0)
-            throw new InvalidMessageSizeException("Illegal length of message set " + messageSetValidBytes + " Message set cannot be appended to log. Possible causes are corrupted produce requests");
-
-        validByteBuffer.limit((int) messageSetValidBytes);
-        ByteBufferMessageSet validMessages = new ByteBufferMessageSet(validByteBuffer);
+        //        ByteBuffer validByteBuffer = messages.getBuffer().duplicate();
+        //        long messageSetValidBytes = messages.getValidBytes();
+        //        if (messageSetValidBytes > Integer.MAX_VALUE || messageSetValidBytes < 0)
+        //            throw new InvalidMessageSizeException("Illegal length of message set " + messageSetValidBytes + " Message set cannot be appended to log. Possible causes are corrupted produce requests");
+        //
+        //        validByteBuffer.limit((int) messageSetValidBytes);
+        //        ByteBufferMessageSet validMessages = new ByteBufferMessageSet(validByteBuffer);
 
         long offset = 0l;
         // they are valid, insert them in the log
         synchronized (lock) {
             try {
                 LogSegment lastSegment = segments.getLastView();
-                long[] writtenAndOffset = lastSegment.getMessageSet().append(validMessages);
+                long[] writtenAndOffset = lastSegment.getMessageSet().append(message);
                 logger.info(String.format("[%s,%s] save %d messages, bytes %d", name, lastSegment.getName(), numberOfMessages, writtenAndOffset[0]));
                 maybeFlush(numberOfMessages);
                 maybeRoll(lastSegment);
@@ -261,7 +258,7 @@ public class Log implements ILog {
                 }
             }
             logger.info("Rolling log '" + name + "' to " + newFile.getName());
-            segments.append(new LogSegment(newFile, new FileMessageSet(newFile, true), newOffset));
+            segments.append(new LogSegment(newFile, new FileMessage(newFile, true), newOffset));
         }
     }
 
@@ -450,4 +447,5 @@ public class Log implements ILog {
 
         return 0;
     }
+
 }

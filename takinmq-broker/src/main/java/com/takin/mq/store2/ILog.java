@@ -19,10 +19,9 @@ package com.takin.mq.store2;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 import com.takin.mq.message.Message;
+import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.msg.TakinMsg;
 
 /**
@@ -35,8 +34,6 @@ import com.takin.mq.msg.TakinMsg;
  */
 public interface ILog extends Closeable {
 
-    List<Long> EMPTY_OFFSETS = Collections.emptyList();
-
     /**
      * read messages from log
      * 
@@ -45,8 +42,8 @@ public interface ILog extends Closeable {
      * @return message objects
      * @throws IOException any Exception
      */
-    Message read(long offset, int size) throws IOException;
-
+    MessageAndOffset read(long offset, int size) throws IOException;
+    
     /**
      * append messages to log
      * 

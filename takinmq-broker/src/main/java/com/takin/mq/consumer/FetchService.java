@@ -8,7 +8,7 @@ import com.takin.rpc.server.anno.ServiceDefine;
 public interface FetchService {
 
     /**
-     * 
+     * 所有的消息都封装成String的，方便序列化传输
      * 获取消息
      * @param data
      * @return

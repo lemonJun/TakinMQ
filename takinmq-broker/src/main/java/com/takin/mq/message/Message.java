@@ -19,7 +19,9 @@ package com.takin.mq.message;
 
 import static java.lang.String.format;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.GatheringByteChannel;
 
 import com.takin.mq.utils.Utils;
 
@@ -48,26 +50,33 @@ public class Message {
     private final int messageSize;
 
     public Message(String messageString) throws Exception {
-        byte[] bytes = messageString.getBytes(ENCODING);
+        this(messageString.getBytes(ENCODING));
+    }
+
+    public Message(byte[] bytes) throws Exception {
         buffer = ByteBuffer.allocate(Message.payloadOffset() + bytes.length);
-        messageSize = buffer.limit();
         buffer.put(CurrentMagicValue);
         buffer.put((byte) 0);//不压缩   后期这部分需要扩展   而且是否压缩应该是跟topic相关的  不需要对外暴露那么重载的方法
         long crc = Utils.crc32(bytes);
         buffer.putInt((int) (crc & 0xffffffffL));//crc32
         buffer.put(bytes);
         buffer.rewind();
+        messageSize = buffer.limit();
     }
-    
-    
-    
+
+    public Message(ByteBuffer buffer) {
+        this.buffer = buffer;
+        messageSize = buffer.limit();
+    }
 
     public static final int NoCompression = 0;
 
+    //2
     public static int crcOffset() {
         return ATTRIBUTE_OFFSET + 1;
     }
 
+    //6
     public static int payloadOffset() {
         return crcOffset() + CrcLength;
     }
@@ -78,6 +87,18 @@ public class Message {
 
     public byte magic() {
         return buffer.get(1);
+    }
+
+    //返回的是写入的字节大小
+    public long writeTo(GatheringByteChannel channel, long offset, long maxSize) throws IOException {
+        buffer.mark();
+        int written = channel.write(buffer);
+        buffer.reset();
+        return written;
+    }
+
+    public long getSizeInBytes() {
+        return buffer.limit();
     }
 
     public int payloadSize() {
@@ -107,6 +128,10 @@ public class Message {
 
     public boolean isValid() {
         return checksum() == Utils.crc32(buffer.array(), buffer.position() + buffer.arrayOffset() + payloadOffset(), payloadSize());
+    }
+
+    public boolean verifyMessageSize(int maxmessagesize) {
+        return getMessageSize() - Message.payloadOffset() < maxmessagesize;
     }
 
     public int serializedSize() {

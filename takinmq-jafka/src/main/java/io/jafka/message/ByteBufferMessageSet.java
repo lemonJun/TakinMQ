@@ -208,7 +208,7 @@ public class ByteBufferMessageSet extends MessageSet {
     public long getSizeInBytes() {
         return buffer.limit();
     }
-    
+
     /**
      * check max size of each message
      * @param maxMessageSize the max size for each message

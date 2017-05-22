@@ -19,7 +19,7 @@ package com.takin.mq.store2;
 
 import java.io.File;
 
-import com.takin.mq.message.FileMessageSet;
+import com.takin.mq.message.FileMessage;
 import com.takin.mq.utils.Range;
 
 /**
@@ -32,16 +32,16 @@ public class LogSegment implements Range, Comparable<LogSegment> {
 
     private final File file;
 
-    private final FileMessageSet messageSet;
+    private final FileMessage filemessage;
 
     private final long start;
 
     private volatile boolean deleted;
 
-    public LogSegment(File file, FileMessageSet messageSet, long start) {
+    public LogSegment(File file, FileMessage messageSet, long start) {
         super();
         this.file = file;
-        this.messageSet = messageSet;
+        this.filemessage = messageSet;
         this.start = start;
         this.deleted = false;
     }
@@ -61,8 +61,8 @@ public class LogSegment implements Range, Comparable<LogSegment> {
         return file;
     }
 
-    public FileMessageSet getMessageSet() {
-        return messageSet;
+    public FileMessage getMessageSet() {
+        return filemessage;
     }
 
     /**
@@ -73,10 +73,11 @@ public class LogSegment implements Range, Comparable<LogSegment> {
     }
 
     /**
+     * 
      * persistence size
      */
     public long size() {
-        return messageSet.highWaterMark();
+        return filemessage.highWaterMark();
     }
 
     /**
@@ -85,7 +86,7 @@ public class LogSegment implements Range, Comparable<LogSegment> {
      * @return the addressing size
      */
     public long addressingSize() {
-        return messageSet.getSizeInBytes();
+        return filemessage.getSizeInBytes();
     }
 
     public int compareTo(LogSegment o) {

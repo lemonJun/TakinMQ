@@ -6,11 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-import com.takin.mq.message.ByteBufferMessageSet;
 import com.takin.mq.message.Message;
 import com.takin.mq.message.SimpleSendData;
-import com.takin.mq.store.ILog;
-import com.takin.mq.store.LogManager;
+import com.takin.mq.store2.ILog;
+import com.takin.mq.store2.LogManager;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.anno.ServiceImpl;
 
@@ -35,8 +34,7 @@ public class ProducerServiceImpl implements ProducerService {
         try {
             ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
             Message msg = new Message(data.getData());
-            ByteBufferMessageSet messageset = new ByteBufferMessageSet(msg);
-            long offset = log.append(messageset);
+            long offset = log.append(msg);
             logger.info(log.reallogfile());
             return offset;
         } catch (Exception e) {

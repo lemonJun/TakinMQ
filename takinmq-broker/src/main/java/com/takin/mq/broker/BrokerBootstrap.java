@@ -5,8 +5,8 @@ import java.io.File;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.google.common.util.concurrent.AbstractService;
-import com.takin.mq.store.LogManager;
-import com.takin.mq.store.RollingStrategy;
+import com.takin.mq.store2.LogManager;
+import com.takin.mq.store2.RollingStrategy;
 import com.takin.mq.utils.Scheduler;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.RPCServer;

@@ -29,7 +29,6 @@ import com.takin.mq.utils.Utils;
 /**
  * Rolling file every day
  *
- * @author adyliu (imxylz@gmail.com)
  * @since 1.1
  */
 public class DailyRollingStrategy implements RollingStrategy, Runnable {
@@ -37,7 +36,7 @@ public class DailyRollingStrategy implements RollingStrategy, Runnable {
     private boolean firstCheck = true;
 
     private final long ONE_HOUR = 1000L * 60 * 60;
-
+    
     private final long ONE_DAY = ONE_HOUR * 24;
 
     private volatile boolean running = true;

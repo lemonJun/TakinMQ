@@ -49,7 +49,7 @@ public class DailyRollingStrategy implements RollingStrategy, Runnable {
     private final AtomicBoolean needRolling = new AtomicBoolean(false);
 
     private volatile long lastRollingTime = 0;
-
+    
     @Override
     public boolean check(LogSegment lastSegment) {
         if (firstCheck) {

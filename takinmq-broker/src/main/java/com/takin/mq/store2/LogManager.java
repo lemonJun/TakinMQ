@@ -92,7 +92,7 @@ public class LogManager implements Closeable {
     private RollingStrategy rollingStategy;
 
     private BrokerConfig config;
-
+    
     @Inject
     private LogManager() {
         config = GuiceDI.getInstance(BrokerConfig.class);

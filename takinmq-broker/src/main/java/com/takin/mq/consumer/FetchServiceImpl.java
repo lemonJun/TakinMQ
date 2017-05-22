@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.takin.mq.message.Message;
 import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.message.SimpleFetchData;
@@ -37,11 +38,12 @@ public class FetchServiceImpl implements FetchService {
             ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(topic, partition);
             logger.info(String.format("topic:%s offset:%s", topic, offset));
             MessageAndOffset messandoffset = log.read(offset, 1);
+            Preconditions.checkNotNull(messandoffset);
             SimpleFetchData data = new SimpleFetchData();
             data.setTopic(topic);
             data.setPartition(partition);
-            data.setOffset(messandoffset.offset);
-            ByteBuffer payload = messandoffset.message.payload();
+            data.setOffset(messandoffset.getOffset());
+            ByteBuffer payload = messandoffset.getMessage().payload();
             byte[] tokenbyte = new byte[payload.limit()];
             payload.get(tokenbyte, 0, payload.limit());
             data.setData(new String(tokenbyte, Message.ENCODING));
@@ -56,8 +58,8 @@ public class FetchServiceImpl implements FetchService {
             return data;
         } catch (Exception e) {
             logger.error("", e);
+            throw e;
         }
-        return null;
     }
 
 }

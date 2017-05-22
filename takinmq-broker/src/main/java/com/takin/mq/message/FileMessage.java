@@ -48,7 +48,7 @@ public class FileMessage {
 
     private final AtomicBoolean needRecover;
 
-    private final AtomicLong setSize = new AtomicLong();
+    private final AtomicLong offsetSize = new AtomicLong();
 
     private final AtomicLong setHighWaterMark = new AtomicLong();
 
@@ -68,12 +68,12 @@ public class FileMessage {
                 long truncated = recover();
                 logger.info("Recovery succeeded in " + (System.currentTimeMillis() - startMs) / 1000 + " seconds. " + truncated + " bytes truncated.");
             } else {
-                setSize.set(channel.size());
+                offsetSize.set(channel.size());
                 setHighWaterMark.set(getSizeInBytes());
                 channel.position(channel.size());
             }
         } else {
-            setSize.set(Math.min(channel.size(), limit) - offset);
+            offsetSize.set(Math.min(channel.size(), limit) - offset);
             setHighWaterMark.set(getSizeInBytes());
         }
     }
@@ -196,7 +196,7 @@ public class FileMessage {
      * while some messages were cached in memory(not flush to disk).
      */
     public long getSizeInBytes() {
-        return setSize.get();
+        return offsetSize.get();
     }
 
     public long writeTo(GatheringByteChannel destChannel, long writeOffset, long maxSize) throws IOException {
@@ -228,7 +228,7 @@ public class FileMessage {
         long written = 0L;
         while (written < messages.getSizeInBytes())
             written += messages.writeTo(channel, 0, messages.getSizeInBytes());
-        long beforeOffset = setSize.getAndAdd(written);//这个值应该是afteroffset 不过这个值并不影响其结果
+        long beforeOffset = offsetSize.getAndAdd(written);//这个值应该是afteroffset 不过这个值并不影响其结果
         return new long[] { written, beforeOffset };
     }
 
@@ -279,7 +279,7 @@ public class FileMessage {
                 validUpTo = next;
         } while (next >= 0);
         channel.truncate(validUpTo);
-        setSize.set(validUpTo);
+        offsetSize.set(validUpTo);
         setHighWaterMark.set(validUpTo);
         logger.info("recover high water mark:" + highWaterMark());
         /* This should not be necessary, but fixes bug 6191269 on some OSs. */

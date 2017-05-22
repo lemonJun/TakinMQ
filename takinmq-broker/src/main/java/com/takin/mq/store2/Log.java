@@ -196,7 +196,7 @@ public class Log implements ILog {
     //
     public long append(Message message) {
         message.verifyMessageSize(maxMessageSize);
-        int numberOfMessages = 0;
+        int numberOfMessages = 1;
         //        for (MessageAndOffset messageAndOffset : messages) {
         //            if (!messageAndOffset.message.isValid()) {
         //                throw new InvalidMessageException();
@@ -220,7 +220,7 @@ public class Log implements ILog {
             try {
                 LogSegment lastSegment = segments.getLastView();
                 long[] writtenAndOffset = lastSegment.getMessageSet().append(message);
-                logger.info(String.format("[%s,%s] save %d messages, bytes %d", name, lastSegment.getName(), numberOfMessages, writtenAndOffset[0]));
+                logger.info(String.format("[%s,%s] save %d messages, bytesize %d", name, lastSegment.getName(), numberOfMessages, writtenAndOffset[0]));
                 maybeFlush(numberOfMessages);
                 maybeRoll(lastSegment);
                 offset = writtenAndOffset[1];

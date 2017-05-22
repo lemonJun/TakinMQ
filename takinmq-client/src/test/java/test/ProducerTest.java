@@ -11,7 +11,7 @@ import com.takin.mq.producer.ProducerService;
 
 public class ProducerTest {
 
-    private static final RateLimiter limit = RateLimiter.create(3d);
+    private static final RateLimiter limit = RateLimiter.create(1d);
 
     private static final AtomicInteger total = new AtomicInteger(0);
 
@@ -21,8 +21,8 @@ public class ProducerTest {
             final ProducerService producer = ProducerProvider.getProducerByTopic();
             while (true) {
                 if (limit.tryAcquire()) {
-                    long address = producer.send(new SimpleSendData("test").add("Hello jafka" + total.getAndIncrement()), 2);
-                    System.out.println(address);
+                    long address = producer.send(new SimpleSendData("test").add("Hello jafka" + total.getAndIncrement()));
+                    System.out.println("offset: " + address);
                 }
             }
         } catch (Exception e) {

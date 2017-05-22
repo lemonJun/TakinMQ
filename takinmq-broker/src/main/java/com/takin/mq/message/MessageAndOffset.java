@@ -27,13 +27,21 @@ package com.takin.mq.message;
  */
 public class MessageAndOffset {
 
-    public final Message message;
+    private final Message message;
 
-    public final long offset;
+    private final long offset;
 
     public MessageAndOffset(Message message, long offset) {
         this.message = message;
         this.offset = offset;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public long getOffset() {
+        return offset;
     }
 
     @Override

@@ -38,6 +38,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.mapdb</groupId>
+			<artifactId>mapdb</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>com.takin</groupId>
 			<artifactId>emmet</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

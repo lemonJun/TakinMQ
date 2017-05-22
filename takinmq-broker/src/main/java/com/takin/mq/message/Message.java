@@ -69,8 +69,6 @@ public class Message {
         messageSize = buffer.limit();
     }
 
-    public static final int NoCompression = 0;
-
     //2
     public static int crcOffset() {
         return ATTRIBUTE_OFFSET + 1;
@@ -92,11 +90,15 @@ public class Message {
     //返回的是写入的字节大小
     public long writeTo(GatheringByteChannel channel, long offset, long maxSize) throws IOException {
         buffer.mark();
-        int written = channel.write(buffer);
+        ByteBuffer lengthbuffer = ByteBuffer.allocate(4 + messageSize);
+        lengthbuffer.putInt(messageSize);
+        buffer.flip();
+        lengthbuffer.put(buffer);
+        int written = channel.write(lengthbuffer);
         buffer.reset();
         return written;
-    }
-
+    } 
+    
     public long getSizeInBytes() {
         return buffer.limit();
     }

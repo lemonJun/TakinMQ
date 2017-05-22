@@ -166,10 +166,6 @@ public class FileMessage {
         return offsetSize.get();
     }
 
-    public long writeTo(GatheringByteChannel destChannel, long writeOffset, long maxSize) throws IOException {
-        return channel.transferTo(offset + writeOffset, Math.min(maxSize, getSizeInBytes()), destChannel);
-    }
-
     /**
      * read message from file
      *
@@ -195,10 +191,15 @@ public class FileMessage {
     public long[] append(Message messages) throws IOException {
         checkMutable();
         long written = 0L;
-        while (written < messages.getSizeInBytes())
-            written += writeTo(channel, 0, messages.getSizeInBytes());
+        //        while (written < messages.getSizeInBytes()) {
+        written += messages.writeTo(channel, 0, messages.getSizeInBytes());
+        //        }
         long beforeOffset = offsetSize.getAndAdd(written);//这个值应该是afteroffset 不过这个值并不影响其结果
         return new long[] { written, beforeOffset };
+    }
+
+    public long writeTo(GatheringByteChannel destChannel, long writeOffset, long maxSize) throws IOException {
+        return channel.transferTo(offset + writeOffset, Math.min(maxSize, getSizeInBytes()), destChannel);
     }
 
     /** 

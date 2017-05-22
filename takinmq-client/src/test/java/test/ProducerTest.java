@@ -21,7 +21,7 @@ public class ProducerTest {
             final ProducerService producer = ProducerProvider.getProducerByTopic();
             while (true) {
                 if (limit.tryAcquire()) {
-                    long address = producer.send(new SimpleSendData("test").add("Hello jafka" + total.getAndIncrement()));
+                    long address = producer.send(new SimpleSendData("test").add("hello" + total.getAndIncrement()));
                     System.out.println("offset: " + address);
                 }
             }

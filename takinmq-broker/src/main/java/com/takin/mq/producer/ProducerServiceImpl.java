@@ -21,9 +21,7 @@ public class ProducerServiceImpl implements ProducerService {
     @Override
     public long send(SimpleSendData data) throws Exception {
         try {
-            if (logger.isDebugEnabled()) {
-                logger.debug(JSON.toJSONString(data));
-            }
+            logger.info(JSON.toJSONString(data));
             int partion = GuiceDI.getInstance(LogManager.class).choosePartition(data.getTopic());
             return send(data, partion);
         } catch (Exception e) {
@@ -31,16 +29,17 @@ public class ProducerServiceImpl implements ProducerService {
             throw e;
         }
     }
-    
+
     @Override
     public long send(SimpleSendData data, Integer partition) throws Exception {
         try {
             ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
             Message msg = new Message(data.getData());
             long offset = log.append(msg);
-            //            logger.info(log.reallogfile());
+            logger.info(log.reallogfile());
             return offset;
         } catch (Exception e) {
+            logger.error("", e);
             throw e;
         }
     }

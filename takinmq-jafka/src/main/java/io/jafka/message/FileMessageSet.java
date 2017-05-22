@@ -173,7 +173,7 @@ public class FileMessageSet extends MessageSet {
     public long writeTo(GatheringByteChannel destChannel, long writeOffset, long maxSize) throws IOException {
         return channel.transferTo(offset + writeOffset, Math.min(maxSize, getSizeInBytes()), destChannel);
     }
-
+    
     /**
      * read message from file
      * 

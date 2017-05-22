@@ -144,7 +144,7 @@ public class ServerRegister implements IZkStateListener, Closeable {
     }
 
     /**
-     *
+     * 
      */
     public void close() {
         if (zkClient != null) {

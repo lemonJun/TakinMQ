@@ -52,12 +52,15 @@ public class Message {
         buffer = ByteBuffer.allocate(Message.payloadOffset() + bytes.length);
         messageSize = buffer.limit();
         buffer.put(CurrentMagicValue);
-        buffer.put((byte) 0);//不压缩
+        buffer.put((byte) 0);//不压缩   后期这部分需要扩展   而且是否压缩应该是跟topic相关的  不需要对外暴露那么重载的方法
         long crc = Utils.crc32(bytes);
         buffer.putInt((int) (crc & 0xffffffffL));//crc32
         buffer.put(bytes);
         buffer.rewind();
     }
+    
+    
+    
 
     public static final int NoCompression = 0;
 
@@ -105,7 +108,7 @@ public class Message {
     public boolean isValid() {
         return checksum() == Utils.crc32(buffer.array(), buffer.position() + buffer.arrayOffset() + payloadOffset(), payloadSize());
     }
-    
+
     public int serializedSize() {
         return 4 + buffer.limit();
     }

@@ -34,8 +34,7 @@ public class ProducerServiceImpl implements ProducerService {
     public long send(SimpleSendData data, Integer partition) throws Exception {
         try {
             ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
-            byte[] databyte = data.getData().getBytes("utf-8");
-            Message msg = new Message(databyte);
+            Message msg = new Message(data.getData());
             ByteBufferMessageSet messageset = new ByteBufferMessageSet(msg);
             long offset = log.append(messageset);
             logger.info(log.reallogfile());

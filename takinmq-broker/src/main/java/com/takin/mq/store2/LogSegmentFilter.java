@@ -15,29 +15,13 @@
  * limitations under the License.
  */
 
-package com.takin.mq.message;
+package com.takin.mq.store2;
 
 /**
- * Represents message and offset of the next message. This is used in the
- * MessageSet to iterate over it
- * 当存储的时候是不需要知道offset的，而一旦消息写入文件中，它就有了一个固定的offset值
- * 
- * 
+ * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
-public class MessageAndOffset {
+public interface LogSegmentFilter {
 
-    public final Message message;
-
-    public final long offset;
-
-    public MessageAndOffset(Message message, long offset) {
-        this.message = message;
-        this.offset = offset;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("MessageAndOffset [offset=%s, message=%s]", offset, message);
-    }
+    boolean filter(LogSegment segment);
 }

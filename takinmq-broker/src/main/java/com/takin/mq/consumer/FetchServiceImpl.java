@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.takin.mq.message.Message;
 import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.message.SimpleFetchData;
-import com.takin.mq.store2.ILog;
+import com.takin.mq.store2.IStore;
 import com.takin.mq.store2.LogManager;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.anno.ServiceImpl;
@@ -35,7 +35,7 @@ public class FetchServiceImpl implements FetchService {
     @Override
     public SimpleFetchData fetch(String topic, Long offset, Integer partition) throws Exception {
         try {
-            ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(topic, partition);
+            IStore log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(topic, partition);
             logger.info(String.format("topic:%s offset:%s", topic, offset));
             MessageAndOffset messandoffset = log.read(offset, 1);
             Preconditions.checkNotNull(messandoffset);

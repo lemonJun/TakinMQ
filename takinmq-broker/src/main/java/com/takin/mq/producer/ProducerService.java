@@ -17,6 +17,14 @@ public interface ProducerService {
     public abstract long send(SimpleSendData data) throws Exception;
 
     /**
+     * 需要延时消费的消息
+     * @param data
+     * @return
+     * @throws Exception
+     */
+    public abstract long sendDelayMsg(SimpleSendData data) throws Exception;
+
+    /**
     * 指定要发送的消息所在的分区
     * @param data
     * @param partition  此分区应该小于初始化topic时指定的分区值

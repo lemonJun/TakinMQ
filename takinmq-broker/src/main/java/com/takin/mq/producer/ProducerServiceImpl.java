@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.takin.mq.message.Message;
 import com.takin.mq.message.SimpleSendData;
-import com.takin.mq.store2.ILog;
+import com.takin.mq.store2.IStore;
 import com.takin.mq.store2.LogManager;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.anno.ServiceImpl;
@@ -33,7 +33,7 @@ public class ProducerServiceImpl implements ProducerService {
     @Override
     public long send(SimpleSendData data, Integer partition) throws Exception {
         try {
-            ILog log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
+            IStore log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(data.getTopic(), partition);
             Message msg = new Message(data.getData());
             long offset = log.append(msg);
             logger.info(log.reallogfile());
@@ -51,6 +51,12 @@ public class ProducerServiceImpl implements ProducerService {
 
     @Override
     public long send(List<SimpleSendData> datas, int partition) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public long sendDelayMsg(SimpleSendData data) throws Exception {
+
         return 0;
     }
 

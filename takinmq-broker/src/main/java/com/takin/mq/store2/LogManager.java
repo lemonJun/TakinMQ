@@ -77,7 +77,7 @@ public class LogManager implements Closeable {
 
     final CountDownLatch startupLatch;
 
-    private final ConcurrentHashMap<String, Map<Integer, Log>> topicLogMap = new ConcurrentHashMap<String, Map<Integer, Log>>();
+    private final ConcurrentHashMap<String, Map<Integer, FileStore>> topicLogMap = new ConcurrentHashMap<String, Map<Integer, FileStore>>();
 
     private final Scheduler logFlusherScheduler = new Scheduler(1, "jafka-logflusher-", false);
 
@@ -128,10 +128,10 @@ public class LogManager implements Closeable {
                     final Tuple<String, Integer> topicPartion = fileNameToTopicPartition(topicNameAndPartition);
                     final String topic = topicPartion.key;
                     final int partition = topicPartion.value;
-                    Log log = new Log(dir, partition, this.rollingStategy, flushInterval, needRecovery, config.getMaxmessagesize());
+                    FileStore log = new FileStore(dir, partition, this.rollingStategy, flushInterval, needRecovery, config.getMaxmessagesize());
 
-                    topicLogMap.putIfAbsent(topic, new HashMap<Integer, Log>());
-                    Map<Integer, Log> parts = topicLogMap.get(topic);
+                    topicLogMap.putIfAbsent(topic, new HashMap<Integer, FileStore>());
+                    Map<Integer, FileStore> parts = topicLogMap.get(topic);
                     parts.put(partition, log);
                 }
             }
@@ -178,7 +178,7 @@ public class LogManager implements Closeable {
      * @return read or create a log
      * @throws IOException any IOException
      */
-    public ILog getOrCreateLog(String topic, int partition) throws IOException {
+    public IStore getOrCreateLog(String topic, int partition) throws IOException {
         awaitStartup();
 
         final int configPartitionNumber = getPartitionNum(topic);
@@ -187,19 +187,19 @@ public class LogManager implements Closeable {
         }
 
         boolean hasNewTopic = false;
-        Map<Integer, Log> parts = topicLogMap.get(topic);
+        Map<Integer, FileStore> parts = topicLogMap.get(topic);
         if (parts == null) {
-            Map<Integer, Log> found = topicLogMap.putIfAbsent(topic, new HashMap<Integer, Log>());
+            Map<Integer, FileStore> found = topicLogMap.putIfAbsent(topic, new HashMap<Integer, FileStore>());
             if (found == null) {
                 hasNewTopic = true;
             }
             parts = topicLogMap.get(topic);
         }
         //
-        Log log = parts.get(partition);
+        FileStore log = parts.get(partition);
         if (log == null) {
             log = createLogFile(topic, partition);
-            Log found = parts.putIfAbsent(partition, log);
+            FileStore found = parts.putIfAbsent(partition, log);
             if (found != null) {
                 Closer.closeQuietly(log, logger);
                 log = found;
@@ -243,11 +243,11 @@ public class LogManager implements Closeable {
         }
     }
 
-    private Log createLogFile(String topic, int partition) throws IOException {
+    private FileStore createLogFile(String topic, int partition) throws IOException {
         synchronized (logCreationLock) {
             File d = new File(logDir, topic + "-" + partition);
             d.mkdirs();
-            return new Log(d, partition, this.rollingStategy, flushInterval, false, config.getMaxmessagesize());
+            return new FileStore(d, partition, this.rollingStategy, flushInterval, false, config.getMaxmessagesize());
         }
     }
 
@@ -271,9 +271,9 @@ public class LogManager implements Closeable {
      * @param force flush anyway(ignore flush interval)
      */
     public void flushAllLogs(final boolean force) {
-        Iterator<Log> iter = getLogIterator();
+        Iterator<FileStore> iter = getLogIterator();
         while (iter.hasNext()) {
-            Log log = iter.next();
+            FileStore log = iter.next();
             try {
                 boolean needFlush = force;
                 if (!needFlush) {
@@ -301,14 +301,14 @@ public class LogManager implements Closeable {
         return topicLogMap.keySet();
     }
 
-    private Iterator<Log> getLogIterator() {
-        return new IteratorTemplate<Log>() {
-            final Iterator<Map<Integer, Log>> iterator = topicLogMap.values().iterator();
+    private Iterator<FileStore> getLogIterator() {
+        return new IteratorTemplate<FileStore>() {
+            final Iterator<Map<Integer, FileStore>> iterator = topicLogMap.values().iterator();
 
-            Iterator<Log> logIter;
+            Iterator<FileStore> logIter;
 
             @Override
-            protected Log makeNext() {
+            protected FileStore makeNext() {
                 while (true) {
                     if (logIter != null && logIter.hasNext()) {
                         return logIter.next();
@@ -352,10 +352,10 @@ public class LogManager implements Closeable {
     public int deleteLogs(String topic, String password) {
         int value = 0;
         synchronized (logCreationLock) {
-            Map<Integer, Log> parts = topicLogMap.remove(topic);
+            Map<Integer, FileStore> parts = topicLogMap.remove(topic);
             if (parts != null) {
-                List<Log> deleteLogs = new ArrayList<Log>(parts.values());
-                for (Log log : deleteLogs) {
+                List<FileStore> deleteLogs = new ArrayList<FileStore>(parts.values());
+                for (FileStore log : deleteLogs) {
                     log.delete();
                     value++;
                 }
@@ -375,10 +375,10 @@ public class LogManager implements Closeable {
     private void cleanupLogs() throws IOException {
         logger.trace("Beginning log cleanup...");
         int total = 0;
-        Iterator<Log> iter = getLogIterator();
+        Iterator<FileStore> iter = getLogIterator();
         long startMs = System.currentTimeMillis();
         while (iter.hasNext()) {
-            Log log = iter.next();
+            FileStore log = iter.next();
             total += cleanupExpiredSegments(log) + cleanupSegmentsToMaintainSize(log);
         }
         if (total > 0) {
@@ -394,7 +394,7 @@ public class LogManager implements Closeable {
      * 
      * @throws IOException
      */
-    private int cleanupSegmentsToMaintainSize(final Log log) throws IOException {
+    private int cleanupSegmentsToMaintainSize(final FileStore log) throws IOException {
         if (logRetentionSize < 0 || log.size() < logRetentionSize)
             return 0;
 
@@ -417,7 +417,7 @@ public class LogManager implements Closeable {
      * @return
      * @throws IOException
      */
-    private int cleanupExpiredSegments(Log log) throws IOException {
+    private int cleanupExpiredSegments(FileStore log) throws IOException {
         final long startMs = System.currentTimeMillis();
         String topic = fileNameToTopicPartition(log.dir.getName()).key;
         long logCleanupThresholdMS = config.getLogretentionhours();
@@ -435,7 +435,7 @@ public class LogManager implements Closeable {
     /**
      * Attemps to delete all provided segments from a log and returns how many it was able to
      */
-    private int deleteSegments(Log log, List<LogSegment> segments) {
+    private int deleteSegments(FileStore log, List<LogSegment> segments) {
         int total = 0;
         for (LogSegment segment : segments) {
             boolean deleted = false;
@@ -495,7 +495,7 @@ public class LogManager implements Closeable {
 
     public void close() {
         logFlusherScheduler.shutdown();
-        Iterator<Log> iter = getLogIterator();
+        Iterator<FileStore> iter = getLogIterator();
         while (iter.hasNext()) {
             Closer.closeQuietly(iter.next(), logger);
         }

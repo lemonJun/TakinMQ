@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import com.takin.mq.message.Message;
 import com.takin.mq.message.MessageAndOffset;
-import com.takin.mq.msg.TakinMsg;
 
 /**
  * log interface
@@ -32,7 +31,7 @@ import com.takin.mq.msg.TakinMsg;
  * 
  * @since 1.0
  */
-public interface ILog extends Closeable {
+public interface IStore extends Closeable {
 
     /**
      * read messages from log
@@ -43,7 +42,7 @@ public interface ILog extends Closeable {
      * @throws IOException any Exception
      */
     MessageAndOffset read(long offset, int size) throws IOException;
-    
+
     /**
      * append messages to log
      * 
@@ -51,8 +50,6 @@ public interface ILog extends Closeable {
      * @return all message offsets or null if not supported
      */
     long append(Message messages);
-
-    long append(TakinMsg message);
 
     String reallogfile();
 

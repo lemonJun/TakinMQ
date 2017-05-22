@@ -14,7 +14,7 @@ public class ProducerTest {
     private static final RateLimiter limit = RateLimiter.create(1d);
 
     private static final AtomicInteger total = new AtomicInteger(0);
-
+    
     public static void main(String[] args) {
         try {
             PropertyConfigurator.configure("conf/log4j.properties");

@@ -39,18 +39,17 @@ import com.takin.mq.common.OffsetOutOfRangeException;
 import com.takin.mq.message.FileMessage;
 import com.takin.mq.message.Message;
 import com.takin.mq.message.MessageAndOffset;
-import com.takin.mq.msg.TakinMsg;
 import com.takin.mq.utils.Range;
 import com.takin.mq.utils.Utils;
 
 /**
- * a log is message sets with more than one files.
+ *
  * 
  * @since 1.0
  */
-public class Log implements ILog {
+public class FileStore implements IStore {
 
-    private final Logger logger = LoggerFactory.getLogger(Log.class);
+    private final Logger logger = LoggerFactory.getLogger(FileStore.class);
 
     private static final String FileSuffix = ".queue";
 
@@ -74,7 +73,7 @@ public class Log implements ILog {
     public final int partition;
     private final int maxMessageSize;
 
-    public Log(File dir, int partition, RollingStrategy rollingStategy, int flushInterval, boolean needRecovery, int maxMessageSize) throws IOException {
+    public FileStore(File dir, int partition, RollingStrategy rollingStategy, int flushInterval, boolean needRecovery, int maxMessageSize) throws IOException {
         this.dir = dir;
         this.partition = partition;
         this.rollingStategy = rollingStategy;
@@ -106,7 +105,7 @@ public class Log implements ILog {
         }
         if (accum.size() == 0) {
             // no existing segments, create a new mutable segment
-            File newFile = new File(dir, Log.nameFromOffset(0));
+            File newFile = new File(dir, FileStore.nameFromOffset(0));
             FileMessage fileMessageSet = new FileMessage(newFile, true);
             accum.add(new LogSegment(newFile, fileMessageSet, 0));
         } else {
@@ -333,7 +332,7 @@ public class Log implements ILog {
         nf.setMinimumIntegerDigits(20);
         nf.setMaximumFractionDigits(0);
         nf.setGroupingUsed(false);
-        return nf.format(offset) + Log.FileSuffix;
+        return nf.format(offset) + FileStore.FileSuffix;
     }
 
     public String getTopicName() {
@@ -422,12 +421,6 @@ public class Log implements ILog {
     @Override
     public String reallogfile() {
         return dir.getAbsolutePath();
-    }
-
-    @Override
-    public long append(TakinMsg message) {
-
-        return 0;
     }
 
 }

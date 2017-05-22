@@ -127,8 +127,9 @@ public class FileMessage {
      * @param location
      * @return 
      */
-    protected MessageAndOffset makeNext(long location) {
+    protected MessageAndOffset makeNext() {
         try {
+            long location = offset;
             ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
             channel.read(sizeBuffer, location);
             if (sizeBuffer.hasRemaining()) {
@@ -156,40 +157,6 @@ public class FileMessage {
         }
     }
 
-    //    public Iterator<MessageAndOffset> iterator() {
-    //        return new IteratorTemplate<MessageAndOffset>() {
-    //
-    //            long location = offset;
-    //
-    //            @Override
-    //            protected MessageAndOffset makeNext() {
-    //                try {
-    //                    ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
-    //                    channel.read(sizeBuffer, location);
-    //                    if (sizeBuffer.hasRemaining()) {
-    //                        return allDone();
-    //                    }
-    //                    sizeBuffer.rewind();
-    //                    int size = sizeBuffer.getInt();
-    //                    if (size < Message.payloadOffset()) {
-    //                        return allDone();
-    //                    }
-    //                    ByteBuffer buffer = ByteBuffer.allocate(size);
-    //                    channel.read(buffer, location + 4);
-    //                    if (buffer.hasRemaining()) {
-    //                        return allDone();
-    //                    }
-    //                    buffer.rewind();
-    //                    location += size + 4;
-    //
-    //                    return new MessageAndOffset(new Message(buffer), location);
-    //                } catch (IOException e) {
-    //                    throw new RuntimeException(e.getMessage(), e);
-    //                }
-    //            }
-    //        };
-    //    }
-
     /**
      * the max offset(next message id).<br>
      * The <code> #getSizeInBytes()</code> maybe is larger than {@link #highWaterMark()}
@@ -207,13 +174,15 @@ public class FileMessage {
      * read message from file
      *
      * @param readOffset offset in this channel(file);not the message offset
+     * 对readoffset这个参数具体解释一下：message offset这个值在一个分区下是唯一的 ，一个分区下有多个队列，每个队列的offset是只增不减的
+     * 此处的readoffset是相对于每个队列的值，也即在每一个文件中的真实的offset 而不是消息的全局offset值
      * @param size       max data size
      * @return messages sharding data with file log
      * @throws IOException reading file failed
      */
     public MessageAndOffset read(long readOffset, long size) throws IOException {
-        //        return new FileMessage(channel, this.offset + readOffset, Math.min(this.offset + readOffset + size, highWaterMark()), false, new AtomicBoolean(false));
-        MessageAndOffset moffset = makeNext(readOffset);
+        FileMessage fmsg = new FileMessage(channel, this.offset + readOffset, Math.min(this.offset + readOffset + size, highWaterMark()), false, new AtomicBoolean(false));
+        MessageAndOffset moffset = fmsg.makeNext();
         return moffset;
     }
 
@@ -227,12 +196,12 @@ public class FileMessage {
         checkMutable();
         long written = 0L;
         while (written < messages.getSizeInBytes())
-            written += messages.writeTo(channel, 0, messages.getSizeInBytes());
+            written += writeTo(channel, 0, messages.getSizeInBytes());
         long beforeOffset = offsetSize.getAndAdd(written);//这个值应该是afteroffset 不过这个值并不影响其结果
         return new long[] { written, beforeOffset };
     }
 
-    /**
+    /** 
      * 
      * Commit all written data to the physical disk
      *

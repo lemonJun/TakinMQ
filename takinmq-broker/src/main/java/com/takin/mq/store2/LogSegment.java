@@ -61,7 +61,7 @@ public class LogSegment implements Range, Comparable<LogSegment> {
         return file;
     }
 
-    public FileMessage getMessageSet() {
+    public FileMessage getFileMessage() {
         return filemessage;
     }
 

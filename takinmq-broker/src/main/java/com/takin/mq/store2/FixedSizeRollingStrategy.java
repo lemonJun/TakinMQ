@@ -20,7 +20,7 @@ public class FixedSizeRollingStrategy implements RollingStrategy {
 
     @Override
     public boolean check(LogSegment lastSegment) {
-        return lastSegment.getMessageSet().getSizeInBytes() > maxFileSize;
+        return lastSegment.getFileMessage().getSizeInBytes() > maxFileSize;
     }
 
     @Override

@@ -129,7 +129,7 @@ public class FileMessageSet extends MessageSet {
         return new IteratorTemplate<MessageAndOffset>() {
 
             long location = offset;
-
+            
             @Override
             protected MessageAndOffset makeNext() {
                 try {
@@ -176,7 +176,7 @@ public class FileMessageSet extends MessageSet {
 
     /**
      * read message from file
-     *
+     * 
      * @param readOffset offset in this channel(file);not the message offset
      * @param size       max data size
      * @return messages sharding data with file log
@@ -201,7 +201,7 @@ public class FileMessageSet extends MessageSet {
         long beforeOffset = setSize.getAndAdd(written);
         return new long[] { written, beforeOffset };
     }
-
+    
     /**
      * Commit all written data to the physical disk
      *

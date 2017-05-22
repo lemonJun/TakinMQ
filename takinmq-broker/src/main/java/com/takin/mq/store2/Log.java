@@ -117,7 +117,7 @@ public class Log implements ILog {
         }
         //
         LogSegment last = accum.remove(accum.size() - 1);
-        last.getMessageSet().close();
+        last.getFileMessage().close();
         logger.info("Loading the last segment " + last.getFile().getAbsolutePath() + " in mutable mode, recovery " + needRecovery);
         LogSegment mutable = new LogSegment(last.getFile(), new FileMessage(last.getFile(), true, new AtomicBoolean(needRecovery)), last.start());
         accum.add(mutable);
@@ -160,7 +160,7 @@ public class Log implements ILog {
         synchronized (lock) {
             for (LogSegment seg : segments.getView()) {
                 try {
-                    seg.getMessageSet().close();
+                    seg.getFileMessage().close();
                 } catch (IOException e) {
                     logger.error("close file message set failed", e);
                 }
@@ -190,7 +190,7 @@ public class Log implements ILog {
             }
             return null;
         }
-        return found.getMessageSet().read(offset - found.start(), length);
+        return found.getFileMessage().read(offset - found.start(), length);
     }
 
     //
@@ -219,7 +219,7 @@ public class Log implements ILog {
         synchronized (lock) {
             try {
                 LogSegment lastSegment = segments.getLastView();
-                long[] writtenAndOffset = lastSegment.getMessageSet().append(message);
+                long[] writtenAndOffset = lastSegment.getFileMessage().append(message);
                 logger.info(String.format("[%s,%s] save %d messages, bytesize %d", name, lastSegment.getName(), numberOfMessages, writtenAndOffset[0]));
                 maybeFlush(numberOfMessages);
                 maybeRoll(lastSegment);
@@ -287,7 +287,7 @@ public class Log implements ILog {
             if (logger.isTraceEnabled()) {
                 logger.debug("Flushing log '" + name + "' last flushed: " + getLastFlushedTime() + " current time: " + System.currentTimeMillis());
             }
-            segments.getLastView().getMessageSet().flush();
+            segments.getLastView().getFileMessage().flush();
             unflushed.set(0);
             lastflushedTime.set(System.currentTimeMillis());
         }

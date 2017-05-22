@@ -441,7 +441,7 @@ public class LogManager implements Closeable {
             boolean deleted = false;
             try {
                 try {
-                    segment.getMessageSet().close();
+                    segment.getFileMessage().close();
                 } catch (IOException e) {
                     logger.warn(e.getMessage(), e);
                 }

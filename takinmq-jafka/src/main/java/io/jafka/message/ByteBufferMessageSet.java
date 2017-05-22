@@ -60,7 +60,7 @@ public class ByteBufferMessageSet extends MessageSet {
         this.errorCode = errorCode;
         this.validBytes = shallowValidBytes();
     }
-
+    
     public ByteBufferMessageSet(CompressionCodec compressionCodec, Message... messages) {
         this(MessageSet.createByteBuffer(compressionCodec, messages), 0L, ErrorMapping.NoError);
     }

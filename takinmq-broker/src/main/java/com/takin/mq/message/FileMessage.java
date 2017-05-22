@@ -150,7 +150,7 @@ public class FileMessage {
             }
             buffer.rewind();
             location += size + 4;
-
+            
             return new MessageAndOffset(new Message(buffer), location);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -191,9 +191,9 @@ public class FileMessage {
     public long[] append(Message messages) throws IOException {
         checkMutable();
         long written = 0L;
-        //        while (written < messages.getSizeInBytes()) {
-        written += messages.writeTo(channel, 0, messages.getSizeInBytes());
-        //        }
+        while (written < messages.getSizeInBytes()) {
+            written += messages.writeTo(channel, 0, messages.getSizeInBytes());
+        }
         long beforeOffset = offsetSize.getAndAdd(written);//这个值应该是afteroffset 不过这个值并不影响其结果
         return new long[] { written, beforeOffset };
     }

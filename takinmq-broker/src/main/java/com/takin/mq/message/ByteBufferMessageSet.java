@@ -44,35 +44,25 @@
 // * 
 // * @since 1.0
 // */
-//public class ByteBufferMessageSet extends MessageSet {
+//public class ByteBufferMessageSet {
 //
 //    private final ByteBuffer buffer;
 //    private final long initialOffset;
-//    private final ErrorMapping errorCode;
 //    //
 //    private long shallowValidByteCount = -1L;
 //    //
 //    private long validBytes;
 //
 //    public ByteBufferMessageSet(ByteBuffer buffer) {
-//        this(buffer, 0L, ErrorMapping.NoError);
+//        this(buffer, 0L);
 //    }
 //
-//    ByteBufferMessageSet(ByteBuffer buffer, long initialOffset, ErrorMapping errorCode) {
+//    ByteBufferMessageSet(ByteBuffer buffer, long initialOffset) {
 //        this.buffer = buffer;
 //        this.initialOffset = initialOffset;
-//        this.errorCode = errorCode;
 //        this.validBytes = shallowValidBytes();
 //    }
-//
-//    public ByteBufferMessageSet(CompressionCodec compressionCodec, Message... messages) {
-//        this(MessageSet.createByteBuffer(compressionCodec, messages), 0L, ErrorMapping.NoError);
-//    }
-//
-//    public ByteBufferMessageSet(Message... messages) {
-//        this(CompressionCodec.NoCompressionCodec, messages);
-//    }
-//
+//    
 //    /** 
 //     * get valid bytes of buffer
 //     * <p>

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 
+import org.apache.log4j.Logger;
+
 import com.takin.mq.utils.Utils;
 
 /**
@@ -47,7 +49,7 @@ public class Message {
     public static final byte CrcLength = 4;
 
     final ByteBuffer buffer;
-    private final int messageSize;
+    private int messageSize;
 
     public Message(String messageString) throws Exception {
         this(messageString.getBytes(ENCODING));
@@ -61,12 +63,12 @@ public class Message {
         buffer.putInt((int) (crc & 0xffffffffL));//crc32
         buffer.put(bytes);
         buffer.rewind();
-        messageSize = buffer.limit();
+        this.messageSize = buffer.limit();
     }
 
     public Message(ByteBuffer buffer) {
         this.buffer = buffer;
-        messageSize = buffer.limit();
+        this.messageSize = buffer.limit();
     }
 
     //2
@@ -89,16 +91,17 @@ public class Message {
 
     //返回的是写入的字节大小
     public long writeTo(GatheringByteChannel channel, long offset, long maxSize) throws IOException {
+        //先记录消息的长度
+        ByteBuffer len = ByteBuffer.allocate(4);
+        len.putInt(getMessageSize());
+        len.rewind();
+        channel.write(len);
         buffer.mark();
-        ByteBuffer lengthbuffer = ByteBuffer.allocate(4 + messageSize);
-        lengthbuffer.putInt(messageSize);
-        buffer.flip();
-        lengthbuffer.put(buffer);
-        int written = channel.write(lengthbuffer);
+        int written = channel.write(buffer);
         buffer.reset();
         return written;
-    } 
-    
+    }
+
     public long getSizeInBytes() {
         return buffer.limit();
     }

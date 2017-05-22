@@ -197,25 +197,7 @@ public class Log implements ILog {
     public long append(Message message) {
         message.verifyMessageSize(maxMessageSize);
         int numberOfMessages = 1;
-        //        for (MessageAndOffset messageAndOffset : messages) {
-        //            if (!messageAndOffset.message.isValid()) {
-        //                throw new InvalidMessageException();
-        //            }
-        //            numberOfMessages += 1;
-        //        }
-        //
-
-        // truncate the message set's buffer upto validbytes, before appending it to the on-disk log
-        //        ByteBuffer validByteBuffer = messages.getBuffer().duplicate();
-        //        long messageSetValidBytes = messages.getValidBytes();
-        //        if (messageSetValidBytes > Integer.MAX_VALUE || messageSetValidBytes < 0)
-        //            throw new InvalidMessageSizeException("Illegal length of message set " + messageSetValidBytes + " Message set cannot be appended to log. Possible causes are corrupted produce requests");
-        //
-        //        validByteBuffer.limit((int) messageSetValidBytes);
-        //        ByteBufferMessageSet validMessages = new ByteBufferMessageSet(validByteBuffer);
-
         long offset = 0l;
-        // they are valid, insert them in the log
         synchronized (lock) {
             try {
                 LogSegment lastSegment = segments.getLastView();

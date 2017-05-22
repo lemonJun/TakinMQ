@@ -29,6 +29,7 @@ public class MessageAndOffset {
 
     private final Message message;
 
+    //此offset值并不是开始位置值   而是结束位置值    好处是：可以直接用此值读取下一个消息
     private final long offset;
 
     public MessageAndOffset(Message message, long offset) {

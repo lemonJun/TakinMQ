@@ -21,7 +21,7 @@ package com.takin.mq.store2;
  * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
-public interface LogSegmentFilter {
+public interface SegmentFilter {
 
-    boolean filter(LogSegment segment);
+    boolean filter(Segment segment);
 }

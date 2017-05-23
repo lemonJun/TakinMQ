@@ -9,9 +9,9 @@ import com.takin.mq.client.ProducerProvider;
 import com.takin.mq.message.SimpleSendData;
 import com.takin.mq.producer.ProducerService;
 
-public class ProducerTest {
+public class ProducerDealyTest {
 
-    private static final RateLimiter limit = RateLimiter.create(5d);
+    private static final RateLimiter limit = RateLimiter.create(1d);
 
     private static final AtomicInteger total = new AtomicInteger(0);
 
@@ -21,7 +21,8 @@ public class ProducerTest {
             final ProducerService producer = ProducerProvider.getProducerByTopic();
             while (true) {
                 if (limit.tryAcquire()) {
-                    long address = producer.send(new SimpleSendData("delay").add("hello" + total.getAndIncrement()));
+                    SimpleSendData data = new SimpleSendData("delay").add("" + total.getAndIncrement()).delay(30l);
+                    long address = producer.sendDelayMsg(data);
                     System.out.println("offset: " + address);
                 }
             }

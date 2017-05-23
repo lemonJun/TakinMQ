@@ -4,8 +4,13 @@ package com.takin.mq.message;
 public class SimpleSendData {
 
     private String topic;
-    private String data; 
-    
+    private String data;
+    private long delayms = 0l;
+
+    public boolean isDelayMsg() {
+        return delayms > 0l;
+    }
+
     public SimpleSendData() {
     }
 
@@ -23,10 +28,15 @@ public class SimpleSendData {
         return this;
     }
 
+    public SimpleSendData delay(long delayms) {
+        setDelayms(delayms);
+        return this;
+    }
+
     public String getTopic() {
         return topic;
     }
-    
+
     public void setTopic(String topic) {
         this.topic = topic;
     }
@@ -37,6 +47,14 @@ public class SimpleSendData {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public long getDelayms() {
+        return delayms;
+    }
+
+    public void setDelayms(long delayms) {
+        this.delayms = delayms;
     }
 
 }

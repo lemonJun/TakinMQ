@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.google.common.util.concurrent.AbstractService;
-import com.takin.mq.store2.LogManager;
+import com.takin.mq.store2.StoreManager;
 import com.takin.mq.store2.RollingStrategy;
 import com.takin.mq.utils.Scheduler;
 import com.takin.rpc.server.GuiceDI;
@@ -14,7 +14,7 @@ import com.takin.rpc.server.RPCServer;
 public class BrokerBootstrap extends AbstractService {
     private static final RPCServer server = new RPCServer();
 
-    private LogManager logManager;
+    private StoreManager logManager;
     private BrokerConfig config;
 
     public void init(String[] args, boolean online) {
@@ -34,7 +34,7 @@ public class BrokerBootstrap extends AbstractService {
         //        
         final Scheduler scheduler = new Scheduler(1, "jafka-logcleaner-", false);
         RollingStrategy rolling = null;
-        this.logManager = GuiceDI.getInstance(LogManager.class);
+        this.logManager = GuiceDI.getInstance(StoreManager.class);
         this.logManager.setRollingStategy(rolling);
         this.logManager.setScheduler(scheduler);
         this.logManager.setNeedRecovery(true);

@@ -129,6 +129,7 @@ public class FileMessage {
      */
     protected MessageAndOffset makeNext() {
         try {
+            long start = offset;
             long location = offset;
             ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
             channel.read(sizeBuffer, location);
@@ -150,8 +151,8 @@ public class FileMessage {
             }
             buffer.rewind();
             location += size + 4;
-            
-            return new MessageAndOffset(new Message(buffer), location);
+
+            return new MessageAndOffset(new Message(buffer), start, location);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

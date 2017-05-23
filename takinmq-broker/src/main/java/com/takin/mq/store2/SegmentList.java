@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class SegmentList {
 
-    private final AtomicReference<List<LogSegment>> contents;
+    private final AtomicReference<List<Segment>> contents;
 
     private final String name;
 
@@ -39,19 +39,19 @@ public class SegmentList {
      * @param name the message topic name
      * @param segments exist segments
      */
-    public SegmentList(final String name, List<LogSegment> segments) {
+    public SegmentList(final String name, List<Segment> segments) {
         this.name = name;
-        contents = new AtomicReference<List<LogSegment>>(segments);
+        contents = new AtomicReference<List<Segment>>(segments);
     }
 
     /**
      * Append the given item to the end of the list
      * @param segment segment to append
      */
-    public void append(LogSegment segment) {
+    public void append(Segment segment) {
         while (true) {
-            List<LogSegment> curr = contents.get();
-            List<LogSegment> updated = new ArrayList<LogSegment>(curr);
+            List<Segment> curr = contents.get();
+            List<Segment> updated = new ArrayList<Segment>(curr);
             updated.add(segment);
             if (contents.compareAndSet(curr, updated)) {
                 return;
@@ -65,14 +65,14 @@ public class SegmentList {
      * @param newStart the logsegment who's index smaller than newStart will be deleted.
      * @return the deleted segment
      */
-    public List<LogSegment> trunc(int newStart) {
+    public List<Segment> trunc(int newStart) {
         if (newStart < 0) {
             throw new IllegalArgumentException("Starting index must be positive.");
         }
         while (true) {
-            List<LogSegment> curr = contents.get();
+            List<Segment> curr = contents.get();
             int newLength = Math.max(curr.size() - newStart, 0);
-            List<LogSegment> updatedList = new ArrayList<LogSegment>(curr.subList(Math.min(newStart, curr.size() - 1), curr.size()));
+            List<Segment> updatedList = new ArrayList<Segment>(curr.subList(Math.min(newStart, curr.size() - 1), curr.size()));
             if (contents.compareAndSet(curr, updatedList)) {
                 return curr.subList(0, curr.size() - newLength);
             }
@@ -84,8 +84,8 @@ public class SegmentList {
      * 
      * @return the last segment
      */
-    public LogSegment getLastView() {
-        List<LogSegment> views = getView();
+    public Segment getLastView() {
+        List<Segment> views = getView();
         return views.get(views.size() - 1);
     }
 
@@ -94,7 +94,7 @@ public class SegmentList {
      * 
      * @return all segments
      */
-    public List<LogSegment> getView() {
+    public List<Segment> getView() {
         return contents.get();
     }
 

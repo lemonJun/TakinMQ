@@ -85,7 +85,7 @@ public class FileStore implements IStore {
     }
 
     private SegmentList loadSegments() throws IOException {
-        List<LogSegment> accum = new ArrayList<LogSegment>();
+        List<Segment> accum = new ArrayList<Segment>();
         File[] ls = dir.listFiles(new FileFilter() {
 
             public boolean accept(File f) {
@@ -101,13 +101,13 @@ public class FileStore implements IStore {
             final String logFormat = "LOADING_LOG_FILE[%2d], start(offset)=%d, size=%d, path=%s";
             logger.info(String.format(logFormat, n, start, f.length(), f.getAbsolutePath()));
             FileMessage messageSet = new FileMessage(f, false);
-            accum.add(new LogSegment(f, messageSet, start));
+            accum.add(new Segment(f, messageSet, start));
         }
         if (accum.size() == 0) {
             // no existing segments, create a new mutable segment
             File newFile = new File(dir, FileStore.nameFromOffset(0));
             FileMessage fileMessageSet = new FileMessage(newFile, true);
-            accum.add(new LogSegment(newFile, fileMessageSet, 0));
+            accum.add(new Segment(newFile, fileMessageSet, 0));
         } else {
             // there is at least one existing segment, validate and recover them/it
             // sort segments into ascending order for fast searching
@@ -115,10 +115,10 @@ public class FileStore implements IStore {
             validateSegments(accum);
         }
         //
-        LogSegment last = accum.remove(accum.size() - 1);
+        Segment last = accum.remove(accum.size() - 1);
         last.getFileMessage().close();
         logger.info("Loading the last segment " + last.getFile().getAbsolutePath() + " in mutable mode, recovery " + needRecovery);
-        LogSegment mutable = new LogSegment(last.getFile(), new FileMessage(last.getFile(), true, new AtomicBoolean(needRecovery)), last.start());
+        Segment mutable = new Segment(last.getFile(), new FileMessage(last.getFile(), true, new AtomicBoolean(needRecovery)), last.start());
         accum.add(mutable);
         return new SegmentList(name, accum);
     }
@@ -126,11 +126,11 @@ public class FileStore implements IStore {
     /**
      * Check that the ranges and sizes add up, otherwise we have lost some data somewhere
      */
-    private void validateSegments(List<LogSegment> segments) {
+    private void validateSegments(List<Segment> segments) {
         synchronized (lock) {
             for (int i = 0; i < segments.size() - 1; i++) {
-                LogSegment curr = segments.get(i);
-                LogSegment next = segments.get(i + 1);
+                Segment curr = segments.get(i);
+                Segment next = segments.get(i + 1);
                 if (curr.start() + curr.size() != next.start()) {
                     throw new IllegalStateException("The following segments don't validate: " + curr.getFile().getAbsolutePath() + ", " + next.getFile().getAbsolutePath());
                 }
@@ -157,7 +157,7 @@ public class FileStore implements IStore {
 
     public void close() {
         synchronized (lock) {
-            for (LogSegment seg : segments.getView()) {
+            for (Segment seg : segments.getView()) {
                 try {
                     seg.getFileMessage().close();
                 } catch (IOException e) {
@@ -181,8 +181,8 @@ public class FileStore implements IStore {
      */
     @Override
     public MessageAndOffset read(long offset, int length) throws IOException {
-        List<LogSegment> views = segments.getView();
-        LogSegment found = findRange(views, offset, views.size());
+        List<Segment> views = segments.getView();
+        Segment found = findRange(views, offset, views.size());
         if (found == null) {
             if (logger.isTraceEnabled()) {
                 logger.trace(format("NOT FOUND MessageSet from Log[%s], offset=%d, length=%d", name, offset, length));
@@ -199,7 +199,7 @@ public class FileStore implements IStore {
         long offset = 0l;
         synchronized (lock) {
             try {
-                LogSegment lastSegment = segments.getLastView();
+                Segment lastSegment = segments.getLastView();
                 long[] writtenAndOffset = lastSegment.getFileMessage().append(message);
                 logger.info(String.format("[%s,%s] save %d messages, bytesize %d", name, lastSegment.getName(), numberOfMessages, writtenAndOffset[0]));
                 maybeFlush(numberOfMessages);
@@ -221,7 +221,7 @@ public class FileStore implements IStore {
      * @param lastSegment the last file segment
      * @throws IOException any file operation exception
      */
-    private void maybeRoll(LogSegment lastSegment) throws IOException {
+    private void maybeRoll(Segment lastSegment) throws IOException {
         if (rollingStategy.check(lastSegment)) {
             roll();
         }
@@ -239,13 +239,13 @@ public class FileStore implements IStore {
                 }
             }
             logger.info("Rolling log '" + name + "' to " + newFile.getName());
-            segments.append(new LogSegment(newFile, new FileMessage(newFile, true), newOffset));
+            segments.append(new Segment(newFile, new FileMessage(newFile, true), newOffset));
         }
     }
 
     private long nextAppendOffset() throws IOException {
         flush();
-        LogSegment lastView = segments.getLastView();
+        Segment lastView = segments.getLastView();
         return lastView.start() + lastView.size();
     }
 
@@ -350,7 +350,7 @@ public class FileStore implements IStore {
      */
     public long size() {
         int size = 0;
-        for (LogSegment seg : segments.getView()) {
+        for (Segment seg : segments.getView()) {
             size += seg.size();
         }
         return size;
@@ -369,16 +369,16 @@ public class FileStore implements IStore {
      * 
      * @throws IOException
      */
-    List<LogSegment> markDeletedWhile(LogSegmentFilter filter) throws IOException {
+    List<Segment> markDeletedWhile(SegmentFilter filter) throws IOException {
         synchronized (lock) {
-            List<LogSegment> view = segments.getView();
-            List<LogSegment> deletable = new ArrayList<LogSegment>();
-            for (LogSegment seg : view) {
+            List<Segment> view = segments.getView();
+            List<Segment> deletable = new ArrayList<Segment>();
+            for (Segment seg : view) {
                 if (filter.filter(seg)) {
                     deletable.add(seg);
                 }
             }
-            for (LogSegment seg : deletable) {
+            for (Segment seg : deletable) {
                 seg.setDeleted(true);
             }
             int numToDelete = deletable.size();
@@ -405,12 +405,12 @@ public class FileStore implements IStore {
     }
 
     public long getTotalOffset() {
-        LogSegment lastView = segments.getLastView();
+        Segment lastView = segments.getLastView();
         return lastView.start() + lastView.size();
     }
 
     public long getTotalAddressingOffset() {
-        LogSegment lastView = segments.getLastView();
+        Segment lastView = segments.getLastView();
         return lastView.start() + lastView.addressingSize();
     }
 

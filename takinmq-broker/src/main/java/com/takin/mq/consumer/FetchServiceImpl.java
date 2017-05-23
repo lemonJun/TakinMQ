@@ -10,7 +10,7 @@ import com.takin.mq.message.Message;
 import com.takin.mq.message.MessageAndOffset;
 import com.takin.mq.message.SimpleFetchData;
 import com.takin.mq.store2.IStore;
-import com.takin.mq.store2.LogManager;
+import com.takin.mq.store2.StoreManager;
 import com.takin.rpc.server.GuiceDI;
 import com.takin.rpc.server.anno.ServiceImpl;
 
@@ -28,26 +28,30 @@ public class FetchServiceImpl implements FetchService {
 
     @Override
     public SimpleFetchData fetch(String topic, Long offset) throws Exception {
-        int partition = GuiceDI.getInstance(LogManager.class).choosePartition(topic);
+        int partition = GuiceDI.getInstance(StoreManager.class).choosePartition(topic);
         return fetch(topic, offset, partition);
     }
 
     @Override
     public SimpleFetchData fetch(String topic, Long offset, Integer partition) throws Exception {
         try {
-            IStore log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(topic, partition);
-            logger.info(String.format("topic:%s offset:%s", topic, offset));
+            IStore log = GuiceDI.getInstance(StoreManager.class).getOrCreateLog(topic, partition);
             MessageAndOffset messandoffset = log.read(offset, 1);
-            Preconditions.checkNotNull(messandoffset);
+            if (messandoffset == null) {
+                return null;
+            }
+
             SimpleFetchData data = new SimpleFetchData();
             data.setTopic(topic);
             data.setPartition(partition);
-            data.setOffset(messandoffset.getOffset());
+            data.setStartoffset(messandoffset.getStartoffset());
+            data.setEndoffset(messandoffset.getOffset());
             ByteBuffer payload = messandoffset.getMessage().payload();
             byte[] tokenbyte = new byte[payload.limit()];
             payload.get(tokenbyte, 0, payload.limit());
             data.setData(new String(tokenbyte, Message.ENCODING));
-
+            logger.info(String.format("topic:%s offset:%s", topic, offset));
+            
             //            
             //            Iterator<MessageAndOffset> ite = messageset.iterator();
             //            List<SimpleFetchData> datas = Lists.newArrayList();

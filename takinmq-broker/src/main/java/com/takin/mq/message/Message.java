@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 
-import org.apache.log4j.Logger;
-
 import com.takin.mq.utils.Utils;
 
 /**
@@ -54,7 +52,7 @@ public class Message {
     public Message(String messageString) throws Exception {
         this(messageString.getBytes(ENCODING));
     }
-
+    
     public Message(byte[] bytes) throws Exception {
         buffer = ByteBuffer.allocate(Message.payloadOffset() + bytes.length);
         buffer.put(CurrentMagicValue);
@@ -70,7 +68,7 @@ public class Message {
         this.buffer = buffer;
         this.messageSize = buffer.limit();
     }
-
+    
     //2
     public static int crcOffset() {
         return ATTRIBUTE_OFFSET + 1;

@@ -57,13 +57,13 @@ import com.takin.rpc.server.GuiceDI;
  * @see
  */
 @Singleton
-public class LogManager implements Closeable {
+public class StoreManager implements Closeable {
 
     private Scheduler scheduler;
 
     private boolean needRecovery;
 
-    private final Logger logger = LoggerFactory.getLogger(LogManager.class);
+    private final Logger logger = LoggerFactory.getLogger(StoreManager.class);
 
     final int numPartitions;
 
@@ -92,9 +92,9 @@ public class LogManager implements Closeable {
     private RollingStrategy rollingStategy;
 
     private BrokerConfig config;
-    
+
     @Inject
-    private LogManager() {
+    private StoreManager() {
         config = GuiceDI.getInstance(BrokerConfig.class);
         this.logDir = Utils.getCanonicalFile(new File(config.getLogdirs()));
         this.numPartitions = config.getNumpartitions();
@@ -398,11 +398,11 @@ public class LogManager implements Closeable {
         if (logRetentionSize < 0 || log.size() < logRetentionSize)
             return 0;
 
-        List<LogSegment> toBeDeleted = log.markDeletedWhile(new LogSegmentFilter() {
+        List<Segment> toBeDeleted = log.markDeletedWhile(new SegmentFilter() {
 
             long diff = log.size() - logRetentionSize;
 
-            public boolean filter(LogSegment segment) {
+            public boolean filter(Segment segment) {
                 diff -= segment.size();
                 return diff >= 0;
             }
@@ -422,9 +422,9 @@ public class LogManager implements Closeable {
         String topic = fileNameToTopicPartition(log.dir.getName()).key;
         long logCleanupThresholdMS = config.getLogretentionhours();
         final long expiredThrshold = logCleanupThresholdMS;
-        List<LogSegment> toBeDeleted = log.markDeletedWhile(new LogSegmentFilter() {
+        List<Segment> toBeDeleted = log.markDeletedWhile(new SegmentFilter() {
 
-            public boolean filter(LogSegment segment) {
+            public boolean filter(Segment segment) {
                 //check file which has not been modified in expiredThrshold millionseconds
                 return startMs - segment.getFile().lastModified() > expiredThrshold;
             }
@@ -435,9 +435,9 @@ public class LogManager implements Closeable {
     /**
      * Attemps to delete all provided segments from a log and returns how many it was able to
      */
-    private int deleteSegments(FileStore log, List<LogSegment> segments) {
+    private int deleteSegments(FileStore log, List<Segment> segments) {
         int total = 0;
-        for (LogSegment segment : segments) {
+        for (Segment segment : segments) {
             boolean deleted = false;
             try {
                 try {

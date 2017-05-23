@@ -7,19 +7,25 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.takin.emmet.file.FileUtils;
+import com.takin.emmet.util.DateUtils;
 import com.takin.mq.broker.BrokerConfig;
 import com.takin.mq.message.Message;
 import com.takin.mq.message.SimpleSendData;
 import com.takin.mq.store2.IStore;
-import com.takin.mq.store2.LogManager;
+import com.takin.mq.store2.StoreManager;
 import com.takin.rpc.server.GuiceDI;
 
 /**
@@ -34,28 +40,34 @@ import com.takin.rpc.server.GuiceDI;
 @Singleton
 public class DelayMessageService {
 
-    private final String dbname = "delayTopic";
+    private static final Logger logger = LoggerFactory.getLogger(DelayMessageService.class);
+
+    private final String dbname = "delay";
 
     //本打算一个主题对应一个DB  后来想了下   这个好像跟主题无关
-
-    private BTreeMap<Long, SimpleSendData> btree;
+    private BTreeMap<Long, String> btree;
 
     //用来于存储互通
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    @SuppressWarnings("unchecked")
+    private final AtomicLong cont = new AtomicLong(1);
+
     @Inject
     private DelayMessageService() {
-        String filepath = GuiceDI.getInstance(BrokerConfig.class).getLogdirs() + File.separator + dbname;
+        //        String filepath = GuiceDI.getInstance(BrokerConfig.class).getLogdirs() + File.separator + "Delay" + File.separator + dbname;
+        //        FileUtils.createDirIfNotExist(filepath);
+        String filepath = "E:/mapdb/";
+        logger.info(String.format("delay db:%s", filepath));
         DB db = DBMaker.fileDB(new File(filepath)).make();
-        btree = (BTreeMap<Long, SimpleSendData>) db.treeMap("delay").keySerializer(Serializer.LONG)//
-                        .counterEnable().createOrOpen();
+        btree = (BTreeMap<Long, String>) db.treeMap("delay").keySerializer(Serializer.LONG)//
+                        .valueSerializer(Serializer.STRING).counterEnable().createOrOpen();
         executor.submit(new DelayThread());
     }
 
     //写入一条数据
-    public void put(long key, SimpleSendData value) {
+    public void put(long key, String value) {
         btree.put(key, value);
+        logger.info(String.format("put:%d key:%s", cont.getAndIncrement(), DateUtils.formatDate(key, DateUtils.YMD_HMS)));
     }
 
     //后台读取消息线程
@@ -64,13 +76,14 @@ public class DelayMessageService {
         public void run() {
             //阻塞获取第一个值 
             try {
-                Map.Entry<Long, SimpleSendData> entry = btree.pollFirstEntry();
+                Map.Entry<Long, String> entry = btree.pollFirstEntry();
                 if (entry != null && entry.getValue() != null) {
-                    SimpleSendData msg = entry.getValue();
-                    int partion = GuiceDI.getInstance(LogManager.class).choosePartition(msg.getTopic());
-                    IStore log = GuiceDI.getInstance(LogManager.class).getOrCreateLog(msg.getTopic(), partion);
+                    logger.info(entry.getValue());
+                    SimpleSendData msg = JSON.parseObject(entry.getValue(), SimpleSendData.class);
+                    int partion = GuiceDI.getInstance(StoreManager.class).choosePartition(msg.getTopic());
+                    IStore log = GuiceDI.getInstance(StoreManager.class).getOrCreateLog(msg.getTopic(), partion);
                     Message messageg = new Message(msg.getData());
-                    long offset = log.append(messageg);
+                    log.append(messageg);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

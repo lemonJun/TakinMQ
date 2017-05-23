@@ -16,5 +16,5 @@ public interface RollingStrategy extends Closeable {
      * @param lastSegment the last segment
      * @return true meaning rolling over and false doing nothing
      */
-    boolean check(LogSegment lastSegment);
+    boolean check(Segment lastSegment);
 }

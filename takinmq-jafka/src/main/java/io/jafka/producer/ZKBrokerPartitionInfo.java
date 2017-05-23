@@ -89,7 +89,7 @@ public class ZKBrokerPartitionInfo implements BrokerPartitionInfo {
         // register listener for session expired event
         zkClient.subscribeStateChanges(new ZKSessionExpirationListener());
     }
-
+    
     public SortedSet<Partition> getBrokerPartitionInfo(final String topic) {
         synchronized (zkWatcherLock) {
             SortedSet<Partition> brokerPartitions = topicBrokerPartitions.get(topic);

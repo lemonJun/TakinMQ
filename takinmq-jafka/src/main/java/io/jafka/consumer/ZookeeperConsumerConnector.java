@@ -272,7 +272,7 @@ public class ZookeeperConsumerConnector implements ConsumerConnector {
         }
         throw new UnknownHostException();
     }
-
+    
     /**
      * generate random consumerid ( hostname-currenttime-uuid.sub(8) )
      *

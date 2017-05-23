@@ -27,14 +27,17 @@ package com.takin.mq.message;
  */
 public class MessageAndOffset {
 
-    private final Message message;
+    private Message message;
+    //消息开始的位置
+    private long startoffset;
 
     //此offset值并不是开始位置值   而是结束位置值    好处是：可以直接用此值读取下一个消息
-    private final long offset;
+    private long afteroffset;
 
-    public MessageAndOffset(Message message, long offset) {
+    public MessageAndOffset(Message message, long startoffset, long afteroffset) {
         this.message = message;
-        this.offset = offset;
+        this.startoffset = startoffset;
+        this.afteroffset = afteroffset;
     }
 
     public Message getMessage() {
@@ -42,11 +45,31 @@ public class MessageAndOffset {
     }
 
     public long getOffset() {
-        return offset;
+        return afteroffset;
+    }
+
+    public long getStartoffset() {
+        return startoffset;
+    }
+
+    public void setStartoffset(long startoffset) {
+        this.startoffset = startoffset;
+    }
+
+    public long getAfteroffset() {
+        return afteroffset;
+    }
+
+    public void setAfteroffset(long afteroffset) {
+        this.afteroffset = afteroffset;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     @Override
     public String toString() {
-        return String.format("MessageAndOffset [offset=%s, message=%s]", offset, message);
+        return String.format("startoffset:%s afteroffset:%s  message:%s", startoffset, afteroffset, message);
     }
 }

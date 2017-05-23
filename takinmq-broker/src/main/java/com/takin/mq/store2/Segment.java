@@ -28,7 +28,7 @@ import com.takin.mq.utils.Range;
  * @author adyliu (imxylz@gmail.com)
  * @since 1.0
  */
-public class LogSegment implements Range, Comparable<LogSegment> {
+public class Segment implements Range, Comparable<Segment> {
 
     private final File file;
 
@@ -38,7 +38,7 @@ public class LogSegment implements Range, Comparable<LogSegment> {
 
     private volatile boolean deleted;
 
-    public LogSegment(File file, FileMessage messageSet, long start) {
+    public Segment(File file, FileMessage messageSet, long start) {
         super();
         this.file = file;
         this.filemessage = messageSet;
@@ -89,7 +89,7 @@ public class LogSegment implements Range, Comparable<LogSegment> {
         return filemessage.getSizeInBytes();
     }
 
-    public int compareTo(LogSegment o) {
+    public int compareTo(Segment o) {
         return this.start > o.start ? 1 : this.start < o.start ? -1 : 0;
     }
 

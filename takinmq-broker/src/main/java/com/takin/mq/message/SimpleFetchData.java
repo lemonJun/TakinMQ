@@ -4,7 +4,8 @@ public class SimpleFetchData {
 
     private String topic;
     private int partition;
-    private long offset;
+    private long startoffset;
+    private long endoffset;
     private String data;
 
     public String getTopic() {
@@ -23,12 +24,20 @@ public class SimpleFetchData {
         this.partition = partition;
     }
 
-    public long getOffset() {
-        return offset;
+    public long getStartoffset() {
+        return startoffset;
     }
 
-    public void setOffset(long offset) {
-        this.offset = offset;
+    public void setStartoffset(long startoffset) {
+        this.startoffset = startoffset;
+    }
+
+    public long getEndoffset() {
+        return endoffset;
+    }
+
+    public void setEndoffset(long endoffset) {
+        this.endoffset = endoffset;
     }
 
     public String getData() {
@@ -38,5 +47,5 @@ public class SimpleFetchData {
     public void setData(String data) {
         this.data = data;
     }
-    
+
 }

@@ -1,5 +1,6 @@
 package com.takin.mq.broker;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,6 +8,8 @@ import com.alibaba.fastjson.JSON;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.takin.emmet.file.PropertiesHelper;
+import com.takin.emmet.string.StringUtil;
+import com.takin.emmet.util.PlatformUtils;
 
 @Singleton
 public class BrokerConfig {
@@ -102,6 +105,13 @@ public class BrokerConfig {
     }
 
     public String getLogdirs() {
+        if (StringUtil.isNullOrEmpty(logdirs)) {
+            if (PlatformUtils.isWindows()) {
+                return "D:";
+            } else {
+                return "/home";
+            }
+        }
         return logdirs;
     }
 

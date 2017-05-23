@@ -51,7 +51,7 @@ public class DailyRollingStrategy implements RollingStrategy, Runnable {
     private volatile long lastRollingTime = 0;
     
     @Override
-    public boolean check(LogSegment lastSegment) {
+    public boolean check(Segment lastSegment) {
         if (firstCheck) {
             checkFile(lastSegment);
         }
@@ -64,7 +64,7 @@ public class DailyRollingStrategy implements RollingStrategy, Runnable {
         return false;
     }
 
-    private void checkFile(LogSegment lastSegment) {
+    private void checkFile(Segment lastSegment) {
         firstCheck = false;
         Calendar today = today();
         if (lastSegment.getFile().lastModified() < today.getTimeInMillis()) {

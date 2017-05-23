@@ -10,10 +10,10 @@ public class ConsumerTest {
         try {
             PropertyConfigurator.configure("conf/log4j.properties");
 
-            ConsumerProvider.registTopicHandler("test", new ReceiveHandler() {
+            ConsumerProvider.registTopicHandler("delay", new ReceiveHandler() {
                 @Override
                 public void messageReceived(String msg) {
-                    System.out.println(msg);
+                    //
                 }
             });
         } catch (Exception e) {

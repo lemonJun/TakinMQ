@@ -15,8 +15,8 @@ public class BrokerBootstrap extends AbstractService {
     private static final RPCServer server = new RPCServer();
 
     private StoreManager logManager;
-    private BrokerConfig config;
-
+    private BrokerConfig config; 
+    
     public void init(String[] args, boolean online) {
         try {
             PropertyConfigurator.configure("conf/log4j.properties");

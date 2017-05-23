@@ -50,7 +50,7 @@ public interface IStore extends Closeable {
      * @return all message offsets or null if not supported
      */
     long append(Message messages);
-
+    
     String reallogfile();
 
 }

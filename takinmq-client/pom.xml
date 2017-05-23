@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>lemon.takinmq</groupId>
+		<groupId>com.takin</groupId>
 		<artifactId>takinmq</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -32,7 +32,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>lemon.takinmq</groupId>
+			<groupId>com.takin</groupId>
 			<artifactId>takinmq-broker</artifactId>
 		</dependency>
 
@@ -58,8 +58,8 @@
 		</dependency>
 
 	</dependencies>
+	
 	<build>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

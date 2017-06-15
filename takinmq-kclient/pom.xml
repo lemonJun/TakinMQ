@@ -7,7 +7,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>takinmq-kclient</artifactId>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -18,12 +18,10 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.5</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -48,19 +46,8 @@
 			<version>1.9.9</version>
 		</dependency>
 		<dependency>
-			<groupId>mx4j</groupId>
-			<artifactId>mx4j-tools</artifactId>
-			<version>3.0.1</version>
-			<optional>true</optional>
-		</dependency>
-		<!-- <dependency> <groupId>io.netty</groupId> <artifactId>netty-all</artifactId> 
-			<version>4.0.24.Final</version> </dependency> <dependency> <groupId>net.sf.jopt-simple</groupId> 
-			<artifactId>jopt-simple</artifactId> <version>4.3</version> <optional>true</optional> 
-			</dependency> -->
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -78,7 +65,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -96,26 +82,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<resources />
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Specification-Title>${project.artifactId}</Specification-Title>
-							<Specification-Version>${project.version}</Specification-Version>
-							<Specification-Vendor>Ady Liu</Specification-Vendor>
-							<Implementation-Title>${project.artifactId}</Implementation-Title>
-							<Implementation-Version>${timestamp}</Implementation-Version>
-							<Url>${project.url}</Url>
-						</manifestEntries>
-					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

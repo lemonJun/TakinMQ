@@ -19,6 +19,7 @@
 		<!-- <module>takinmq-jafka</module> <module>takinmq-store</module> <module>takinmq-mq2</module> 
 			<module>taminmq-common</module> -->
 		<module>takinmq-jkafka</module>
+		<module>takinmq-kclient</module>
 	</modules>
 
 	<properties>
